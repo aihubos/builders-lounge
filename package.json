@@ -1,0 +1,12 @@
+{
+  "name": "builders-lounge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "check": "node --check script.js && node --check site-config.js && node --check install/install.js && node --check lounge/lounge.js && node --check lounge/jobs.js && node --check lounge/settings.js && node --check lounge/placeholders.js && node --check lounge/js/pages/home.js",
+    "test": "node scripts/check-application.mjs",
+    "build": "node scripts/build.mjs"
+  }
+}

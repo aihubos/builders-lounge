@@ -1,0 +1,8 @@
+.DS_Store
+dist/
+output/
+.superloopy/
+.playwright-cli/
+*.tgz
+.secrets/
+supabase/functions/.env
