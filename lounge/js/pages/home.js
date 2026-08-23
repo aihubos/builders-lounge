@@ -108,10 +108,7 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
   root.innerHTML = `<section class="lounge-home portal-home" aria-labelledby="home-dashboard-title">
     <div class="portal-home-layout">
       <div class="portal-home-main">
-        <section class="portal-home-hero">
-          <div class="portal-home-hero-copy"><span class="portal-live-badge"><i aria-hidden="true"></i> BUILDERS COMMUNITY</span><h3 id="home-dashboard-title">만들고, 나누고,<br><strong>함께 성장해요.</strong></h3><p>게시판에 경험을 나누어 빌드를 모으고, AI 회의록·쇼츠·웹툰·이미지 제작에 사용해 보세요.</p><div class="portal-home-hero-actions"><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기 <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-home-nav="meeting">AI 도구 둘러보기</button></div></div>
-          <div class="portal-hero-map" aria-label="Builders Lounge 이용 흐름"><span><b>01</b>Google 로그인</span><i></i><span><b>02</b>글·댓글 작성 · 1빌드</span><i></i><span><b>03</b>AI 도구에서 사용</span></div>
-        </section>
+        <h3 id="home-dashboard-title" class="visually-hidden">라운지 모아보기</h3>
 
         <section class="portal-panel portal-feed-panel" aria-labelledby="home-feed-title">
           <div class="portal-panel-head"><div><p class="section-label">LOUNGE NOW</p><h4 id="home-feed-title">라운지 모아보기</h4></div></div>

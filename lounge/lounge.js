@@ -38,7 +38,6 @@ const viewMeta = Object.freeze({
   shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "대본이나 주제를 쇼츠 제작안으로 만들고 빌드로 결제합니다.", status: "빌드 포인트" },
   webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 제작기가 Google 로그인과 빌드 잔액을 공유합니다.", status: "빌드 포인트" },
   masterpiece: { kicker: "만들기", title: "세계명화 프롬프트", description: "프롬프트는 무료로 만들고 이미지 생성에 빌드를 사용합니다.", status: "빌드 포인트" },
-  token: { kicker: "AI 도구", title: "토큰 비용 계산기", description: "사용 토큰 수에 따른 예상 API 비용을 바로 계산합니다.", status: "바로 사용" },
   prompts: { kicker: "AI 도구", title: "프롬프트 모음", description: "상황별 공개 프롬프트를 찾아 복사하고 직접 고쳐 씁니다.", status: "공개 콘텐츠" },
   newsletter: { kicker: "콘텐츠", title: "AI 빌더스 랩 뉴스레터", description: "AI 도구와 빌더의 실전 경험을 짧고 꾸준하게 읽습니다.", status: "읽기용 아카이브" },
   videos: { kicker: "콘텐츠", title: "영상 모음", description: "요약을 먼저 보고 원하는 영상만 눌러 재생합니다.", status: "선택 재생" },
@@ -64,7 +63,6 @@ const SEARCH_TOOLS = Object.freeze([
   { id: "search-shorts", title: "AI 쇼츠 스튜디오", summary: "긴 영상에서 세로형 숏폼 후보를 찾는 제작 흐름", route: "shorts", typeLabel: "제작 도구", icon: "▶" },
   { id: "search-webtoon", title: "웹툰 제작기", summary: "빌드 포인트로 대화와 아이디어를 공감 카드로 바꾸는 도구", route: "webtoon", typeLabel: "제작 도구", icon: "▣" },
   { id: "search-masterpiece", title: "세계명화 프롬프트", summary: "명화와 캐릭터를 조합하는 이미지 프롬프트 도구", route: "masterpiece", typeLabel: "제작 도구", icon: "♜" },
-  { id: "search-token", title: "토큰 비용 계산기", summary: "모델별 예상 API 비용을 비교하는 원본 도구", route: "token", typeLabel: "AI 도구", icon: "₩" },
   { id: "search-board", title: "자유게시판", summary: "질문, 정보와 빌더 결과물을 나누는 통합 게시판", route: "board", typeLabel: "커뮤니티", icon: "☷" },
 ]);
 
@@ -126,7 +124,7 @@ function renderGlobalSearch(rawQuery = "") {
   const query = String(rawQuery || "").trim().slice(0, 120);
   const normalized = query.toLocaleLowerCase("ko-KR");
   const catalog = searchCatalog();
-  const matches = (normalized ? catalog.filter((item) => item.searchText.includes(normalized)) : catalog.filter((item) => ["search-webtoon", "search-token", "prompt-stic", "newsletter-001", "video-openclaw", "game-pokopia"].includes(item.id))).slice(0, 12);
+  const matches = (normalized ? catalog.filter((item) => item.searchText.includes(normalized)) : catalog.filter((item) => ["search-webtoon", "prompt-stic", "newsletter-001", "video-openclaw", "game-pokopia"].includes(item.id))).slice(0, 12);
 
   if (!matches.length) {
     searchResults.innerHTML = `<div class="portal-search-empty"><strong>일치하는 공개 콘텐츠가 없습니다.</strong><p>다른 표현으로 검색하거나 게시판의 실제 글을 검색해 보세요.</p></div>`;
@@ -177,7 +175,6 @@ function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "h
   if (view === "shorts") return "현재는 쇼츠 대본·컷 구성 생성입니다. 실제 MP4 제작은 관리자가 외부 제작 API를 연결하면 제공됩니다.";
   if (view === "webtoon") return "웹툰 제작기는 Lounge 로그인과 빌드 잔액을 공유합니다. API 키는 서버에서만 사용합니다.";
   if (view === "masterpiece") return "프롬프트 조합은 무료이며 실제 이미지 생성에만 설정된 빌드가 사용됩니다.";
-  if (view === "token") return "토큰 비용 계산기는 원본 도구를 오른쪽 본문에 표시합니다. 입력한 계산값은 Lounge에 저장하지 않습니다.";
   if (view === "prompts") return "공개용으로 정리한 프롬프트만 제공합니다. 개인 정보·로컬 경로·비밀값은 포함하지 않습니다.";
   if (view === "newsletter") return "AI 빌더스 랩 뉴스레터는 직접 작성한 요약과 원문 출처를 제공하는 읽기용 아카이브입니다.";
   if (view === "videos") return "영상은 재생 버튼을 눌렀을 때만 youtube-nocookie.com 플레이어를 한 개 불러옵니다.";
