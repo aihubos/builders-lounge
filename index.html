@@ -89,6 +89,7 @@
               <div class="nav-stack">
                 <a class="nav-item" href="#meeting" data-view-link="meeting"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">AI 회의록</span></a>
                 <a class="nav-item" href="#shorts" data-view-link="shorts"><span class="nav-icon" aria-hidden="true">▶</span><span class="nav-label">AI 쇼츠 스튜디오</span></a>
+                <a class="nav-item" href="#webtoon" data-view-link="webtoon"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">웹툰 제작기</span><span class="nav-note">원본 앱</span></a>
               </div>
             </div>
 
@@ -147,6 +148,14 @@
             <section class="view-panel is-visible" id="view-home" data-view-panel="home"><div data-home-mount></div></section>
             <section class="view-panel" id="view-meeting" data-view-panel="meeting" hidden></section>
             <section class="view-panel" id="view-shorts" data-view-panel="shorts" hidden></section>
+            <section class="view-panel" id="view-webtoon" data-view-panel="webtoon" hidden>
+              <div class="panel-heading"><p class="section-label">MAKE · WEBTOON</p><h3>웹툰 제작기</h3><p>공감툰 프롬프트를 만드는 원본 앱으로 이어집니다.</p></div>
+              <section class="webtoon-connection-card" aria-labelledby="webtoon-connection-title">
+                <div class="webtoon-art" aria-hidden="true"><span class="webtoon-bubble webtoon-bubble-top">오늘도</span><span class="webtoon-character">✦</span><span class="webtoon-bubble webtoon-bubble-bottom">공감툰!</span></div>
+                <div class="webtoon-connection-copy"><span class="sample-label webtoon-live-label">원본 앱 연결</span><h4 id="webtoon-connection-title">공감툰 프롬프트 생성기</h4><p>주제·스타일·패널 구성을 고르고 AI 이미지 생성용 프롬프트를 만들 수 있습니다. 실제 생성 흐름은 Builders Lounge가 아니라 원본 앱에서 실행됩니다.</p><div class="webtoon-feature-list"><span>주제·스타일 선택</span><span>패널 레이아웃</span><span>프롬프트 복사</span></div><div class="webtoon-actions"><a class="primary-button" href="https://aihubos.github.io/gonggamtoon/" target="_blank" rel="noopener">웹툰 제작기 열기 <span aria-hidden="true">↗</span></a><a class="secondary-button" href="https://github.com/aihubos/gonggamtoon" target="_blank" rel="noopener">원본 저장소 보기 <span aria-hidden="true">↗</span></a></div></div>
+              </section>
+              <p class="webtoon-safety-note"><strong>연결 범위 안내</strong> 이 메뉴는 원본 앱으로 이동하는 링크만 제공합니다. Lounge에 API 키, 로그인, 결제, 파일 업로드를 복사하지 않습니다.</p>
+            </section>
             <section class="view-panel" id="view-jobs" data-view-panel="jobs" hidden><div data-jobs-slot></div></section>
             <section class="view-panel" id="view-results" data-view-panel="results" hidden><div data-results-slot></div></section>
             <section class="view-panel" id="view-files" data-view-panel="files" hidden><div data-files-slot></div></section>

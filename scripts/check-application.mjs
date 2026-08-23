@@ -65,6 +65,7 @@ expect(indexHtml.includes('<meta property="og:url" content="https://aihubos.gith
 expect(!/noindex\s*,?\s*nofollow/i.test(indexHtml), "루트 검색 제외 설정이 남아 있습니다.");
 expect(!indexHtml.includes("공개 홈페이지") && !indexHtml.includes("topbar-home-link"), "이전 홈페이지 링크가 남아 있습니다.");
 expect(indexHtml.includes("AI 회의록") && indexHtml.includes("AI 쇼츠 스튜디오"), "연결 예정 기능 표기가 없습니다.");
+expect(indexHtml.includes("웹툰 제작기") && indexHtml.includes("https://aihubos.github.io/gonggamtoon/"), "웹툰 제작기 메뉴 연결이 없습니다.");
 expect(indexHtml.includes("샘플 UI MVP") && indexHtml.includes("MVP 데모"), "샘플 MVP 안내가 부족합니다.");
 const nonVisitorScripts = loungeScript.replace(topbarScript, "");
 expect(!/type\s*=\s*["']file/i.test(indexHtml) && !/\b(XMLHttpRequest|FormData)\b/.test(nonVisitorScripts) && !/\bfetch\s*\(/.test(nonVisitorScripts), "연결 전 외부 요청·업로드 로직이 있습니다.");

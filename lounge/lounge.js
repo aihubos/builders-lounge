@@ -28,6 +28,7 @@ const viewMeta = Object.freeze({
   home: { kicker: "BUILDERS LOUNGE", title: "오늘 무엇을 만들어볼까요?", description: "AI 도구, 진행 중인 작업과 결과물을 한곳에서 확인합니다.", status: "MVP 데모" },
   meeting: { kicker: "만들기", title: "AI 회의록", description: "회의 파일을 정리하고 검토하는 샘플 흐름을 확인합니다.", status: "샘플 화면" },
   shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "영상에서 후보 구간을 찾는 샘플 흐름을 확인합니다.", status: "샘플 화면" },
+  webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 프롬프트를 만드는 원본 앱으로 이어집니다.", status: "원본 앱 연결" },
   jobs: { kicker: "내 작업", title: "진행 중 작업", description: "샘플 작업의 상태와 진행률을 확인합니다.", status: "샘플 데이터" },
   results: { kicker: "내 작업", title: "결과물", description: "완료된 샘플 결과를 미리 확인합니다.", status: "샘플 데이터" },
   files: { kicker: "내 작업", title: "파일", description: "작업에 사용된 샘플 파일 목록을 확인합니다.", status: "샘플 데이터" },
@@ -57,7 +58,7 @@ function setDemoMode(nextValue) {
   demoMode = Boolean(nextValue);
   writeLocalValue(DEMO_MODE_STORAGE_KEY, demoMode ? "on" : "off");
   shell?.setAttribute("data-demo-mode", demoMode ? "on" : "off");
-  if (notice) notice.textContent = demoMode ? "아래 작업과 사용량은 화면 확인용 샘플입니다. 실제 파일은 업로드되거나 처리되지 않습니다." : "샘플 데이터가 숨겨져 있습니다. 실제 파일·AI 처리는 아직 연결되지 않았습니다.";
+  if (notice) notice.textContent = getNoticeCopy();
   if (pageStatus && document.documentElement.dataset.loungeRoute === "home") pageStatus.textContent = demoMode ? "MVP 데모" : "연결 전";
   renderHomeModule();
   renderDataModules();
@@ -77,6 +78,11 @@ function formatDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return escapeHtml(value || "날짜 정보 없음");
   return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(date);
+}
+
+function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "home") {
+  if (view === "webtoon") return "웹툰 제작기는 별도 원본 앱으로 이동합니다. Lounge 안에서는 API 키·파일·생성 요청을 받지 않습니다.";
+  return demoMode ? "아래 작업과 사용량은 화면 확인용 샘플입니다. 실제 파일은 업로드되거나 처리되지 않습니다." : "샘플 데이터가 숨겨져 있습니다. 실제 파일·AI 처리는 아직 연결되지 않았습니다.";
 }
 
 function renderResults(root, data) {
@@ -184,7 +190,7 @@ function showView(requestedView, { updateHash = false, announce = true } = {}) {
   if (pageStatus) pageStatus.textContent = demoMode && view !== "membership" && view !== "settings" && view !== "help" ? meta.status : (view === "home" ? "연결 전" : meta.status);
   if (mobilePageTitle) mobilePageTitle.textContent = meta.title;
   document.title = `${meta.title} | Builders Lounge`;
-  if (notice) notice.textContent = demoMode ? "아래 작업과 사용량은 화면 확인용 샘플입니다. 실제 파일은 업로드되거나 처리되지 않습니다." : "샘플 데이터가 숨겨져 있습니다. 실제 파일·AI 처리는 아직 연결되지 않았습니다.";
+  if (notice) notice.textContent = getNoticeCopy(view);
   if (updateHash && window.location.hash !== `#${view}`) history.pushState(null, "", `#${view}`);
   writeLocalValue(ROUTE_STORAGE_KEY, view);
   if (announce && liveRegion) liveRegion.textContent = `${meta.title} 화면으로 이동했습니다.`;
