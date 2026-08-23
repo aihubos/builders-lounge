@@ -44,7 +44,14 @@ async function request(path, options = {}) {
   const headers = { ...(options.headers || {}) };
   if (options.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
   if (state.credential) headers.Authorization = `Bearer ${state.credential}`;
-  const response = await fetch(API_BASE + path, { cache: "no-store", ...options, headers });
+  let response;
+  try {
+    response = await fetch(API_BASE + path, { cache: "no-store", ...options, headers });
+  } catch (error) {
+    const wrapped = new Error("서버에 연결하지 못했습니다. 네트워크 상태와 관리자 API 설정을 확인해 주세요.");
+    wrapped.code = "network_error";
+    throw wrapped;
+  }
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
     if (response.status === 401 && state.credential) clearSession(false);
