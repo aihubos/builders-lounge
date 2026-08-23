@@ -35,16 +35,15 @@
   gap: 24px;
 }
 
-.report-hub-brand-cluster,
+.lounge-topbar-brand-cluster,
 .archive-topbar-actions,
 .archive-topbar-links { display: flex; align-items: center; }
 
-.report-hub-brand-cluster { gap: 18px; flex: 0 0 auto; min-width: 0; }
+.lounge-topbar-brand-cluster { gap: 14px; flex: 0 0 auto; min-width: 0; }
 
 .archive-brand { display: inline-flex; color: inherit; text-decoration: none; }
-.report-hub-brand-copy { position: relative; display: inline-flex; align-items: center; width: 190px; height: 43px; }
-.report-hub-logo-image { position: relative; z-index: 1; display: block; width: 190px; height: 43px; object-fit: contain; object-position: left center; }
-.report-hub-logo-mark-shimmer { position: absolute; left: 2px; top: 3px; z-index: 0; width: 38px; height: 38px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, rgba(49, 130, 246, 0.42), transparent 63%); filter: blur(10px); opacity: 0.75; }
+.builders-lounge-brand-copy { width: 210px; height: 64px; display: inline-flex; align-items: center; overflow: hidden; }
+.builders-lounge-logo-image { display: block; width: 220px; height: 72px; margin-left: -5px; object-fit: contain; }
 
 .report-hub-clock { display: grid; gap: 1px; min-width: 108px; color: var(--rh-sub); font-style: normal; line-height: 1.2; }
 .report-hub-clock-date { font-size: 12px; white-space: nowrap; }
@@ -82,6 +81,9 @@
 
 @media (max-width: 1100px) {
   .archive-topbar-inner { gap: 14px; }
+  .lounge-topbar-brand-cluster { gap: 8px; }
+  .builders-lounge-brand-copy { width: 164px; }
+  .builders-lounge-logo-image { width: 174px; margin-left: -5px; }
   .report-hub-clock-date { display: none; }
   .report-hub-clock { min-width: auto; }
   .archive-community-board-card, .archive-blog-card { width: 38px; min-height: 38px; padding: 0; }
@@ -96,19 +98,20 @@
 }
 
 @media (max-width: 700px) {
-  .archive-topbar { height: 112px; }
-  .archive-topbar-inner { width: calc(100% - 24px); display: block; padding: 8px 0 7px; }
-  .report-hub-brand-cluster { height: 40px; justify-content: space-between; gap: 12px; }
-  .report-hub-brand-copy, .report-hub-logo-image { width: 142px; height: 32px; }
-  .report-hub-logo-mark-shimmer { width: 29px; height: 29px; }
-  .report-hub-clock { margin-left: auto; text-align: right; }
-  .report-hub-clock-time { font-size: 18px; }
-  .archive-topbar-actions { width: 100%; margin-top: 8px; justify-content: flex-start; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; overscroll-behavior-x: contain; }
-  .archive-topbar-links { flex: 0 0 auto; gap: 8px; }
-  .archive-topbar-actions .archive-visitor-count { display: inline-flex; flex: 0 0 auto; min-height: 38px; }
-  .archive-community-board-card, .archive-blog-card { width: 38px; min-height: 38px; }
-  .archive-builders-card { width: 84px; min-height: 38px; }
-  .archive-kakao-openchat-card, .archive-kakao-openchat-banner { width: 38px; height: 38px; }
-  .archive-daangn-banner-card, .archive-daangn-banner { width: 64px; height: 38px; }
+  .archive-topbar { height: 68px; }
+  .archive-topbar-inner { width: 100%; padding: 0 10px; display: flex; gap: 8px; overflow: hidden; }
+  .lounge-topbar-brand-cluster { height: 100%; flex: 0 0 auto; gap: 5px; }
+  .builders-lounge-brand-copy { width: 112px; height: 62px; }
+  .builders-lounge-logo-image { width: 122px; height: 66px; margin-left: -5px; }
+  .report-hub-clock { min-width: 48px; text-align: right; }
+  .report-hub-clock-time { font-size: 15px; }
+  .archive-topbar-actions { width: auto; min-width: 0; flex: 1; margin: 0; justify-content: flex-start; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .archive-topbar-actions::-webkit-scrollbar { display: none; }
+  .archive-topbar-links { flex: 0 0 auto; gap: 6px; }
+  .archive-topbar-actions .archive-visitor-count { display: inline-flex; flex: 0 0 auto; min-height: 36px; }
+  .archive-community-board-card, .archive-blog-card { width: 36px; min-height: 36px; }
+  .archive-builders-card { width: 78px; min-height: 36px; }
+  .archive-builders-logo { width: 70px; height: 32px; }
+  .archive-kakao-openchat-card, .archive-kakao-openchat-banner { width: 36px; height: 36px; }
+  .archive-daangn-banner-card, .archive-daangn-banner { width: 60px; height: 36px; }
 }
-

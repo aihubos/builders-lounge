@@ -21,13 +21,15 @@
     <a class="skip-link" href="#lounge-main">본문으로 바로가기</a>
 
     <div class="lounge-app" data-lounge-shell data-lounge-app data-demo-mode="on">
-      <header class="archive-topbar" aria-label="Report Hub 상단 메뉴">
+      <header class="archive-topbar" aria-label="Builders Lounge 상단 메뉴">
         <div class="archive-topbar-inner">
-          <div class="report-hub-brand-cluster">
-            <a class="archive-brand report-hub-brand-link" href="https://aireport.ai-hub-os.com/" aria-label="Report Hub 메인으로 이동">
-              <span class="report-hub-brand-copy">
-                <span class="report-hub-logo-mark-shimmer" aria-hidden="true"></span>
-                <img class="report-hub-logo-image" src="assets/report-hub-logo.png" width="190" height="43" alt="Report Hub" />
+          <div class="lounge-topbar-brand-cluster">
+            <button class="menu-toggle portal-menu-toggle" type="button" aria-expanded="false" aria-controls="lounge-sidebar" aria-label="전체 메뉴 열기" data-lounge-menu-toggle>
+              <span></span><span></span><span></span>
+            </button>
+            <a class="archive-brand builders-lounge-top-brand" href="#home" data-view-link="home" aria-label="Builders Lounge 홈으로 이동">
+              <span class="builders-lounge-brand-copy">
+                <img class="builders-lounge-logo-image" src="assets/builders-lounge-logo.png" width="218" height="64" alt="Builders Lounge" />
               </span>
             </a>
             <time class="report-hub-clock" data-report-hub-clock="true" aria-label="서울 현재 날짜와 시각">
@@ -38,7 +40,7 @@
 
           <div class="archive-topbar-actions">
             <nav class="archive-topbar-links" aria-label="외부 메뉴">
-              <a class="archive-community-board-card" href="https://aihubos.github.io/reportmode/board/" aria-label="Report Hub 의견 게시판 열기">
+              <a class="archive-community-board-card" href="https://aihubos.github.io/reportmode/board/" aria-label="통합 의견 게시판 열기">
                 <span class="archive-community-board-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v6a2.5 2.5 0 0 1-2.5 2.5H12l-4.5 4v-4h0A2.5 2.5 0 0 1 5 12.5v-6Z"></path></svg></span>
                 <span>의견 게시판</span>
               </a>
@@ -61,47 +63,33 @@
         </div>
       </header>
 
-      <header class="lounge-portal-header" aria-label="Builders Lounge 주 메뉴">
-        <div class="portal-navigation-row">
-          <div class="portal-brand-cluster">
-            <button class="menu-toggle portal-menu-toggle" type="button" aria-expanded="false" aria-controls="lounge-sidebar" aria-label="전체 메뉴 열기" data-lounge-menu-toggle>
-              <span></span><span></span><span></span>
-            </button>
-            <a class="portal-brand" href="#home" data-view-link="home" aria-label="Builders Lounge 홈으로 이동">
-              <img class="portal-brand-logo" src="assets/builders-lounge-logo.png" width="246" height="82" alt="Builders Lounge" />
-            </a>
-          </div>
-
-          <nav class="portal-primary-nav" aria-label="Builders Lounge 빠른 메뉴">
-            <a class="is-active" href="#home" data-view-link="home">모아보기</a>
-            <a href="#webtoon" data-view-link="webtoon">웹툰 제작기</a>
-            <a href="#shorts" data-view-link="shorts">쇼츠 스튜디오</a>
-            <a href="#prompts" data-view-link="prompts">프롬프트</a>
-            <a href="#newsletter" data-view-link="newsletter">뉴스레터</a>
-            <a href="#board" data-view-link="board">자유게시판</a>
-            <a href="#memes" data-view-link="memes">빌더 결과물</a>
-            <a href="#games" data-view-link="games">게임방</a>
-          </nav>
-
-          <div class="portal-brand-actions">
-            <button class="secondary-button portal-write-button" type="button" data-portal-write>프로젝트 공유</button>
-            <a class="primary-button portal-lab-button" href="https://builderslab.ai-hub-os.com" target="_blank" rel="noopener">빌더스 랩 참여 <span aria-hidden="true">↗</span></a>
-          </div>
-        </div>
-      </header>
-
       <section class="portal-search-space" aria-label="Builders Lounge 통합 검색">
         <div class="portal-search-space-inner">
-          <div class="portal-search-space-copy">
-            <span>FIND YOUR NEXT BUILD</span>
-            <strong>라운지 통합 검색</strong>
+          <div class="portal-search-row">
+            <div class="portal-search-space-copy">
+              <span>FIND YOUR NEXT BUILD</span>
+              <strong>라운지 통합 검색</strong>
+            </div>
+            <button class="portal-search-trigger" type="button" data-global-search-open aria-label="Builders Lounge 통합 검색 열기">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+              <span>도구, 프롬프트, 콘텐츠를 한 번에 찾아보세요</span>
+              <kbd>/</kbd>
+            </button>
+            <button class="secondary-button portal-quick-write" type="button" data-portal-write>프로젝트 공유 <span aria-hidden="true">＋</span></button>
           </div>
-          <button class="portal-search-trigger" type="button" data-global-search-open aria-label="Builders Lounge 통합 검색 열기">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
-            <span>도구, 프롬프트, 콘텐츠를 한 번에 찾아보세요</span>
-            <kbd>/</kbd>
-          </button>
-          <p class="portal-search-space-hint">웹툰 · 쇼츠 · 프롬프트 · 뉴스레터 · 커뮤니티</p>
+          <nav class="portal-primary-nav" aria-label="Builders Lounge 빠른 메뉴">
+            <span class="portal-quick-title">빠른 메뉴</span>
+            <div class="portal-quick-links">
+              <a class="is-active" href="#home" data-view-link="home"><span aria-hidden="true">⌂</span><strong>모아보기</strong></a>
+              <a href="#webtoon" data-view-link="webtoon"><span aria-hidden="true">▣</span><strong>웹툰 제작기</strong></a>
+              <a href="#shorts" data-view-link="shorts"><span aria-hidden="true">▶</span><strong>쇼츠 스튜디오</strong></a>
+              <a href="#prompts" data-view-link="prompts"><span aria-hidden="true">⌘</span><strong>프롬프트</strong></a>
+              <a href="#newsletter" data-view-link="newsletter"><span aria-hidden="true">N</span><strong>뉴스레터</strong></a>
+              <a href="#board" data-view-link="board"><span aria-hidden="true">☷</span><strong>자유게시판</strong></a>
+              <a href="#memes" data-view-link="memes"><span aria-hidden="true">☺</span><strong>빌더 결과물</strong></a>
+              <a href="#games" data-view-link="games"><span aria-hidden="true">✦</span><strong>게임방</strong></a>
+            </div>
+          </nav>
         </div>
       </section>
 

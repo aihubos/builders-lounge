@@ -65,9 +65,10 @@ if (!html.includes("AI 빌더스 랩 뉴스레터") || !html.includes('data-comm
 if (!html.includes('href="lounge/lounge.css"') || !html.includes('href="lounge/portal.css"') || !html.includes('src="lounge/lounge.js"')) {
   throw new Error("루트에서 Lounge 지원 파일 경로를 찾을 수 없습니다.");
 }
-if (!html.includes('src="assets/builders-lounge-logo.png"') || !html.includes("portal-search-space")) {
-  throw new Error("Builders Lounge 신규 로고 또는 분리된 통합 검색 영역이 없습니다.");
+if (!html.includes('src="assets/builders-lounge-logo.png"') || !html.includes("portal-search-space") || !html.includes("portal-quick-links")) {
+  throw new Error("Builders Lounge 통합 로고, 검색 또는 빠른 메뉴 카드가 없습니다.");
 }
+if (html.includes('src="assets/report-hub-logo.png"') || html.includes("lounge-portal-header")) throw new Error("이전 Report Hub 로고 또는 이중 상단 헤더가 남아 있습니다.");
 if (/noindex\s*,?\s*nofollow/i.test(html) || html.includes("공개 홈페이지")) {
   throw new Error("루트에 검색 제외 설정 또는 이전 홈페이지 링크가 남아 있습니다.");
 }
