@@ -1,491 +1,253 @@
 <!doctype html>
-<html lang="ko" data-theme="default">
+<html lang="ko" data-lounge-route="home">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="동탄에서 수요일과 토요일에 진행하는 3시간 AI 실습. 개인 노트북에 Hermes와 LLM Wiki를 설치하고 직접 실행합니다."
-    />
     <meta name="theme-color" content="#FFFFFF" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:url" content="https://aihubos.github.io/builders-lounge/" />
-    <meta property="og:title" content="AI 빌더스 랩 | 3시간 AI 실습" />
-    <meta
-      property="og:description"
-      content="동탄에서 Hermes와 LLM Wiki를 개인 노트북에 설치하고 직접 실행합니다."
-    />
+    <meta property="og:title" content="Builders Lounge | AI Builders Lab" />
+    <meta property="og:description" content="AI Builders Lab 멤버 작업공간. 작업, 결과물, 파일과 사용량을 한곳에서 확인합니다." />
     <meta property="og:image" content="https://aihubos.github.io/builders-lounge/assets/og.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="AI 빌더스 랩 | 3시간 AI 실습" />
-    <meta
-      name="twitter:description"
-      content="수요일·토요일, 3시간, 20,000원, 최대 3명, 동탄."
-    />
-    <meta name="twitter:image" content="https://aihubos.github.io/builders-lounge/assets/og.png" />
     <link rel="canonical" href="https://aihubos.github.io/builders-lounge/" />
+    <meta
+      name="description"
+      content="AI Builders Lab 멤버 작업공간. 작업, 결과물, 파일과 사용량을 한곳에서 확인합니다."
+    />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/ai-builders-lab-logo-transparent-384.webp"
-      imagesrcset="assets/ai-builders-lab-logo-transparent-384.webp 384w, assets/ai-builders-lab-logo-transparent-576.webp 576w"
-      imagesizes="(min-width: 768px) 192px, 136px"
-      type="image/webp"
-      fetchpriority="high"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="assets/hero-builders-character-poster.jpg"
-      type="image/jpeg"
-      fetchpriority="high"
-    />
-    <link rel="stylesheet" href="styles.css?v=20260822-conversion" />
-    <script>
-      document.documentElement.classList.add("no-js");
-    </script>
-    <title>AI 빌더스 랩 | 3시간 AI 실습</title>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Organization",
-            "@id": "https://aihubos.github.io/builders-lounge/#organization",
-            "name": "AI 빌더스 랩",
-            "url": "https://aihubos.github.io/builders-lounge/",
-            "logo": "https://aihubos.github.io/builders-lounge/assets/ai-builders-lab-logo-transparent.png",
-            "sameAs": [
-              "https://open.kakao.com/me/aibuilderslab",
-              "https://github.com/jeremylee0213"
-            ]
-          },
-          {
-            "@type": "Course",
-            "@id": "https://aihubos.github.io/builders-lounge/#course",
-            "name": "Hermes와 LLM Wiki 3시간 실습",
-            "description": "동탄에서 개인 노트북에 Hermes와 LLM Wiki를 설치하고 텔레그램 연결과 첫 활용까지 확인하는 소수정예 실습입니다.",
-            "url": "https://aihubos.github.io/builders-lounge/hermes.html",
-            "provider": { "@id": "https://aihubos.github.io/builders-lounge/#organization" },
-            "educationalLevel": "입문",
-            "coursePrerequisites": "개인 노트북, Telegram 계정, Chrome, Obsidian, ChatGPT Plus 이상 환경",
-            "offers": {
-              "@type": "Offer",
-              "price": "20000",
-              "priceCurrency": "KRW",
-              "url": "https://aihubos.github.io/builders-lounge/#schedule",
-              "availability": "https://schema.org/InStock"
-            }
-          },
-          {
-            "@type": "FAQPage",
-            "@id": "https://aihubos.github.io/builders-lounge/#faq",
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "완전 초보도 참여할 수 있나요?",
-                "acceptedAnswer": { "@type": "Answer", "text": "네. 코딩보다 설치와 실행 결과를 먼저 확인하는 입문 실습입니다. 수업 전 사용 환경을 개인 카카오로 확인합니다." }
-              },
-              {
-                "@type": "Question",
-                "name": "코딩을 몰라도 되나요?",
-                "acceptedAnswer": { "@type": "Answer", "text": "코딩을 몰라도 참여할 수 있습니다. 원하는 결과를 정하고, Plan을 읽고, 직접 실행하고, 결과를 비교하는 순서로 진행합니다." }
-              },
-              {
-                "@type": "Question",
-                "name": "취소·환불·노쇼 기준은 무엇인가요?",
-                "acceptedAnswer": { "@type": "Answer", "text": "정확한 기준은 신청 전 개인 카카오에서 일정과 함께 확인합니다." }
-              }
-            ]
-          }
-        ]
-      }
-    </script>
+    <link rel="stylesheet" href="lounge/lounge.css" />
+    <title>Builders Lounge | AI Builders Lab</title>
   </head>
   <body>
-    <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+    <a class="skip-link" href="#lounge-main">본문으로 바로가기</a>
 
-    <header class="site-header" data-header>
-      <div class="nav-shell">
-        <a class="brand" href="#top" aria-label="AI 빌더스 랩 처음으로">
-          <picture>
-            <source
-              srcset="assets/ai-builders-lab-logo-transparent-384.webp 384w, assets/ai-builders-lab-logo-transparent-576.webp 576w"
-              sizes="(min-width: 768px) 192px, 136px"
-              type="image/webp"
-            />
+    <div class="lounge-app" data-lounge-shell data-lounge-app>
+      <header class="lounge-topbar">
+        <div class="topbar-start">
+          <button
+            class="menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="lounge-sidebar"
+            aria-label="작업공간 메뉴 열기"
+            data-lounge-menu-toggle
+          >
+            <span></span>
+            <span></span>
+          </button>
+          <a class="lounge-brand" href="#home" data-view-link="home">
             <img
-              src="assets/ai-builders-lab-logo-transparent.png"
-              width="1200"
-              height="400"
-              fetchpriority="high"
-              decoding="async"
-              alt="AI 빌더스 랩"
+              src="assets/ai-builders-lab-logo-transparent-384.webp"
+              width="384"
+              height="128"
+              alt="AI Builders Lab"
             />
-          </picture>
-        </a>
+            <span>
+              <strong>Builders Lounge</strong>
+              <small>AI 작업공간</small>
+            </span>
+          </a>
+        </div>
 
-        <button
-          class="menu-toggle"
-          type="button"
-          aria-expanded="false"
-          aria-controls="primary-navigation"
-          aria-label="메뉴 열기"
-          data-menu-toggle
-        >
-          <span></span>
-          <span></span>
-        </button>
+        <div class="topbar-actions">
+          <span class="account-state" data-account-state>
+            <span class="state-mark" aria-hidden="true"></span>
+            멤버십 연결 전
+          </span>
+        </div>
+      </header>
 
-        <nav class="site-nav" id="primary-navigation" aria-label="주요 메뉴" data-site-nav>
-          <a href="#outcomes">교육 결과</a>
-          <a href="#curriculum">3시간 구성</a>
-          <a href="#schedule">일정·장소</a>
-          <a href="#faq">FAQ</a>
-          <a class="nav-workspace-mobile" href="lounge/">멤버 전용 도구</a>
-          <details class="nav-more">
-            <summary>더보기</summary>
-            <div class="nav-more-panel">
-              <a href="hermes.html">상세 교육 안내</a>
-              <a href="install/">설치 안내</a>
-              <a href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener noreferrer">카카오 단체방</a>
-              <a href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener noreferrer">당근 모임</a>
+      <div class="lounge-layout">
+        <aside class="lounge-sidebar" id="lounge-sidebar" aria-label="작업공간 메뉴" data-lounge-sidebar tabindex="-1">
+          <div class="sidebar-heading">
+            <div>
+              <p class="sidebar-kicker">AI BUILDERS LAB</p>
+              <h1>작업공간</h1>
             </div>
-          </details>
-        </nav>
+            <button class="sidebar-close" type="button" aria-label="메뉴 닫기" data-lounge-menu-close>닫기</button>
+          </div>
 
-        <a class="header-workspace" href="lounge/" aria-label="멤버 전용 도구 열기">멤버 도구</a>
-        <a class="header-cta" href="https://open.kakao.com/me/aibuilderslab" data-contact-key="kakaoProfile" data-primary-cta>
-          다음 수업 신청
-        </a>
+          <nav class="sidebar-nav" aria-label="작업공간 탐색">
+            <a class="nav-item is-active" href="#home" data-view-link="home" aria-current="page">
+              <span class="nav-label">홈</span>
+              <span class="nav-note">오늘의 작업</span>
+            </a>
+
+            <div class="nav-group">
+              <p class="nav-group-label">만들기</p>
+              <div class="nav-stack">
+                <button class="nav-item nav-item-module" type="button" disabled data-connection-slot="meeting">
+                  <span class="nav-label">AI 회의록</span>
+                  <span class="nav-note">기존 기능 연결 예정</span>
+                </button>
+                <button class="nav-item nav-item-module" type="button" disabled data-connection-slot="shorts">
+                  <span class="nav-label">AI 쇼츠 스튜디오</span>
+                  <span class="nav-note">기존 기능 연결 예정</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="nav-group">
+              <p class="nav-group-label">내 작업</p>
+              <div class="nav-stack">
+                <a class="nav-item" href="#jobs" data-view-link="jobs">
+                  <span class="nav-label">진행 중 작업</span>
+                  <span class="nav-note" data-nav-jobs-count>확인 중</span>
+                </a>
+                <a class="nav-item" href="#results" data-view-link="results">
+                  <span class="nav-label">결과물</span>
+                  <span class="nav-note">보관된 결과</span>
+                </a>
+                <a class="nav-item" href="#files" data-view-link="files">
+                  <span class="nav-label">파일</span>
+                  <span class="nav-note">내 업로드</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="nav-group">
+              <p class="nav-group-label">계정</p>
+              <div class="nav-stack">
+                <a class="nav-item" href="#usage" data-view-link="usage">
+                  <span class="nav-label">사용량</span>
+                  <span class="nav-note">크레딧 확인</span>
+                </a>
+                <a class="nav-item" href="#membership" data-view-link="membership">
+                  <span class="nav-label">멤버십 상태</span>
+                  <span class="nav-note">연결 전</span>
+                </a>
+                <a class="nav-item" href="#settings" data-view-link="settings">
+                  <span class="nav-label">설정</span>
+                  <span class="nav-note">계정과 환경</span>
+                </a>
+                <a class="nav-item" href="#help" data-view-link="help">
+                  <span class="nav-label">도움말</span>
+                  <span class="nav-note">사용 안내</span>
+                </a>
+              </div>
+            </div>
+          </nav>
+
+          <div class="sidebar-footer">
+            <div class="credit-summary" aria-label="사용량 요약">
+              <div class="credit-summary-head"><span>이번 달 사용량</span><strong data-credit-summary>연결 전</strong></div>
+              <div class="credit-meter" aria-hidden="true"><span data-credit-meter></span></div>
+              <small>멤버십 연결 후 표시됩니다.</small>
+            </div>
+            <a class="sidebar-contact" href="mailto:hello@ai-hub-os.com">문의·오류 신고</a>
+          </div>
+        </aside>
+
+        <button class="drawer-scrim" type="button" aria-label="메뉴 닫기" hidden data-lounge-menu-close></button>
+
+        <main class="lounge-main" id="lounge-main" tabindex="-1">
+          <div class="page-wrap">
+            <header class="page-header">
+              <div>
+                <p class="page-kicker" data-page-kicker>Builders Lounge</p>
+                <h2 data-page-title>오늘의 작업공간</h2>
+                <p class="page-description" data-page-description>필요한 작업을 고르고, 결과를 확인하고, 다음 행동을 정합니다.</p>
+              </div>
+              <span class="page-status" data-page-status>미리보기</span>
+            </header>
+
+            <div class="lounge-notice" role="status" aria-live="polite" data-lounge-notice>
+              현재는 작업공간 화면을 먼저 제공합니다. 멤버십과 기존 기능 연결은 준비가 끝난 뒤 별도로 켭니다.
+            </div>
+
+            <section class="view-panel is-visible" id="view-home" data-view-panel="home">
+              <div class="home-intro">
+                <p class="section-label">WORKSPACE HOME</p>
+                <h3 id="home-title">작업을 시작할 위치를 고르세요.</h3>
+                <p>진행 중인 작업과 저장한 결과물을 한 화면에서 확인할 수 있습니다.</p>
+              </div>
+
+              <div class="workspace-overview" aria-label="작업공간 요약">
+                <a class="overview-row overview-row-primary" href="#jobs" data-view-link="jobs">
+                  <span class="overview-index" aria-hidden="true">01</span>
+                  <span class="overview-copy"><strong>진행 중 작업</strong><small>멈춘 작업과 처리 상태를 확인합니다.</small></span>
+                  <span class="overview-value" data-overview-jobs>확인 중</span>
+                </a>
+                <a class="overview-row" href="#results" data-view-link="results">
+                  <span class="overview-index" aria-hidden="true">02</span>
+                  <span class="overview-copy"><strong>결과물</strong><small>완료된 결과와 다운로드 기록을 확인합니다.</small></span>
+                  <span class="overview-value" data-overview-results>확인 중</span>
+                </a>
+                <a class="overview-row" href="#files" data-view-link="files">
+                  <span class="overview-index" aria-hidden="true">03</span>
+                  <span class="overview-copy"><strong>파일</strong><small>작업에 사용한 업로드 파일을 관리합니다.</small></span>
+                  <span class="overview-value" data-overview-files>확인 중</span>
+                </a>
+                <a class="overview-row" href="#usage" data-view-link="usage">
+                  <span class="overview-index" aria-hidden="true">04</span>
+                  <span class="overview-copy"><strong>사용량</strong><small>멤버십 연결 후 크레딧과 사용 내역을 표시합니다.</small></span>
+                  <span class="overview-value" data-overview-usage>연결 전</span>
+                </a>
+              </div>
+
+              <div class="module-section">
+                <div class="section-heading-row">
+                  <div><p class="section-label">MODULES</p><h3>연결 예정 기능</h3></div>
+                  <span class="section-meta">이름과 상태만 표시</span>
+                </div>
+                <div class="module-list">
+                  <div class="module-row" data-connection-slot="meeting">
+                    <div class="module-row-main"><span class="module-mark" aria-hidden="true">A</span><div><strong>AI 회의록</strong><small>기존 회의록 기능 연결 예정</small></div></div>
+                    <span class="module-status">연결 예정</span>
+                  </div>
+                  <div class="module-row" data-connection-slot="shorts">
+                    <div class="module-row-main"><span class="module-mark" aria-hidden="true">B</span><div><strong>AI 쇼츠 스튜디오</strong><small>기존 쇼츠 제작 기능 연결 예정</small></div></div>
+                    <span class="module-status">연결 예정</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="view-panel" id="view-jobs" data-view-panel="jobs" hidden>
+              <div class="panel-heading"><p class="section-label">MY WORK</p><h3 id="jobs-title">진행 중 작업</h3><p>작업 상태와 다음에 필요한 행동을 확인합니다.</p></div>
+              <div class="module-slot" data-jobs-slot><p class="empty-title">진행 중인 작업이 없습니다.</p><p>기존 기능을 연결하면 이곳에 작업 상태가 표시됩니다.</p></div>
+            </section>
+
+            <section class="view-panel" id="view-results" data-view-panel="results" aria-labelledby="results-title" hidden>
+              <div class="panel-heading"><p class="section-label">OUTPUTS</p><h3 id="results-title">결과물</h3><p>완료된 결과와 보관 상태를 확인합니다.</p></div>
+              <div class="module-slot" data-results-slot><p class="empty-title">아직 결과물이 없습니다.</p><p>기존 기능 연결 후 완료된 결과가 이곳에 쌓입니다.</p></div>
+            </section>
+
+            <section class="view-panel" id="view-files" data-view-panel="files" aria-labelledby="files-title" hidden>
+              <div class="panel-heading"><p class="section-label">FILES</p><h3 id="files-title">파일</h3><p>업로드한 원본과 작업 파일을 관리합니다.</p></div>
+              <div class="module-slot" data-files-slot><p class="empty-title">업로드한 파일이 없습니다.</p><p>파일 기능 연결 후 파일 상태와 삭제 메뉴가 이곳에 표시됩니다.</p></div>
+            </section>
+
+            <section class="view-panel" id="view-usage" data-view-panel="usage" aria-labelledby="usage-title" hidden>
+              <div class="panel-heading"><p class="section-label">USAGE</p><h3 id="usage-title">사용량</h3><p>멤버십 연결 전에는 크레딧과 비용을 표시하지 않습니다.</p></div>
+              <div class="module-slot" data-usage-slot><p class="empty-title">멤버십 연결 전</p><p>연결이 승인되면 월별 사용량과 내역을 확인할 수 있습니다.</p></div>
+            </section>
+
+            <section class="view-panel" id="view-membership" data-view-panel="membership" aria-labelledby="membership-title" hidden>
+              <div class="panel-heading"><p class="section-label">MEMBERSHIP</p><h3 id="membership-title">멤버십 상태</h3><p>외부 권한을 변경하지 않고 현재 연결 상태만 안내합니다.</p></div>
+              <div class="membership-status-row"><span class="status-mark status-mark-review" aria-hidden="true"></span><div><strong>연결 대기</strong><p>OAuth와 YouTube 멤버십 연동은 별도 승인 후 진행합니다.</p></div></div>
+            </section>
+
+            <section class="view-panel" id="view-settings" data-view-panel="settings" hidden>
+              <div class="panel-heading"><p class="section-label">SETTINGS</p><h3 id="settings-title">설정</h3><p>작업공간의 표시와 알림 설정을 확인합니다.</p></div>
+              <div class="module-slot" data-settings-slot><p class="empty-title">설정 기능을 준비 중입니다.</p><p>계정·연결·삭제 항목은 승인된 흐름이 준비된 뒤 추가합니다.</p></div>
+            </section>
+
+            <section class="view-panel" id="view-help" data-view-panel="help" aria-labelledby="help-title" hidden>
+              <div class="panel-heading"><p class="section-label">HELP</p><h3 id="help-title">도움말</h3><p>작업공간의 현재 범위와 연결 상태를 안내합니다.</p></div>
+              <div class="help-list">
+                <details open><summary>지금 사용할 수 있는 기능은 무엇인가요?</summary><p>현재는 작업공간의 홈과 작업·결과물·파일·사용량·계정 메뉴 골격을 확인할 수 있습니다. AI 회의록과 AI 쇼츠 스튜디오는 기존 기능 연결 예정 상태입니다.</p></details>
+                <details><summary>왜 멤버십 연결 전으로 표시되나요?</summary><p>이번 화면에는 OAuth, YouTube API, 결제나 외부 권한 변경을 넣지 않았습니다. 승인된 연결 흐름이 준비되면 상태를 갱신합니다.</p></details>
+              </div>
+            </section>
+          </div>
+        </main>
       </div>
-    </header>
+    </div>
 
-    <main id="main-content">
-      <section class="hero" id="top" aria-labelledby="hero-title" data-hero-scroll>
-        <div class="section-shell hero-inner">
-          <div class="hero-copy">
-            <p class="eyebrow">동탄 / 소수정예 / 초보자 실습</p>
-            <h1 id="hero-title">3시간 만에 내 노트북에<br /><em>Hermes와 LLM Wiki를</em><br />설치합니다.</h1>
-            <p class="hero-lead">
-              코딩을 몰라도 괜찮습니다. Hermes를 텔레그램에서 실행하고, 내 자료를 다시 꺼내 쓰는 LLM Wiki까지 직접 연결합니다.
-            </p>
-            <ul class="hero-facts" aria-label="교육 기본 정보">
-              <li>수요일·토요일</li>
-              <li>3시간</li>
-              <li>20,000원</li>
-              <li>최대 3명</li>
-              <li>개인 노트북 지참</li>
-            </ul>
-            <div class="hero-actions">
-              <a class="button button-primary" href="https://open.kakao.com/me/aibuilderslab" data-contact-key="kakaoProfile" data-primary-cta>다음 수업 일정 확인·신청</a>
-              <a class="button button-secondary" href="#curriculum">3시간 구성 보기</a>
-            </div>
-            <p class="hero-note">정확한 수업 공간과 신청 확정 절차는 개인 카카오로 안내합니다.</p>
-          </div>
+    <div class="visually-hidden" role="status" aria-live="polite" data-lounge-live></div>
 
-          <figure class="hero-media" data-hero-media>
-            <video
-              class="hero-video"
-              data-hero-video
-              preload="none"
-              poster="assets/hero-builders-character-poster.jpg"
-              width="1280"
-              height="720"
-              playsinline
-              aria-label="AI 빌더 캐릭터가 파도 위에서 함께 움직이는 브랜드 영상"
-            ></video>
-            <button class="media-control" type="button" data-hero-video-load aria-pressed="false">
-              <span class="media-control-icon" aria-hidden="true">▶</span>
-              <span data-hero-video-label>브랜드 영상 재생</span>
-            </button>
-            <figcaption>먼저 만들고, 실행하고, 수정하며 배웁니다.</figcaption>
-            <noscript><p class="media-noscript">영상 대신 브랜드 포스터를 표시합니다.</p></noscript>
-          </figure>
-        </div>
-      </section>
-
-      <section class="outcomes-section section-shell" id="outcomes" aria-labelledby="outcomes-title">
-        <div class="section-intro">
-          <p class="eyebrow">수업 후 남는 것</p>
-          <h2 id="outcomes-title">수업이 끝나면,<br />이 네 가지가 직접 작동합니다.</h2>
-          <p>설명만 듣지 않고, 개인 노트북에서 확인한 상태를 기준으로 다음 행동까지 정합니다.</p>
-        </div>
-        <ol class="outcome-list">
-          <li>
-            <span class="outcome-number">1</span>
-            <div><h3>Hermes Agent 설치</h3><p>Desktop App 실행과 기본 상태를 확인합니다.</p><small>확인: 내 노트북에서 테스트 요청 1회</small></div>
-          </li>
-          <li>
-            <span class="outcome-number">2</span>
-            <div><h3>텔레그램 연결</h3><p>허용한 내 계정에서 Hermes 응답을 받습니다.</p><small>확인: 테스트 메시지 1회와 응답 1회</small></div>
-          </li>
-          <li>
-            <span class="outcome-number">3</span>
-            <div><h3>개인 LLM Wiki 구성</h3><p>원자료와 정리 페이지를 담을 Vault를 만듭니다.</p><small>확인: raw, pages, prompts 구조</small></div>
-          </li>
-          <li>
-            <span class="outcome-number">4</span>
-            <div><h3>Hermes와 Wiki 첫 활용</h3><p>자료를 저장하고 다시 찾아 쓰는 흐름을 실행합니다.</p><small>확인: 원자료 1개와 활용 결과 1개</small></div>
-          </li>
-        </ol>
-      </section>
-
-      <section class="proof-section section-shell" id="proof" aria-labelledby="proof-title">
-        <div class="section-intro">
-          <p class="eyebrow">실제 사용 사례</p>
-          <h2 id="proof-title">질문에서 끝나지 않고,<br />내 작업으로 이어집니다.</h2>
-          <p>기존 브랜드 자산으로 보여주는 대표 활용 예시입니다. 수업에서는 개인 자료 대신 안전한 샘플부터 사용합니다.</p>
-        </div>
-        <div class="proof-grid">
-          <div class="proof-compare" aria-label="교육 전후 비교">
-            <div><span>이전</span><p>AI에게 질문하고, 답을 채팅창에 남긴 채 끝납니다.</p></div>
-            <div><span>교육 후</span><p>내 자료를 저장하고, 텔레그램으로 다시 요청해 결과를 비교합니다.</p></div>
-            <div><span>검수</span><p>원자료와 생성 결과를 사람이 직접 열어 보고 다음 변경을 정합니다.</p></div>
-          </div>
-          <div class="use-case-list">
-            <figure class="use-case">
-              <img src="assets/hermes-use/find.webp" width="960" height="960" loading="lazy" decoding="async" alt="흩어진 파일을 찾아 모으는 활용 예시 그림" />
-              <figcaption><strong>자료 찾기</strong><span>폴더와 메모에서 필요한 자료를 찾아 한곳에 모읍니다.</span></figcaption>
-            </figure>
-            <figure class="use-case">
-              <img src="assets/hermes-use/meeting.webp" width="960" height="960" loading="lazy" decoding="async" alt="긴 회의 메모를 짧게 정리하는 활용 예시 그림" />
-              <figcaption><strong>회의 정리</strong><span>긴 메모를 안건, 결정, 다음 할 일로 나눕니다.</span></figcaption>
-            </figure>
-            <figure class="use-case">
-              <img src="assets/hermes-use/draft.webp" width="960" height="960" loading="lazy" decoding="async" alt="빈 페이지에 문서 초안을 만드는 활용 예시 그림" />
-              <figcaption><strong>초안 작성</strong><span>공지와 문서의 첫 버전을 만들고 직접 고칩니다.</span></figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <section class="curriculum-section" id="curriculum" aria-labelledby="curriculum-title">
-        <div class="section-shell">
-          <div class="section-intro curriculum-intro">
-            <p class="eyebrow">3시간 커리큘럼</p>
-            <h2 id="curriculum-title">설치에서 끝내지 않습니다.<br />3시간 안에 직접 실행합니다.</h2>
-            <p>닫힌 상태에서도 시간, 목표, 남는 결과를 확인할 수 있습니다. JavaScript가 꺼져도 모든 내용이 보입니다.</p>
-            <button class="text-button" type="button" data-accordion-all aria-expanded="true">전체 접기</button>
-          </div>
-
-          <div class="curriculum-list" data-curriculum-list>
-            <article class="curriculum-item">
-              <button class="curriculum-trigger" type="button" aria-expanded="true" aria-controls="curriculum-part-0" data-curriculum-trigger>
-                <span class="curriculum-part">Part 0</span>
-                <span class="curriculum-summary"><strong>수업 전 사전 점검</strong><small>노트북·계정·설치 권한을 먼저 확인합니다.</small></span>
-                <span class="curriculum-time">사전 안내</span>
-                <span class="trigger-symbol" aria-hidden="true">+</span>
-              </button>
-              <div class="curriculum-panel" id="curriculum-part-0" data-curriculum-panel>
-                <ul class="detail-list">
-                  <li>운영체제와 버전, 저장 공간, 인터넷 연결</li>
-                  <li>Telegram, Chrome, Obsidian 설치 여부</li>
-                  <li>회사 관리 기기나 관리자 권한 제한 여부</li>
-                  <li>설치가 어려우면 수업 전 개인 카카오로 상담</li>
-                </ul>
-                <p class="result-line"><strong>남는 결과</strong>오늘 사용할 수 있는 환경과 지원 범위를 확인합니다.</p>
-              </div>
-            </article>
-
-            <article class="curriculum-item">
-              <button class="curriculum-trigger" type="button" aria-expanded="true" aria-controls="curriculum-part-1" data-curriculum-trigger>
-                <span class="curriculum-part">Part 1</span>
-                <span class="curriculum-summary"><strong>Hermes 설치와 안전한 연결</strong><small>설치, Telegram 연결, 첫 작업을 확인합니다.</small></span>
-                <span class="curriculum-time">0:00-2:00</span>
-                <span class="trigger-symbol" aria-hidden="true">+</span>
-              </button>
-              <div class="curriculum-panel" id="curriculum-part-1" data-curriculum-panel>
-                <ol class="timeline-list">
-                  <li><time>0:00-0:15</time><span>오늘 완성할 네 가지와 안전 원칙 확인</span></li>
-                  <li><time>0:15-0:45</time><span>공식 Hermes Desktop App 설치와 기본 상태 확인</span></li>
-                  <li><time>0:45-1:15</time><span>모델 연결 상태 확인과 테스트 대화</span></li>
-                  <li><time>1:15-1:45</time><span>Telegram 허용 사용자와 Gateway 상태 확인</span></li>
-                  <li><time>1:45-2:00</time><span>안전한 테스트 폴더에서 첫 작업 실행</span></li>
-                </ol>
-                <p class="result-line"><strong>남는 결과</strong>실행되는 Hermes Desktop, Telegram 테스트 응답, 오류 메모</p>
-              </div>
-            </article>
-
-            <article class="curriculum-item">
-              <button class="curriculum-trigger" type="button" aria-expanded="true" aria-controls="curriculum-part-2" data-curriculum-trigger>
-                <span class="curriculum-part">Part 2</span>
-                <span class="curriculum-summary"><strong>LLM Wiki 구성과 첫 활용</strong><small>자료를 저장하고 다시 찾아 쓰는 흐름입니다.</small></span>
-                <span class="curriculum-time">2:00-3:00</span>
-                <span class="trigger-symbol" aria-hidden="true">+</span>
-              </button>
-              <div class="curriculum-panel" id="curriculum-part-2" data-curriculum-panel>
-                <ol class="timeline-list">
-                  <li><time>2:00-2:15</time><span>Obsidian Vault와 raw, pages, prompts 구조 확인</span></li>
-                  <li><time>2:15-2:35</time><span>개인 식별 정보가 없는 샘플 자료 저장과 정리</span></li>
-                  <li><time>2:35-2:50</time><span>Hermes로 저장한 자료를 다시 찾고 결과 비교</span></li>
-                  <li><time>2:50-3:00</time><span>네 가지 완료 항목과 다음 행동 확인</span></li>
-                </ol>
-                <p class="result-line"><strong>남는 결과</strong>원자료 1개, 정리 페이지 1개, Hermes 활용 결과 1개</p>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="audience-section section-shell" id="audience" aria-labelledby="audience-title">
-        <div class="section-intro">
-          <p class="eyebrow">추천 대상과 준비</p>
-          <h2 id="audience-title">내 노트북으로 직접 해볼 분을 위한 자리입니다.</h2>
-        </div>
-        <div class="audience-grid">
-          <div class="audience-column">
-            <h3>이런 분께 추천합니다</h3>
-            <ul class="check-list">
-              <li>ChatGPT는 써봤지만 반복 업무 연결이 어려운 분</li>
-              <li>AI가 내 자료를 기억하게 만들고 싶은 분</li>
-              <li>코딩보다 실제 실행 결과를 먼저 경험하고 싶은 분</li>
-              <li>혼자 설치하다가 막힌 분</li>
-            </ul>
-          </div>
-          <div class="audience-column caution-column">
-            <h3>사전 상담이 필요한 경우</h3>
-            <ul class="check-list">
-              <li>회사 보안 노트북만 사용하고 설치 권한이 없는 경우</li>
-              <li>계정·결제·토큰 입력을 다른 사람에게 맡기려는 경우</li>
-              <li>3시간 안에 완성된 상용 서비스를 기대하는 경우</li>
-              <li>개인정보나 회사 기밀 자료를 바로 사용하려는 경우</li>
-            </ul>
-          </div>
-          <div class="preparation-line">
-            <h3>준비물</h3>
-            <p>개인 노트북과 충전기, ChatGPT Plus 이상, Telegram 계정과 PC 앱, Google 계정과 Chrome, Obsidian</p>
-            <p class="muted-note">설치가 어려우면 수업 전에 알려주세요. 비밀번호·토큰·결제정보는 강사가 받거나 대신 입력하지 않습니다.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="trust-section" id="trust" aria-labelledby="trust-title">
-        <div class="section-shell trust-grid">
-          <div class="section-intro">
-            <p class="eyebrow">운영 방식과 안전</p>
-            <h2 id="trust-title">사람의 승인과 검수를<br />먼저 둡니다.</h2>
-            <p>AI 빌더스 랩은 도구를 대신 조작하는 대행이 아니라, 빌더가 직접 실행하고 판단하는 연습을 돕습니다.</p>
-          </div>
-          <div class="trust-content">
-            <ol class="trust-list">
-              <li><span>1</span><p>Plan을 먼저 읽고 사람이 승인합니다.</p></li>
-              <li><span>2</span><p>비밀번호·토큰·API 키는 본인이 공식 입력란에 직접 입력합니다.</p></li>
-              <li><span>3</span><p>삭제·대량 변경·외부 발송·결제는 실행 전 멈추고 확인합니다.</p></li>
-              <li><span>4</span><p>테스트 입력과 실제 자료를 분리합니다.</p></li>
-              <li><span>5</span><p>결과를 직접 열고 예상과 비교한 뒤 다음 변경을 정합니다.</p></li>
-            </ol>
-            <p class="trust-note">공개 후기와 수강생 수를 임의로 만들지 않습니다. 확인 가능한 운영 정보와 수업 결과만 안내합니다.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="schedule-section section-shell" id="schedule" aria-labelledby="schedule-title">
-        <div class="section-intro">
-          <p class="eyebrow">일정·장소·정책</p>
-          <h2 id="schedule-title">신청 전에 필요한 정보를<br />한곳에서 확인하세요.</h2>
-          <p>최신 확정 일정은 개인 카카오로 안내하고, 아래 달력은 저장소에 포함된 공개 스냅샷을 보여줍니다.</p>
-        </div>
-
-        <div class="schedule-grid">
-          <div class="schedule-facts">
-            <dl class="fact-list">
-              <div><dt>정기 운영</dt><dd>수요일·토요일</dd></div>
-              <div><dt>수업 시간</dt><dd>3시간</dd></div>
-              <div><dt>참가비</dt><dd>20,000원</dd></div>
-              <div><dt>정원</dt><dd>최대 3명</dd></div>
-              <div><dt>지역</dt><dd>동탄</dd></div>
-              <div><dt>준비물</dt><dd>개인 노트북과 충전기</dd></div>
-            </dl>
-            <div class="policy-note">
-              <h3>정책 안내</h3>
-              <p>정확한 장소, 주차, 신청 확정, 취소·환불·노쇼 기준은 일정과 함께 신청 전 개인 카카오로 확인합니다.</p>
-            </div>
-            <a class="button button-primary" href="https://open.kakao.com/me/aibuilderslab" data-contact-key="kakaoProfile" data-primary-cta>다음 수업 일정 확인·신청</a>
-          </div>
-
-          <div class="calendar-card" data-google-calendar>
-            <div class="calendar-card-head">
-              <div><h3>공개 일정 스냅샷</h3><p>assets/google-calendar.ics 기준</p></div>
-              <div class="calendar-actions">
-                <a class="button button-small button-secondary" href="https://calendar.google.com/calendar/r?cid=aibuilderslab.kr@gmail.com" target="_blank" rel="noopener noreferrer">내 Google Calendar에 등록</a>
-                <a class="calendar-ics-link" href="assets/google-calendar.ics" download>ICS 저장</a>
-              </div>
-            </div>
-            <div class="calendar-toolbar">
-              <button type="button" class="calendar-nav" data-calendar-prev aria-label="이전 달">이전</button>
-              <h4 data-calendar-month>일정을 준비하는 중</h4>
-              <button type="button" class="calendar-nav" data-calendar-next aria-label="다음 달">다음</button>
-            </div>
-            <div class="calendar-grid-wrap" data-calendar-grid></div>
-            <p class="calendar-status" role="status" aria-live="polite" data-calendar-status>저장된 일정 스냅샷을 불러오는 중입니다.</p>
-            <p class="calendar-note">공개 스냅샷이 오래되었거나 읽히지 않으면 최신 일정은 개인 카카오로 확인해주세요.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="faq-section section-shell" id="faq" aria-labelledby="faq-title">
-        <div class="section-intro">
-          <p class="eyebrow">자주 묻는 질문</p>
-          <h2 id="faq-title">신청 전에 걱정되는 부분을<br />먼저 답합니다.</h2>
-        </div>
-        <div class="faq-list">
-          <details><summary>완전 초보도 가능한가요?</summary><p>네. 코딩보다 설치와 실행 결과를 먼저 확인하는 입문 실습입니다. 수업 전 사용 환경을 개인 카카오로 확인합니다.</p></details>
-          <details><summary>코딩을 몰라도 되나요?</summary><p>코딩을 몰라도 참여할 수 있습니다. 원하는 결과를 정하고, Plan을 읽고, 직접 실행하고, 결과를 비교하는 순서로 진행합니다.</p></details>
-          <details><summary>Mac과 Windows 모두 가능한가요?</summary><p>공식 설치 경로와 운영체제별 상태를 수업 전에 확인합니다. 회사 기기처럼 설치 권한이 제한된 경우에는 신청 전에 상담해주세요.</p></details>
-          <details><summary>ChatGPT 무료 계정도 가능한가요?</summary><p>수업은 ChatGPT Plus 이상 환경을 기준으로 합니다. 무료 계정은 기능 차이가 있으므로 신청 전에 개인 카카오로 확인해주세요.</p></details>
-          <details><summary>노트북을 꼭 가져와야 하나요?</summary><p>네. 개인 노트북과 충전기를 가져와 직접 설치하고 실행합니다.</p></details>
-          <details><summary>설치가 실패하면 어떻게 하나요?</summary><p>오류 메시지를 기록하고 안전한 범위에서 원인을 확인합니다. 수업 전 설치가 어려우면 개인 카카오로 먼저 알려주세요.</p></details>
-          <details><summary>회사 노트북도 가능한가요?</summary><p>회사 보안 정책과 관리자 권한에 따라 달라집니다. 설치가 허용되는지 신청 전에 확인해주세요.</p></details>
-          <details><summary>비밀번호나 토큰을 강사에게 알려줘야 하나요?</summary><p>아니요. 비밀번호·토큰·API 키는 본인이 공식 입력란에 직접 입력하며, 채팅이나 공개 문서에 붙여넣지 않습니다.</p></details>
-          <details><summary>수업 장소와 주차는 어떻게 확인하나요?</summary><p>동탄에서 진행하며, 정확한 공간과 주차 안내는 일정 확정 전에 개인 카카오로 안내합니다.</p></details>
-          <details><summary>신청은 언제 확정되나요?</summary><p>개인 카카오로 가능한 일정을 확인한 뒤 운영자가 참여 가능 여부와 준비사항을 안내합니다.</p></details>
-          <details><summary>취소·환불·노쇼 기준은 무엇인가요?</summary><p>정확한 기준은 신청 전 개인 카카오에서 일정과 함께 확인합니다.</p></details>
-          <details><summary>수업 후에도 도움을 받을 수 있나요?</summary><p>수업 후 필요한 지원 범위와 방법은 신청 전에 개인 카카오로 문의해주세요.</p></details>
-        </div>
-      </section>
-
-      <section class="final-cta-section" id="final-cta" aria-labelledby="final-cta-title">
-        <div class="section-shell final-cta-inner">
-          <p class="eyebrow">다음 행동</p>
-          <h2 id="final-cta-title">질문만 하던 AI에서,<br />내 컴퓨터에서 직접 일하는 AI로.</h2>
-          <p>동탄 / 3시간 / 20,000원 / 최대 3명 / 개인 노트북 지참</p>
-          <div class="final-actions">
-            <a class="button button-primary" href="https://open.kakao.com/me/aibuilderslab" data-contact-key="kakaoProfile" data-primary-cta>다음 수업 일정 확인·신청</a>
-            <a class="button button-light" href="https://open.kakao.com/me/aibuilderslab" data-contact-key="kakaoProfile">개인 카카오로 먼저 질문하기</a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <a class="mobile-sticky-cta" href="https://open.kakao.com/me/aibuilderslab" data-mobile-cta data-contact-key="kakaoProfile" hidden>다음 수업 신청</a>
-
-    <dialog class="calendar-admin-dialog" aria-labelledby="calendar-admin-title" data-calendar-admin>
-      <div class="calendar-admin-shell">
-        <header class="dialog-header"><div><p>운영자 메뉴</p><h2 id="calendar-admin-title">방문자 통계</h2></div><button type="button" class="dialog-close" data-admin-close>닫기</button></header>
-        <section class="visitor-admin" aria-labelledby="visitor-admin-title"><h3 id="visitor-admin-title">이 브라우저에 쌓인 기록</h3><p>개인 식별 정보 없이 일자별 방문과 유입 경로만 저장합니다.</p><dl class="visitor-admin-summary"><div><dt>전체</dt><dd data-admin-visitor-total>0</dd></div><div><dt>오늘</dt><dd data-admin-visitor-today>0</dd></div></dl><div class="visitor-chart" aria-hidden="true" data-visitor-chart></div><table class="visitor-table"><caption>일자별 방문</caption><thead><tr><th scope="col">날짜</th><th scope="col">방문</th><th scope="col">유입</th></tr></thead><tbody data-visitor-day-table><tr><td colspan="3">아직 기록이 없습니다.</td></tr></tbody></table><table class="visitor-table"><caption>유입 경로</caption><thead><tr><th scope="col">유입</th><th scope="col">방문</th></tr></thead><tbody data-visitor-source-table><tr><td colspan="2">아직 기록이 없습니다.</td></tr></tbody></table></section>
-        <p class="calendar-admin-status" role="status" aria-live="polite" data-admin-status></p>
-      </div>
-    </dialog>
-
-    <footer class="site-footer">
-      <div class="section-shell footer-inner">
-        <div class="footer-brand"><p>AI BUILDERS LAB</p><strong>배우고, 공유하고, 성장한다.</strong></div>
-        <ul class="footer-notes">
-          <li>교육 일정과 장소는 신청과 공간 상황에 따라 조정될 수 있습니다.</li>
-          <li>1:1 맞춤교육의 비용·시간·장소는 개인 문의로 안내합니다.</li>
-          <li>AI 도구의 결과는 사용자가 직접 검토해야 합니다.</li>
-          <li>외부 AI 명칭은 교육 도구 안내 목적이며 공식 제휴를 의미하지 않습니다.</li>
-        </ul>
-        <nav class="footer-links" aria-label="보조 링크"><a href="hermes.html">상세 교육 안내</a><a href="install/">설치 안내</a><a href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener noreferrer">당근 모임</a></nav>
-        <button class="footer-admin-link" type="button" data-admin-open>방문자 통계</button>
-      </div>
-    </footer>
-
-    <script src="site-config.js?v=20260822-conversion"></script>
-    <script src="script.js?v=20260822-conversion" defer></script>
+    <script type="module" src="lounge/lounge.js"></script>
   </body>
 </html>

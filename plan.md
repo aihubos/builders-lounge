@@ -1,5 +1,7 @@
 # AI Builders Lab 멤버 전용 AI Workspace 구현 계획
 
+> **2026-08-23 승인 변경:** GitHub Pages의 `https://aihubos.github.io/builders-lounge/`는 기존 교육 랜딩을 제거하고 Builders Lounge 화면을 루트에서 직접 제공한다. 이 문서의 기존 홈페이지 보존 및 `/lounge` 분리 배포 내용은 해당 GitHub Pages 저장소에 한해 이 변경으로 대체한다. `AI 회의록`과 `AI 쇼츠 스튜디오`는 실제 연결 주소가 승인될 때까지 연결 예정 상태를 유지한다.
+
 - 작성일: 2026-08-22
 - 기준 사이트: https://builderslab.ai-hub-os.com
 - YouTube 채널: https://www.youtube.com/@AIBuildersLabKR

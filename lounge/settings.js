@@ -72,7 +72,7 @@
           <ul class="lounge-help-list">
             <li><details><summary>지금 사용할 수 있는 범위</summary><p>홈, 작업 내역, 멤버십·사용량, 설정·도움말을 확인할 수 있습니다. AI 회의록과 AI 쇼츠 스튜디오는 기존 기능을 연결할 자리만 준비되어 있습니다.</p></details></li>
             <li><details><summary>자료와 개인정보 안내</summary><p>현재 두 도구에는 업로드·생성·API 호출이 연결되어 있지 않습니다. 이 화면은 계정·결제정보를 요청하지 않습니다.</p></details></li>
-            <li><details><summary>기존 홈페이지로 돌아가기</summary><p><a class="lounge-text-link" href="../">AI 빌더스 랩 홈페이지 열기</a></p></details></li>
+            <li><details><summary>Builders Lounge 홈으로 돌아가기</summary><p><a class="lounge-text-link" href="./">Builders Lounge 홈 열기</a></p></details></li>
           </ul>
         </section>
       </section>

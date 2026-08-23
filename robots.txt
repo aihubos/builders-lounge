@@ -1,3 +1,4 @@
+# Builders Lounge is served from the public root.
 User-agent: *
 Allow: /
 
