@@ -12,10 +12,13 @@ const requiredFiles = [
   "sitemap.xml",
   ".nojekyll",
   "lounge/lounge.css",
+  "lounge/community.css",
   "lounge/lounge.js",
   "lounge/topbar.css",
   "lounge/topbar.js",
   "lounge/demo-data.js",
+  "lounge/community-data.js",
+  "lounge/community.js",
   "lounge/jobs.css",
   "lounge/jobs.js",
   "lounge/settings.css",
@@ -53,6 +56,9 @@ await cp(resolve(projectRoot, "assets"), resolve(clientRoot, "assets"), {
 const html = await readFile(resolve(clientRoot, "index.html"), "utf8");
 if (!html.includes("data-lounge-shell") || !html.includes("AI 회의록") || !html.includes("AI 쇼츠 스튜디오")) {
   throw new Error("루트 Builders Lounge 화면 또는 연결 자리 이름이 없습니다.");
+}
+if (!html.includes("AI 빌더스 랩 뉴스레터") || !html.includes('data-community-view="board"')) {
+  throw new Error("Builders Lounge 커뮤니티 화면이 없습니다.");
 }
 if (!html.includes('href="lounge/lounge.css"') || !html.includes('src="lounge/lounge.js"')) {
   throw new Error("루트에서 Lounge 지원 파일 경로를 찾을 수 없습니다.");

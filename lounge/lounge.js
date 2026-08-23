@@ -4,6 +4,7 @@ import "./settings.js";
 import "./placeholders.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";
 import { mountReportHubTopbar } from "./topbar.js";
+import { mountCommunity } from "./community.js";
 
 const ROUTE_STORAGE_KEY = "ai-builders-lounge-route";
 const DENSITY_STORAGE_KEY = "ai-builders-lounge-density";
@@ -25,10 +26,18 @@ const mobilePageTitle = document.querySelector("[data-mobile-page-title]");
 const mobileMenu = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
 
 const viewMeta = Object.freeze({
-  home: { kicker: "BUILDERS LOUNGE", title: "오늘 무엇을 만들어볼까요?", description: "AI 도구, 진행 중인 작업과 결과물을 한곳에서 확인합니다.", status: "MVP 데모" },
+  home: { kicker: "BUILDERS LOUNGE · COMMUNITY", title: "만들고, 나누고, 함께 성장해요", description: "AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 만나보세요.", status: "MVP 데모" },
   meeting: { kicker: "만들기", title: "AI 회의록", description: "회의 파일을 정리하고 검토하는 샘플 흐름을 확인합니다.", status: "샘플 화면" },
   shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "영상에서 후보 구간을 찾는 샘플 흐름을 확인합니다.", status: "샘플 화면" },
-  webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 프롬프트를 만드는 원본 앱으로 이어집니다.", status: "원본 앱 연결" },
+  webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 프롬프트 원본 앱을 오른쪽 본문에서 바로 사용합니다.", status: "원본 앱 연결" },
+  masterpiece: { kicker: "만들기", title: "세계명화 프롬프트", description: "명화와 캐릭터·배경을 조합하는 원본 앱을 바로 사용합니다.", status: "원본 앱 연결" },
+  token: { kicker: "AI 도구", title: "토큰 비용 계산기", description: "사용 토큰 수에 따른 예상 API 비용을 바로 계산합니다.", status: "바로 사용" },
+  prompts: { kicker: "AI 도구", title: "프롬프트 모음", description: "상황별 공개 프롬프트를 찾아 복사하고 직접 고쳐 씁니다.", status: "공개 콘텐츠" },
+  newsletter: { kicker: "콘텐츠", title: "AI 빌더스 랩 뉴스레터", description: "AI 도구와 빌더의 실전 경험을 짧고 꾸준하게 읽습니다.", status: "읽기용 아카이브" },
+  videos: { kicker: "콘텐츠", title: "영상 모음", description: "요약을 먼저 보고 원하는 영상만 눌러 재생합니다.", status: "선택 재생" },
+  memes: { kicker: "콘텐츠", title: "짤방", description: "AI·개발 공감 밈과 빌더 결과물을 함께 봅니다.", status: "공개 콘텐츠" },
+  board: { kicker: "커뮤니티", title: "자유게시판", description: "Report Hub와 같은 글·댓글을 닉네임으로 나눕니다.", status: "실시간 게시판" },
+  games: { kicker: "커뮤니티", title: "게임방", description: "한 번에 하나의 게임만 불러와 가볍게 즐깁니다.", status: "선택 실행" },
   jobs: { kicker: "내 작업", title: "진행 중 작업", description: "샘플 작업의 상태와 진행률을 확인합니다.", status: "샘플 데이터" },
   results: { kicker: "내 작업", title: "결과물", description: "완료된 샘플 결과를 미리 확인합니다.", status: "샘플 데이터" },
   files: { kicker: "내 작업", title: "파일", description: "작업에 사용된 샘플 파일 목록을 확인합니다.", status: "샘플 데이터" },
@@ -81,7 +90,15 @@ function formatDate(value) {
 }
 
 function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "home") {
-  if (view === "webtoon") return "웹툰 제작기는 별도 원본 앱으로 이동합니다. Lounge 안에서는 API 키·파일·생성 요청을 받지 않습니다.";
+  if (view === "webtoon") return "웹툰 제작기 원본 앱을 오른쪽 본문에 표시합니다. Lounge에는 API 키·파일·생성 요청을 저장하지 않습니다.";
+  if (view === "masterpiece") return "세계명화 프롬프트 원본 앱을 오른쪽 본문에 표시합니다. 생성에 필요한 설정값은 원본 앱에서만 처리됩니다.";
+  if (view === "token") return "토큰 비용 계산기는 원본 도구를 오른쪽 본문에 표시합니다. 입력한 계산값은 Lounge에 저장하지 않습니다.";
+  if (view === "prompts") return "공개용으로 정리한 프롬프트만 제공합니다. 개인 정보·로컬 경로·비밀값은 포함하지 않습니다.";
+  if (view === "newsletter") return "AI 빌더스 랩 뉴스레터는 직접 작성한 요약과 원문 출처를 제공하는 읽기용 아카이브입니다.";
+  if (view === "videos") return "영상은 재생 버튼을 눌렀을 때만 youtube-nocookie.com 플레이어를 한 개 불러옵니다.";
+  if (view === "memes") return "자체 제작 밈과 공개 프로젝트 결과물을 함께 소개합니다. 원본 프로젝트 링크를 확인해 주세요.";
+  if (view === "board") return "게시글과 댓글은 Report Hub 게시판과 공유됩니다. 작성 비밀번호는 브라우저에 저장하지 않습니다.";
+  if (view === "games") return "게임은 선택한 한 개만 본문에 표시합니다. 화면이 열리지 않으면 새 탭으로 이용할 수 있습니다.";
   return demoMode ? "아래 작업과 사용량은 화면 확인용 샘플입니다. 실제 파일은 업로드되거나 처리되지 않습니다." : "샘플 데이터가 숨겨져 있습니다. 실제 파일·AI 처리는 아직 연결되지 않았습니다.";
 }
 
@@ -142,6 +159,7 @@ function renderHomeModule() {
     data: getDemoSnapshot(demoMode),
     onNavigate: (view) => showView(view, { updateHash: true }),
     onModuleOpen: (module) => showView(module.action || "meeting", { updateHash: true }),
+    onWrite: () => { showView("board", { updateHash: true }); window.dispatchEvent(new CustomEvent("lounge:boardwrite")); },
   });
 }
 
@@ -192,6 +210,7 @@ function showView(requestedView, { updateHash = false, announce = true } = {}) {
   document.title = `${meta.title} | Builders Lounge`;
   if (notice) notice.textContent = getNoticeCopy(view);
   if (updateHash && window.location.hash !== `#${view}`) history.pushState(null, "", `#${view}`);
+  if (view !== "board") window.LoungeCommunity?.clearBoardQuery?.();
   writeLocalValue(ROUTE_STORAGE_KEY, view);
   if (announce && liveRegion) liveRegion.textContent = `${meta.title} 화면으로 이동했습니다.`;
   if (mobileMenu.matches) setMenuOpen(false);
@@ -207,6 +226,7 @@ function initializeModules() {
   renderHomeModule();
   if (settings) window.LoungeSettings?.render(settings, { demoMode, onDemoChange: setDemoMode });
   renderDataModules();
+  mountCommunity();
 }
 
 function bindNavigation() {

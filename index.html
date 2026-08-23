@@ -8,10 +8,10 @@
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:url" content="https://aihubos.github.io/builders-lounge/" />
     <meta property="og:title" content="Builders Lounge | AI Builders Lab" />
-    <meta property="og:description" content="AI 도구, 작업과 결과물을 한곳에서 확인하는 Builders Lounge 샘플 UI MVP입니다." />
+    <meta property="og:description" content="AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 나누는 Builders Lounge 커뮤니티 MVP입니다." />
     <meta property="og:image" content="https://aihubos.github.io/builders-lounge/assets/og.png" />
     <link rel="canonical" href="https://aihubos.github.io/builders-lounge/" />
-    <meta name="description" content="AI 도구, 작업과 결과물을 한곳에서 확인하는 Builders Lounge 샘플 UI MVP입니다." />
+    <meta name="description" content="AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 나누는 Builders Lounge 커뮤니티 MVP입니다." />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="stylesheet" href="lounge/lounge.css" />
     <title>Builders Lounge | AI Builders Lab</title>
@@ -80,43 +80,46 @@
 
           <nav class="sidebar-nav" aria-label="작업공간 탐색">
             <p class="nav-group-label">OVERVIEW</p>
-            <a class="nav-item is-active" href="#home" data-view-link="home">
-              <span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">홈</span><span class="nav-note">대시보드</span>
-            </a>
+            <a class="nav-item is-active" href="#home" data-view-link="home"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">홈</span><span class="nav-note">대시보드</span></a>
 
-            <div class="nav-group">
-              <p class="nav-group-label">만들기</p>
-              <div class="nav-stack">
-                <a class="nav-item" href="#meeting" data-view-link="meeting"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">AI 회의록</span></a>
-                <a class="nav-item" href="#shorts" data-view-link="shorts"><span class="nav-icon" aria-hidden="true">▶</span><span class="nav-label">AI 쇼츠 스튜디오</span></a>
-                <a class="nav-item" href="#webtoon" data-view-link="webtoon"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">웹툰 제작기</span><span class="nav-note">원본 앱</span></a>
-              </div>
-            </div>
+            <div class="nav-group"><p class="nav-group-label">만들기</p><div class="nav-stack">
+              <a class="nav-item" href="#meeting" data-view-link="meeting"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">AI 회의록</span></a>
+              <a class="nav-item" href="#shorts" data-view-link="shorts"><span class="nav-icon" aria-hidden="true">▶</span><span class="nav-label">AI 쇼츠 스튜디오</span></a>
+              <a class="nav-item" href="#webtoon" data-view-link="webtoon"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">웹툰 제작기</span><span class="nav-note">원본 앱</span></a>
+              <a class="nav-item" href="#masterpiece" data-view-link="masterpiece"><span class="nav-icon" aria-hidden="true">♜</span><span class="nav-label">세계명화 프롬프트</span><span class="nav-note">원본 앱</span></a>
+            </div></div>
 
-            <div class="nav-group">
-              <p class="nav-group-label">내 작업</p>
-              <div class="nav-stack">
-                <a class="nav-item" href="#jobs" data-view-link="jobs"><span class="nav-icon" aria-hidden="true">◷</span><span class="nav-label">진행 중 작업</span><span class="nav-count" data-nav-jobs-count>0</span></a>
-                <a class="nav-item" href="#results" data-view-link="results"><span class="nav-icon" aria-hidden="true">✓</span><span class="nav-label">결과물</span><span class="nav-count" data-nav-results-count>0</span></a>
-                <a class="nav-item" href="#files" data-view-link="files"><span class="nav-icon" aria-hidden="true">□</span><span class="nav-label">파일</span><span class="nav-count" data-nav-files-count>0</span></a>
-              </div>
-            </div>
+            <div class="nav-group"><p class="nav-group-label">AI 도구</p><div class="nav-stack">
+              <a class="nav-item" href="#token" data-view-link="token"><span class="nav-icon" aria-hidden="true">₩</span><span class="nav-label">토큰 비용 계산기</span><span class="nav-note">바로 사용</span></a>
+              <a class="nav-item" href="#prompts" data-view-link="prompts"><span class="nav-icon" aria-hidden="true">⌘</span><span class="nav-label">프롬프트 모음</span></a>
+            </div></div>
 
-            <div class="nav-group">
-              <p class="nav-group-label">계정</p>
-              <div class="nav-stack">
-                <a class="nav-item" href="#usage" data-view-link="usage"><span class="nav-icon" aria-hidden="true">▥</span><span class="nav-label">사용량</span></a>
-                <a class="nav-item" href="#membership" data-view-link="membership"><span class="nav-icon" aria-hidden="true">○</span><span class="nav-label">멤버십 상태</span></a>
-              </div>
-            </div>
+            <div class="nav-group"><p class="nav-group-label">콘텐츠</p><div class="nav-stack">
+              <a class="nav-item" href="#newsletter" data-view-link="newsletter"><span class="nav-icon" aria-hidden="true">✎</span><span class="nav-label">AI 빌더스 랩 뉴스레터</span></a>
+              <a class="nav-item" href="#videos" data-view-link="videos"><span class="nav-icon" aria-hidden="true">▻</span><span class="nav-label">영상 모음</span></a>
+              <a class="nav-item" href="#memes" data-view-link="memes"><span class="nav-icon" aria-hidden="true">☺</span><span class="nav-label">짤방</span></a>
+            </div></div>
 
-            <div class="nav-group">
-              <p class="nav-group-label">지원</p>
-              <div class="nav-stack">
-                <a class="nav-item" href="#settings" data-view-link="settings"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-label">설정</span></a>
-                <a class="nav-item" href="#help" data-view-link="help"><span class="nav-icon" aria-hidden="true">?</span><span class="nav-label">도움말</span></a>
-              </div>
-            </div>
+            <div class="nav-group"><p class="nav-group-label">커뮤니티</p><div class="nav-stack">
+              <a class="nav-item" href="#board" data-view-link="board"><span class="nav-icon" aria-hidden="true">☷</span><span class="nav-label">자유게시판</span></a>
+              <a class="nav-item" href="#games" data-view-link="games"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">게임방</span></a>
+            </div></div>
+
+            <div class="nav-group"><p class="nav-group-label">내 작업</p><div class="nav-stack">
+              <a class="nav-item" href="#jobs" data-view-link="jobs"><span class="nav-icon" aria-hidden="true">◷</span><span class="nav-label">진행 중 작업</span><span class="nav-count" data-nav-jobs-count>0</span></a>
+              <a class="nav-item" href="#results" data-view-link="results"><span class="nav-icon" aria-hidden="true">✓</span><span class="nav-label">결과물</span><span class="nav-count" data-nav-results-count>0</span></a>
+              <a class="nav-item" href="#files" data-view-link="files"><span class="nav-icon" aria-hidden="true">□</span><span class="nav-label">파일</span><span class="nav-count" data-nav-files-count>0</span></a>
+            </div></div>
+
+            <div class="nav-group"><p class="nav-group-label">계정</p><div class="nav-stack">
+              <a class="nav-item" href="#usage" data-view-link="usage"><span class="nav-icon" aria-hidden="true">▥</span><span class="nav-label">사용량</span></a>
+              <a class="nav-item" href="#membership" data-view-link="membership"><span class="nav-icon" aria-hidden="true">○</span><span class="nav-label">멤버십 상태</span></a>
+            </div></div>
+
+            <div class="nav-group"><p class="nav-group-label">지원</p><div class="nav-stack">
+              <a class="nav-item" href="#settings" data-view-link="settings"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-label">설정</span></a>
+              <a class="nav-item" href="#help" data-view-link="help"><span class="nav-icon" aria-hidden="true">?</span><span class="nav-label">도움말</span></a>
+            </div></div>
           </nav>
 
           <div class="sidebar-footer">
@@ -135,8 +138,8 @@
             <header class="page-header">
               <div>
                 <p class="page-kicker" data-page-kicker>BUILDERS LOUNGE</p>
-                <h2 data-page-title>오늘 무엇을 만들어볼까요?</h2>
-                <p class="page-description" data-page-description>AI 도구, 진행 중인 작업과 결과물을 한곳에서 확인합니다.</p>
+                <h2 data-page-title>만들고, 나누고, 함께 성장해요</h2>
+                <p class="page-description" data-page-description>AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 만나보세요.</p>
               </div>
               <span class="page-status" data-page-status>MVP 데모</span>
             </header>
@@ -149,13 +152,26 @@
             <section class="view-panel" id="view-meeting" data-view-panel="meeting" hidden></section>
             <section class="view-panel" id="view-shorts" data-view-panel="shorts" hidden></section>
             <section class="view-panel" id="view-webtoon" data-view-panel="webtoon" hidden>
-              <div class="panel-heading"><p class="section-label">MAKE · WEBTOON</p><h3>웹툰 제작기</h3><p>공감툰 프롬프트를 만드는 원본 앱으로 이어집니다.</p></div>
-              <section class="webtoon-connection-card" aria-labelledby="webtoon-connection-title">
-                <div class="webtoon-art" aria-hidden="true"><span class="webtoon-bubble webtoon-bubble-top">오늘도</span><span class="webtoon-character">✦</span><span class="webtoon-bubble webtoon-bubble-bottom">공감툰!</span></div>
-                <div class="webtoon-connection-copy"><span class="sample-label webtoon-live-label">원본 앱 연결</span><h4 id="webtoon-connection-title">공감툰 프롬프트 생성기</h4><p>주제·스타일·패널 구성을 고르고 AI 이미지 생성용 프롬프트를 만들 수 있습니다. 실제 생성 흐름은 Builders Lounge가 아니라 원본 앱에서 실행됩니다.</p><div class="webtoon-feature-list"><span>주제·스타일 선택</span><span>패널 레이아웃</span><span>프롬프트 복사</span></div><div class="webtoon-actions"><a class="primary-button" href="https://aihubos.github.io/gonggamtoon/" target="_blank" rel="noopener">웹툰 제작기 열기 <span aria-hidden="true">↗</span></a><a class="secondary-button" href="https://github.com/aihubos/gonggamtoon" target="_blank" rel="noopener">원본 저장소 보기 <span aria-hidden="true">↗</span></a></div></div>
-              </section>
-              <p class="webtoon-safety-note"><strong>연결 범위 안내</strong> 이 메뉴는 원본 앱으로 이동하는 링크만 제공합니다. Lounge에 API 키, 로그인, 결제, 파일 업로드를 복사하지 않습니다.</p>
+              <div class="webtoon-embed-head"><div><p class="section-label">MAKE · WEBTOON</p><h3>웹툰 제작기</h3><p>오른쪽 본문에서 공감툰 원본 앱을 바로 사용합니다.</p></div><div class="webtoon-embed-actions"><span class="sample-label webtoon-live-label">원본 앱 표시 중</span><a class="secondary-button" href="https://aihubos.github.io/gonggamtoon/" target="_blank" rel="noopener">새 탭으로 열기 <span aria-hidden="true">↗</span></a></div></div>
+              <section class="webtoon-embed-card" aria-label="공감툰 원본 앱"><div class="webtoon-embed-bar"><span class="webtoon-embed-dot" aria-hidden="true"></span><strong>gonggamtoon</strong><span>공감툰 프롬프트 생성기</span><a href="https://github.com/aihubos/gonggamtoon" target="_blank" rel="noopener">원본 저장소 ↗</a></div><iframe class="webtoon-iframe" src="https://aihubos.github.io/gonggamtoon/" title="공감툰 프롬프트 생성기" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe></section>
+              <p class="webtoon-safety-note"><strong>연결 범위 안내</strong> 원본 앱은 오른쪽 영역에 표시되며, Lounge에는 API 키·로그인·결제·파일 업로드 기능을 복사하지 않습니다.</p>
             </section>
+            <section class="view-panel" id="view-masterpiece" data-view-panel="masterpiece" hidden>
+              <div class="app-embed-head"><div><p class="section-label">MAKE · MASTERPIECE</p><h3>세계명화 프롬프트</h3><p>명화와 캐릭터·배경을 조합해 이미지 생성 프롬프트를 만듭니다.</p></div><div class="app-embed-actions"><span class="sample-label app-live-label">원본 앱 표시 중</span><a class="secondary-button" href="https://aihubos.github.io/world-masterpiece-bot/" target="_blank" rel="noopener">새 탭으로 열기 <span aria-hidden="true">↗</span></a></div></div>
+              <section class="app-embed-card" aria-label="세계명화 프롬프트 원본 앱"><div class="app-embed-bar"><span class="app-embed-dot app-embed-dot-art" aria-hidden="true"></span><strong>world-masterpiece-bot</strong><span>Nanobanana Prompt Studio</span><a href="https://github.com/aihubos/world-masterpiece-bot" target="_blank" rel="noopener">원본 저장소 ↗</a></div><iframe class="app-iframe" src="https://aihubos.github.io/world-masterpiece-bot/" title="세계명화 프롬프트 스튜디오" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></section>
+              <p class="app-safety-note"><strong>이용 안내</strong> 원본 앱의 생성 기능은 사용자가 원본 앱에서 직접 설정한 키와 선택값으로만 동작합니다. Lounge에는 키를 저장하지 않습니다.</p>
+            </section>
+            <section class="view-panel" id="view-token" data-view-panel="token" hidden>
+              <div class="app-embed-head"><div><p class="section-label">AI TOOL · COST</p><h3>토큰 비용 계산기</h3><p>사용 토큰 수와 모델 비율을 바꾸며 예상 API 비용을 바로 계산합니다.</p></div><div class="app-embed-actions"><span class="sample-label app-live-label">바로 사용</span><a class="secondary-button" href="https://aihubos.github.io/token-calculator/" target="_blank" rel="noopener">새 탭으로 열기 <span aria-hidden="true">↗</span></a></div></div>
+              <section class="app-embed-card" aria-label="토큰 비용 계산기 원본 앱"><div class="app-embed-bar"><span class="app-embed-dot app-embed-dot-cost" aria-hidden="true"></span><strong>token-calculator</strong><span>GPT API 비용 계산기</span><a href="https://github.com/aihubos/token-calculator" target="_blank" rel="noopener">원본 저장소 ↗</a></div><iframe class="app-iframe app-iframe-token" src="https://aihubos.github.io/token-calculator/" title="토큰 비용 계산기" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></section>
+              <p class="app-safety-note"><strong>계산 기준</strong> 원본 도구에 등록된 모델 단가와 환율을 기준으로 계산합니다. 실제 청구 금액과 차이가 날 수 있습니다.</p>
+            </section>
+            <section class="view-panel" id="view-prompts" data-view-panel="prompts" data-community-view="prompts" hidden></section>
+            <section class="view-panel" id="view-newsletter" data-view-panel="newsletter" data-community-view="newsletter" hidden></section>
+            <section class="view-panel" id="view-videos" data-view-panel="videos" data-community-view="videos" hidden></section>
+            <section class="view-panel" id="view-memes" data-view-panel="memes" data-community-view="memes" hidden></section>
+            <section class="view-panel" id="view-board" data-view-panel="board" data-community-view="board" hidden></section>
+            <section class="view-panel" id="view-games" data-view-panel="games" data-community-view="games" hidden></section>
             <section class="view-panel" id="view-jobs" data-view-panel="jobs" hidden><div data-jobs-slot></div></section>
             <section class="view-panel" id="view-results" data-view-panel="results" hidden><div data-results-slot></div></section>
             <section class="view-panel" id="view-files" data-view-panel="files" hidden><div data-files-slot></div></section>
@@ -171,6 +187,9 @@
                 <details open><summary>샘플 데이터란 무엇인가요?</summary><p>화면 구성과 이동을 확인하기 위한 가상의 작업·결과·파일입니다. 모든 항목에 샘플 표시가 붙으며 실제 데이터가 아닙니다.</p></details>
                 <details><summary>실제 파일이 전송되나요?</summary><p>아니요. 파일 선택창, 업로드, AI API, 로그인과 결제는 아직 연결되어 있지 않습니다.</p></details>
                 <details><summary>AI 도구는 언제 연결되나요?</summary><p>연결 주소와 승인된 이용 범위가 준비되면 각 도구 화면에 실제 시작 동선을 추가합니다. 현재는 3단계 설명만 제공합니다.</p></details>
+                <details><summary>게시판 비밀번호와 개인정보는 어떻게 처리하나요?</summary><p>게시글·댓글은 닉네임과 작성 비밀번호 방식으로 동작합니다. 비밀번호는 브라우저에 저장하지 않으며, 공개 글에는 일반 텍스트만 허용합니다. 개인 정보·비밀값·내부 경로는 작성하지 마세요.</p></details>
+                <details><summary>뉴스레터·영상·프롬프트 출처는 어디인가요?</summary><p>Vault 후보를 공개 가능한 내용으로 다시 작성하고 원문 링크를 붙입니다. 외부 뉴스레터·영상·기사 전문을 복사하지 않으며, 원본 프로젝트와 YouTube는 사용자가 직접 열 때만 불러옵니다.</p></details>
+                <details><summary>게임과 영상이 보이지 않으면 어떻게 하나요?</summary><p>브라우저가 iframe을 차단할 수 있습니다. 각 카드의 새 탭 링크로 원본을 열어 주세요. 자동 재생은 하지 않고 선택한 콘텐츠 하나만 표시합니다.</p></details>
                 <details><summary>메뉴와 보기 설정을 초기화하려면?</summary><p>설정에서 보기 밀도와 샘플 표시를 바꿀 수 있습니다. 브라우저 저장값을 지우면 기본값(여유 있게·샘플 표시)으로 돌아갑니다.</p></details>
               </div>
             </section>
