@@ -1,5 +1,5 @@
 import "./platform.js";
-import { renderHome } from "./js/pages/home.js";
+import { renderHome } from "./js/pages/home.js?v=20260824-no-hero";
 import { mountJobs } from "./jobs.js";
 import { mountAdmin } from "./admin.js";
 import "./settings.js";
