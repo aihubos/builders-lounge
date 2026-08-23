@@ -13,6 +13,7 @@ const requiredFiles = [
   ".nojekyll",
   "lounge/lounge.css",
   "lounge/community.css",
+  "lounge/portal.css",
   "lounge/lounge.js",
   "lounge/topbar.css",
   "lounge/topbar.js",
@@ -60,7 +61,7 @@ if (!html.includes("data-lounge-shell") || !html.includes("AI 회의록") || !ht
 if (!html.includes("AI 빌더스 랩 뉴스레터") || !html.includes('data-community-view="board"')) {
   throw new Error("Builders Lounge 커뮤니티 화면이 없습니다.");
 }
-if (!html.includes('href="lounge/lounge.css"') || !html.includes('src="lounge/lounge.js"')) {
+if (!html.includes('href="lounge/lounge.css"') || !html.includes('href="lounge/portal.css"') || !html.includes('src="lounge/lounge.js"')) {
   throw new Error("루트에서 Lounge 지원 파일 경로를 찾을 수 없습니다.");
 }
 if (/noindex\s*,?\s*nofollow/i.test(html) || html.includes("공개 홈페이지")) {

@@ -9,6 +9,7 @@ const sourceSupport = [
   "sitemap.xml",
   "lounge/lounge.css",
   "lounge/community.css",
+  "lounge/portal.css",
   "lounge/lounge.js",
   "lounge/topbar.css",
   "lounge/topbar.js",
@@ -64,7 +65,7 @@ const robots = await readFile(resolve(root, "robots.txt"), "utf8");
 const sitemap = await readFile(resolve(root, "sitemap.xml"), "utf8");
 
 expect(indexHtml.includes("data-lounge-shell"), "루트 Builders Lounge 셸이 없습니다.");
-expect(indexHtml.includes('href="lounge/lounge.css"') && indexHtml.includes('src="lounge/lounge.js"'), "루트 Lounge 경로가 없습니다.");
+expect(indexHtml.includes('href="lounge/lounge.css"') && indexHtml.includes('href="lounge/portal.css"') && indexHtml.includes('src="lounge/lounge.js"'), "루트 Lounge 경로가 없습니다.");
 expect(indexHtml.includes('href="assets/favicon.png"') && indexHtml.includes('src="assets/report-hub-logo.png"'), "루트 assets 경로가 없습니다.");
 expect(indexHtml.includes('<link rel="canonical" href="https://aihubos.github.io/builders-lounge/" />'), "canonical 루트 주소가 없습니다.");
 expect(indexHtml.includes('<meta property="og:url" content="https://aihubos.github.io/builders-lounge/" />'), "OG 루트 주소가 없습니다.");
@@ -78,7 +79,7 @@ for (const route of ["home", "meeting", "shorts", "webtoon", "masterpiece", "tok
 expect(indexHtml.includes("웹툰 제작기") && indexHtml.includes("https://aihubos.github.io/gonggamtoon/"), "웹툰 제작기 메뉴 연결이 없습니다.");
 expect(indexHtml.includes("토큰 비용 계산기") && indexHtml.includes('src="https://aihubos.github.io/token-calculator/"'), "토큰 비용 계산기 메뉴 연결이 없습니다.");
 expect(indexHtml.includes("세계명화 프롬프트") && indexHtml.includes('src="https://aihubos.github.io/world-masterpiece-bot/"'), "세계명화 프롬프트 메뉴 연결이 없습니다.");
-expect(indexHtml.includes("MVP 데모") && indexHtml.includes("실제 파일"), "샘플 MVP 안내가 부족합니다.");
+expect(indexHtml.includes("커뮤니티 운영 중") && indexHtml.includes("실제 파일"), "실제 커뮤니티와 샘플 기능의 범위 안내가 부족합니다.");
 const nonVisitorScripts = loungeScript.replace(topbarScript, "").replace(communityScript, "");
 expect(!/type\s*=\s*["']file/i.test(indexHtml) && !/\b(XMLHttpRequest|FormData)\b/.test(nonVisitorScripts) && !/\bfetch\s*\(/.test(nonVisitorScripts), "연결 전 외부 요청·업로드 로직이 있습니다.");
 expect(communityScript.includes("reportmode-request-board.report-request-board.workers.dev") && communityScript.includes("/board/posts"), "통합 게시판 API 연결이 없습니다.");
@@ -113,6 +114,7 @@ for (const file of [
   ".nojekyll",
   "lounge/lounge.css",
   "lounge/community.css",
+  "lounge/portal.css",
   "lounge/lounge.js",
   "lounge/topbar.css",
   "lounge/topbar.js",

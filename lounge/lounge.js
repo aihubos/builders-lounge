@@ -5,11 +5,12 @@ import "./placeholders.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";
 import { mountReportHubTopbar } from "./topbar.js";
 import { mountCommunity } from "./community.js";
+import { publishedItems } from "./community-data.js";
 
 const ROUTE_STORAGE_KEY = "ai-builders-lounge-route";
 const DENSITY_STORAGE_KEY = "ai-builders-lounge-density";
 const ALLOWED_DENSITIES = new Set(["comfortable", "compact"]);
-const MOBILE_BREAKPOINT = 1023;
+const MOBILE_BREAKPOINT = 1180;
 
 const shell = document.querySelector("[data-lounge-shell]");
 const sidebar = document.querySelector("[data-lounge-sidebar]");
@@ -24,9 +25,13 @@ const pageDescription = document.querySelector("[data-page-description]");
 const pageStatus = document.querySelector("[data-page-status]");
 const mobilePageTitle = document.querySelector("[data-mobile-page-title]");
 const mobileMenu = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+const searchDialog = document.querySelector("[data-global-search-dialog]");
+const searchInput = document.querySelector("[data-global-search-input]");
+const searchResults = document.querySelector("[data-global-search-results]");
+const searchForm = document.querySelector("[data-global-search-form]");
 
 const viewMeta = Object.freeze({
-  home: { kicker: "BUILDERS LOUNGE · COMMUNITY", title: "만들고, 나누고, 함께 성장해요", description: "AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 만나보세요.", status: "MVP 데모" },
+  home: { kicker: "BUILDERS LOUNGE · COMMUNITY", title: "만들고, 나누고, 함께 성장해요", description: "AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 만나보세요.", status: "커뮤니티 운영 중" },
   meeting: { kicker: "만들기", title: "AI 회의록", description: "회의 파일을 정리하고 검토하는 샘플 흐름을 확인합니다.", status: "샘플 화면" },
   shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "영상에서 후보 구간을 찾는 샘플 흐름을 확인합니다.", status: "샘플 화면" },
   webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 프롬프트 원본 앱을 오른쪽 본문에서 바로 사용합니다.", status: "원본 앱 연결" },
@@ -44,11 +49,21 @@ const viewMeta = Object.freeze({
   usage: { kicker: "계정", title: "사용량", description: "멤버십 연결 전에는 샘플 사용량만 표시합니다.", status: "연결 전" },
   membership: { kicker: "계정", title: "멤버십 상태", description: "로그인·결제 연결 전의 현재 상태를 안내합니다.", status: "연결 전" },
   settings: { kicker: "지원", title: "설정", description: "보기 밀도와 샘플 표시 여부를 바꿉니다.", status: "브라우저 저장" },
-  help: { kicker: "지원", title: "도움말", description: "샘플 UI의 범위와 이용 방법을 안내합니다.", status: "안내" },
+  help: { kicker: "지원", title: "이용 안내", description: "실제 운영 기능과 샘플 범위, 커뮤니티 이용 원칙을 확인합니다.", status: "운영 안내" },
 });
 
 let demoMode = readDemoMode();
 let jobsController = null;
+let searchReturnFocus = null;
+
+const SEARCH_TOOLS = Object.freeze([
+  { id: "search-meeting", title: "AI 회의록", summary: "회의 기록을 결정사항과 할 일로 정리하는 제작 흐름", route: "meeting", typeLabel: "제작 도구", icon: "✦" },
+  { id: "search-shorts", title: "AI 쇼츠 스튜디오", summary: "긴 영상에서 세로형 숏폼 후보를 찾는 제작 흐름", route: "shorts", typeLabel: "제작 도구", icon: "▶" },
+  { id: "search-webtoon", title: "웹툰 제작기", summary: "대화와 아이디어를 공감 카드로 바꾸는 원본 앱", route: "webtoon", typeLabel: "제작 도구", icon: "▣" },
+  { id: "search-masterpiece", title: "세계명화 프롬프트", summary: "명화와 캐릭터를 조합하는 이미지 프롬프트 도구", route: "masterpiece", typeLabel: "제작 도구", icon: "♜" },
+  { id: "search-token", title: "토큰 비용 계산기", summary: "모델별 예상 API 비용을 비교하는 원본 도구", route: "token", typeLabel: "AI 도구", icon: "₩" },
+  { id: "search-board", title: "자유게시판", summary: "질문, 정보와 빌더 결과물을 나누는 통합 게시판", route: "board", typeLabel: "커뮤니티", icon: "☷" },
+]);
 
 function readLocalValue(key) {
   try { return window.localStorage.getItem(key); } catch { return null; }
@@ -68,7 +83,7 @@ function setDemoMode(nextValue) {
   writeLocalValue(DEMO_MODE_STORAGE_KEY, demoMode ? "on" : "off");
   shell?.setAttribute("data-demo-mode", demoMode ? "on" : "off");
   if (notice) notice.textContent = getNoticeCopy();
-  if (pageStatus && document.documentElement.dataset.loungeRoute === "home") pageStatus.textContent = demoMode ? "MVP 데모" : "연결 전";
+  if (pageStatus && document.documentElement.dataset.loungeRoute === "home") pageStatus.textContent = "커뮤니티 운영 중";
   renderHomeModule();
   renderDataModules();
   window.dispatchEvent(new CustomEvent("lounge:demochange", { detail: { demoMode } }));
@@ -83,6 +98,70 @@ function escapeHtml(value) {
   return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
 
+function searchCatalog() {
+  const typeMeta = {
+    prompts: { route: "prompts", typeLabel: "프롬프트", icon: "⌘" },
+    newsletters: { route: "newsletter", typeLabel: "뉴스레터", icon: "N" },
+    videos: { route: "videos", typeLabel: "추천 영상", icon: "▶" },
+    memes: { route: "memes", typeLabel: "빌더 결과물", icon: "▣" },
+    games: { route: "games", typeLabel: "게임방", icon: "✦" },
+  };
+  const content = Object.entries(typeMeta).flatMap(([type, meta]) => publishedItems(type).map((item) => ({
+    id: item.id,
+    title: item.title,
+    summary: item.summary || item.useCase || "Builders Lounge 공개 콘텐츠",
+    route: meta.route,
+    typeLabel: meta.typeLabel,
+    icon: meta.icon,
+    searchText: [item.title, item.summary, item.useCase, item.category, ...(item.tags || [])].filter(Boolean).join(" ").toLocaleLowerCase("ko-KR"),
+  })));
+  return [...SEARCH_TOOLS.map((item) => ({ ...item, searchText: `${item.title} ${item.summary} ${item.typeLabel}`.toLocaleLowerCase("ko-KR") })), ...content];
+}
+
+function renderGlobalSearch(rawQuery = "") {
+  if (!searchResults) return;
+  const query = String(rawQuery || "").trim().slice(0, 120);
+  const normalized = query.toLocaleLowerCase("ko-KR");
+  const catalog = searchCatalog();
+  const matches = (normalized ? catalog.filter((item) => item.searchText.includes(normalized)) : catalog.filter((item) => ["search-webtoon", "search-token", "prompt-stic", "newsletter-001", "video-openclaw", "game-pokopia"].includes(item.id))).slice(0, 12);
+
+  if (!matches.length) {
+    searchResults.innerHTML = `<div class="portal-search-empty"><strong>일치하는 공개 콘텐츠가 없습니다.</strong><p>다른 표현으로 검색하거나 게시판의 실제 글을 검색해 보세요.</p></div>`;
+  } else {
+    const groups = new Map();
+    matches.forEach((item) => { if (!groups.has(item.typeLabel)) groups.set(item.typeLabel, []); groups.get(item.typeLabel).push(item); });
+    searchResults.innerHTML = [...groups.entries()].map(([label, items]) => `<section class="portal-search-section"><h3>${escapeHtml(label)}</h3>${items.map((item) => `<button class="portal-search-result" type="button" data-global-search-route="${escapeHtml(item.route)}"><span aria-hidden="true">${escapeHtml(item.icon)}</span><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.summary)}</small></span><em>열기 →</em></button>`).join("")}</section>`).join("");
+  }
+
+  searchResults.insertAdjacentHTML("afterend", `<button class="secondary-button portal-search-board" type="button" data-global-board-search="${escapeHtml(query)}">${query ? `게시판에서 ‘${escapeHtml(query)}’ 검색` : "자유게시판 전체 보기"}</button>`);
+  searchDialog?.querySelectorAll(".portal-search-board").forEach((button, index) => { if (index > 0) button.remove(); });
+}
+
+function openGlobalSearch() {
+  if (!searchDialog) return;
+  searchReturnFocus = document.activeElement;
+  if (!searchDialog.open) searchDialog.showModal();
+  renderGlobalSearch(searchInput?.value || "");
+  window.requestAnimationFrame(() => searchInput?.focus({ preventScroll: true }));
+}
+
+function closeGlobalSearch({ restoreFocus = true } = {}) {
+  if (!restoreFocus) searchReturnFocus = null;
+  if (searchDialog?.open) searchDialog.close();
+  else if (restoreFocus) searchReturnFocus?.focus?.({ preventScroll: true });
+}
+
+function openBoardSearch(query = "") {
+  const url = new URL(window.location.href);
+  ["post", "page", "category", "sort", "q"].forEach((key) => url.searchParams.delete(key));
+  if (query) url.searchParams.set("q", query.slice(0, 120));
+  url.hash = "board";
+  window.history.pushState({}, "", url);
+  closeGlobalSearch({ restoreFocus: false });
+  showView("board", { announce: true });
+  window.LoungeCommunity?.refreshBoard?.();
+}
+
 function formatDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return escapeHtml(value || "날짜 정보 없음");
@@ -90,6 +169,7 @@ function formatDate(value) {
 }
 
 function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "home") {
+  if (view === "home") return "게시판과 공개 콘텐츠는 실제로 작동합니다. 작업·결과·파일·사용량만 화면 확인용 샘플입니다.";
   if (view === "webtoon") return "웹툰 제작기 원본 앱을 오른쪽 본문에 표시합니다. Lounge에는 API 키·파일·생성 요청을 저장하지 않습니다.";
   if (view === "masterpiece") return "세계명화 프롬프트 원본 앱을 오른쪽 본문에 표시합니다. 생성에 필요한 설정값은 원본 앱에서만 처리됩니다.";
   if (view === "token") return "토큰 비용 계산기는 원본 도구를 오른쪽 본문에 표시합니다. 입력한 계산값은 Lounge에 저장하지 않습니다.";
@@ -161,6 +241,7 @@ function renderHomeModule() {
     onModuleOpen: (module) => showView(module.action || "meeting", { updateHash: true }),
     onWrite: () => { showView("board", { updateHash: true }); window.dispatchEvent(new CustomEvent("lounge:boardwrite")); },
   });
+  window.LoungeCommunity?.refreshHomePreview?.();
 }
 
 function syncSidebarAccessibility(isOpen = shell?.hasAttribute("data-menu-open")) {
@@ -205,7 +286,7 @@ function showView(requestedView, { updateHash = false, announce = true } = {}) {
   if (pageKicker) pageKicker.textContent = meta.kicker;
   if (pageTitle) pageTitle.textContent = meta.title;
   if (pageDescription) pageDescription.textContent = meta.description;
-  if (pageStatus) pageStatus.textContent = demoMode && view !== "membership" && view !== "settings" && view !== "help" ? meta.status : (view === "home" ? "연결 전" : meta.status);
+  if (pageStatus) pageStatus.textContent = view === "home" ? "커뮤니티 운영 중" : meta.status;
   if (mobilePageTitle) mobilePageTitle.textContent = meta.title;
   document.title = `${meta.title} | Builders Lounge`;
   if (notice) notice.textContent = getNoticeCopy(view);
@@ -237,14 +318,29 @@ function bindNavigation() {
     showView(view, { updateHash: true });
   }));
   menuToggle?.addEventListener("click", () => setMenuOpen(!shell?.hasAttribute("data-menu-open")));
+  document.querySelectorAll("[data-mobile-menu-open]").forEach((button) => button.addEventListener("click", () => setMenuOpen(true)));
+  document.querySelectorAll("[data-portal-write]").forEach((button) => button.addEventListener("click", () => { showView("board", { updateHash: true }); window.dispatchEvent(new CustomEvent("lounge:boardwrite")); }));
   menuCloseButtons.forEach((button) => button.addEventListener("click", () => setMenuOpen(false, { restoreFocus: true })));
+  document.querySelectorAll("[data-global-search-open]").forEach((button) => button.addEventListener("click", openGlobalSearch));
+  document.querySelectorAll("[data-global-search-close]").forEach((button) => button.addEventListener("click", () => closeGlobalSearch()));
+  searchForm?.addEventListener("submit", (event) => { event.preventDefault(); renderGlobalSearch(searchInput?.value || ""); });
+  searchInput?.addEventListener("input", () => renderGlobalSearch(searchInput.value));
+  searchDialog?.addEventListener("click", (event) => {
+    const route = event.target.closest("[data-global-search-route]");
+    if (route) { closeGlobalSearch({ restoreFocus: false }); showView(route.dataset.globalSearchRoute, { updateHash: true }); return; }
+    const boardSearch = event.target.closest("[data-global-board-search]");
+    if (boardSearch) openBoardSearch(boardSearch.dataset.globalBoardSearch || "");
+  });
+  searchDialog?.addEventListener("close", () => { searchReturnFocus?.focus?.({ preventScroll: true }); searchReturnFocus = null; });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && shell?.hasAttribute("data-menu-open")) setMenuOpen(false, { restoreFocus: true });
+    if (event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey && !event.target.closest("input, textarea, select, [contenteditable='true']")) { event.preventDefault(); openGlobalSearch(); }
   });
   mobileMenu.addEventListener("change", syncMenuForViewport);
   window.addEventListener("hashchange", () => showView(window.location.hash.slice(1), { announce: false }));
   window.addEventListener("popstate", () => showView(window.location.hash.slice(1), { announce: false }));
   window.addEventListener("lounge:navigate", (event) => showView(event.detail?.view, { updateHash: true }));
+  window.addEventListener("lounge:searchopen", openGlobalSearch);
 }
 
 applySavedDensity();

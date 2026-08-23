@@ -269,7 +269,7 @@ button:disabled { cursor: not-allowed; }
   .home-tool-card .primary-button { grid-column: 2; justify-self: start; }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1180px) {
   .lounge-mobile-toolbar { min-height: 52px; padding: 0 max(20px, calc((100% - 920px) / 2)); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--lounge-border); background: rgba(255,255,255,0.96); }
   .menu-toggle { order: 0; flex: 0 0 36px; width: 36px; height: 36px; margin: 0; padding: 8px; display: inline-flex; flex-direction: column; justify-content: center; gap: 4px; border: 1px solid var(--lounge-border); border-radius: 9px; background: white; }
   .menu-toggle span { display: block; width: 17px; height: 2px; margin: 0; border-radius: 2px; background: var(--lounge-navy); }
