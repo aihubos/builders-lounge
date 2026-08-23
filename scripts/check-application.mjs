@@ -7,6 +7,7 @@ const sourceSupport = [
   "styles.css",
   "robots.txt",
   "sitemap.xml",
+  "assets/builders-lounge-logo.png",
   "lounge/lounge.css",
   "lounge/community.css",
   "lounge/portal.css",
@@ -67,6 +68,8 @@ const sitemap = await readFile(resolve(root, "sitemap.xml"), "utf8");
 expect(indexHtml.includes("data-lounge-shell"), "루트 Builders Lounge 셸이 없습니다.");
 expect(indexHtml.includes('href="lounge/lounge.css"') && indexHtml.includes('href="lounge/portal.css"') && indexHtml.includes('src="lounge/lounge.js"'), "루트 Lounge 경로가 없습니다.");
 expect(indexHtml.includes('href="assets/favicon.png"') && indexHtml.includes('src="assets/report-hub-logo.png"'), "루트 assets 경로가 없습니다.");
+expect(indexHtml.includes('src="assets/builders-lounge-logo.png"') && indexHtml.includes("portal-search-space"), "Builders Lounge 신규 로고 또는 분리된 검색 영역이 없습니다.");
+expect(!indexHtml.includes("portal-brand-mark") && !indexHtml.includes("portal-brand-copy"), "이전 임시 Builders Lounge 로고가 남아 있습니다.");
 expect(indexHtml.includes('<link rel="canonical" href="https://aihubos.github.io/builders-lounge/" />'), "canonical 루트 주소가 없습니다.");
 expect(indexHtml.includes('<meta property="og:url" content="https://aihubos.github.io/builders-lounge/" />'), "OG 루트 주소가 없습니다.");
 expect(!/noindex\s*,?\s*nofollow/i.test(indexHtml), "루트 검색 제외 설정이 남아 있습니다.");
@@ -109,6 +112,7 @@ for (const file of [
   "index.html",
   "styles.css",
   "assets",
+  "assets/builders-lounge-logo.png",
   "robots.txt",
   "sitemap.xml",
   ".nojekyll",
