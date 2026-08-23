@@ -3,139 +3,127 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="theme-color" content="#ffffff" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:url" content="https://aihubos.github.io/builders-lounge/" />
     <meta property="og:title" content="Builders Lounge | AI Builders Lab" />
-    <meta property="og:description" content="AI Builders Lab 멤버 작업공간. 작업, 결과물, 파일과 사용량을 한곳에서 확인합니다." />
+    <meta property="og:description" content="AI 도구, 작업과 결과물을 한곳에서 확인하는 Builders Lounge 샘플 UI MVP입니다." />
     <meta property="og:image" content="https://aihubos.github.io/builders-lounge/assets/og.png" />
     <link rel="canonical" href="https://aihubos.github.io/builders-lounge/" />
-    <meta
-      name="description"
-      content="AI Builders Lab 멤버 작업공간. 작업, 결과물, 파일과 사용량을 한곳에서 확인합니다."
-    />
+    <meta name="description" content="AI 도구, 작업과 결과물을 한곳에서 확인하는 Builders Lounge 샘플 UI MVP입니다." />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="stylesheet" href="lounge/lounge.css" />
     <title>Builders Lounge | AI Builders Lab</title>
   </head>
-  <body>
+  <body class="lounge-page">
     <a class="skip-link" href="#lounge-main">본문으로 바로가기</a>
 
-    <div class="lounge-app" data-lounge-shell data-lounge-app>
-      <header class="lounge-topbar">
-        <div class="topbar-start">
-          <button
-            class="menu-toggle"
-            type="button"
-            aria-expanded="false"
-            aria-controls="lounge-sidebar"
-            aria-label="작업공간 메뉴 열기"
-            data-lounge-menu-toggle
-          >
-            <span></span>
-            <span></span>
-          </button>
-          <a class="lounge-brand" href="#home" data-view-link="home">
-            <img
-              src="assets/ai-builders-lab-logo-transparent-384.webp"
-              width="384"
-              height="128"
-              alt="AI Builders Lab"
-            />
-            <span>
-              <strong>Builders Lounge</strong>
-              <small>AI 작업공간</small>
-            </span>
-          </a>
-        </div>
+    <div class="lounge-app" data-lounge-shell data-lounge-app data-demo-mode="on">
+      <header class="archive-topbar" aria-label="Report Hub 상단 메뉴">
+        <div class="archive-topbar-inner">
+          <div class="report-hub-brand-cluster">
+            <a class="archive-brand report-hub-brand-link" href="https://aireport.ai-hub-os.com/" aria-label="Report Hub 메인으로 이동">
+              <span class="report-hub-brand-copy">
+                <span class="report-hub-logo-mark-shimmer" aria-hidden="true"></span>
+                <img class="report-hub-logo-image" src="assets/report-hub-logo.png" width="190" height="43" alt="Report Hub" />
+              </span>
+            </a>
+            <time class="report-hub-clock" data-report-hub-clock="true" aria-label="서울 현재 날짜와 시각">
+              <span class="report-hub-clock-date"></span>
+              <span class="report-hub-clock-time"></span>
+            </time>
+          </div>
 
-        <div class="topbar-actions">
-          <span class="account-state" data-account-state>
-            <span class="state-mark" aria-hidden="true"></span>
-            멤버십 연결 전
-          </span>
+          <div class="archive-topbar-actions">
+            <nav class="archive-topbar-links" aria-label="외부 메뉴">
+              <a class="archive-community-board-card" href="https://aihubos.github.io/reportmode/board/" aria-label="Report Hub 의견 게시판 열기">
+                <span class="archive-community-board-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v6a2.5 2.5 0 0 1-2.5 2.5H12l-4.5 4v-4h0A2.5 2.5 0 0 1 5 12.5v-6Z"></path></svg></span>
+                <span>의견 게시판</span>
+              </a>
+              <a class="archive-builders-card" href="https://builderslab.ai-hub-os.com" target="_blank" rel="noopener" aria-label="AI Builders Lab 웹사이트 열기">
+                <img class="archive-builders-logo" src="assets/ai-builders-lab-logo.png" width="122" height="38" alt="AI Builders Lab 로고" />
+              </a>
+              <a class="archive-kakao-openchat-card" href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener" aria-label="AI Builders Lab 카카오 오픈채팅방 열기">
+                <img class="archive-kakao-openchat-banner" src="assets/kakao-openchat-banner.png" width="48" height="48" alt="카카오 오픈채팅" />
+              </a>
+              <a class="archive-daangn-banner-card" href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener" aria-label="당근 모임 열기">
+                <img class="archive-daangn-banner" src="assets/daangn-community-banner.png" width="118" height="48" alt="당근 모임" />
+              </a>
+              <a class="archive-blog-card" href="https://blog.naver.com/jeremylee0213" target="_blank" rel="noopener" aria-label="Jeremy의 네이버 블로그 열기">
+                <span class="archive-blog-mark" aria-hidden="true">N</span>
+                <span class="archive-blog-card-copy"><b>Jeremy's Blog</b><small>네이버 블로그</small></span>
+              </a>
+            </nav>
+            <span class="archive-visitor-count" id="loungeVisitorCount" aria-live="polite">방문 집계 중</span>
+          </div>
         </div>
       </header>
 
+      <div class="lounge-mobile-toolbar" data-mobile-toolbar>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="lounge-sidebar" aria-label="작업공간 메뉴 열기" data-lounge-menu-toggle>
+          <span></span><span></span><span></span>
+        </button>
+        <span class="mobile-toolbar-label">현재 화면</span>
+        <strong data-mobile-page-title>오늘 무엇을 만들어볼까요?</strong>
+      </div>
+
       <div class="lounge-layout">
-        <aside class="lounge-sidebar" id="lounge-sidebar" aria-label="작업공간 메뉴" data-lounge-sidebar tabindex="-1">
+        <aside class="lounge-sidebar" id="lounge-sidebar" aria-label="Builders Lounge 메뉴" data-lounge-sidebar tabindex="-1">
           <div class="sidebar-heading">
             <div>
-              <p class="sidebar-kicker">AI BUILDERS LAB</p>
+              <p class="sidebar-kicker">BUILDERS LOUNGE</p>
               <h1>작업공간</h1>
             </div>
             <button class="sidebar-close" type="button" aria-label="메뉴 닫기" data-lounge-menu-close>닫기</button>
           </div>
 
           <nav class="sidebar-nav" aria-label="작업공간 탐색">
-            <a class="nav-item is-active" href="#home" data-view-link="home" aria-current="page">
-              <span class="nav-label">홈</span>
-              <span class="nav-note">오늘의 작업</span>
+            <p class="nav-group-label">OVERVIEW</p>
+            <a class="nav-item is-active" href="#home" data-view-link="home">
+              <span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">홈</span><span class="nav-note">대시보드</span>
             </a>
 
             <div class="nav-group">
               <p class="nav-group-label">만들기</p>
               <div class="nav-stack">
-                <button class="nav-item nav-item-module" type="button" disabled data-connection-slot="meeting">
-                  <span class="nav-label">AI 회의록</span>
-                  <span class="nav-note">기존 기능 연결 예정</span>
-                </button>
-                <button class="nav-item nav-item-module" type="button" disabled data-connection-slot="shorts">
-                  <span class="nav-label">AI 쇼츠 스튜디오</span>
-                  <span class="nav-note">기존 기능 연결 예정</span>
-                </button>
+                <a class="nav-item" href="#meeting" data-view-link="meeting"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">AI 회의록</span></a>
+                <a class="nav-item" href="#shorts" data-view-link="shorts"><span class="nav-icon" aria-hidden="true">▶</span><span class="nav-label">AI 쇼츠 스튜디오</span></a>
               </div>
             </div>
 
             <div class="nav-group">
               <p class="nav-group-label">내 작업</p>
               <div class="nav-stack">
-                <a class="nav-item" href="#jobs" data-view-link="jobs">
-                  <span class="nav-label">진행 중 작업</span>
-                  <span class="nav-note" data-nav-jobs-count>확인 중</span>
-                </a>
-                <a class="nav-item" href="#results" data-view-link="results">
-                  <span class="nav-label">결과물</span>
-                  <span class="nav-note">보관된 결과</span>
-                </a>
-                <a class="nav-item" href="#files" data-view-link="files">
-                  <span class="nav-label">파일</span>
-                  <span class="nav-note">내 업로드</span>
-                </a>
+                <a class="nav-item" href="#jobs" data-view-link="jobs"><span class="nav-icon" aria-hidden="true">◷</span><span class="nav-label">진행 중 작업</span><span class="nav-count" data-nav-jobs-count>0</span></a>
+                <a class="nav-item" href="#results" data-view-link="results"><span class="nav-icon" aria-hidden="true">✓</span><span class="nav-label">결과물</span><span class="nav-count" data-nav-results-count>0</span></a>
+                <a class="nav-item" href="#files" data-view-link="files"><span class="nav-icon" aria-hidden="true">□</span><span class="nav-label">파일</span><span class="nav-count" data-nav-files-count>0</span></a>
               </div>
             </div>
 
             <div class="nav-group">
               <p class="nav-group-label">계정</p>
               <div class="nav-stack">
-                <a class="nav-item" href="#usage" data-view-link="usage">
-                  <span class="nav-label">사용량</span>
-                  <span class="nav-note">크레딧 확인</span>
-                </a>
-                <a class="nav-item" href="#membership" data-view-link="membership">
-                  <span class="nav-label">멤버십 상태</span>
-                  <span class="nav-note">연결 전</span>
-                </a>
-                <a class="nav-item" href="#settings" data-view-link="settings">
-                  <span class="nav-label">설정</span>
-                  <span class="nav-note">계정과 환경</span>
-                </a>
-                <a class="nav-item" href="#help" data-view-link="help">
-                  <span class="nav-label">도움말</span>
-                  <span class="nav-note">사용 안내</span>
-                </a>
+                <a class="nav-item" href="#usage" data-view-link="usage"><span class="nav-icon" aria-hidden="true">▥</span><span class="nav-label">사용량</span></a>
+                <a class="nav-item" href="#membership" data-view-link="membership"><span class="nav-icon" aria-hidden="true">○</span><span class="nav-label">멤버십 상태</span></a>
+              </div>
+            </div>
+
+            <div class="nav-group">
+              <p class="nav-group-label">지원</p>
+              <div class="nav-stack">
+                <a class="nav-item" href="#settings" data-view-link="settings"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-label">설정</span></a>
+                <a class="nav-item" href="#help" data-view-link="help"><span class="nav-icon" aria-hidden="true">?</span><span class="nav-label">도움말</span></a>
               </div>
             </div>
           </nav>
 
           <div class="sidebar-footer">
-            <div class="credit-summary" aria-label="사용량 요약">
-              <div class="credit-summary-head"><span>이번 달 사용량</span><strong data-credit-summary>연결 전</strong></div>
-              <div class="credit-meter" aria-hidden="true"><span data-credit-meter></span></div>
-              <small>멤버십 연결 후 표시됩니다.</small>
+            <div class="sidebar-demo-card">
+              <span class="sidebar-demo-dot" aria-hidden="true"></span>
+              <div><strong>MVP 데모</strong><small>실제 파일·AI 처리는 연결 전입니다.</small></div>
             </div>
-            <a class="sidebar-contact" href="mailto:hello@ai-hub-os.com">문의·오류 신고</a>
+            <a class="sidebar-contact" href="mailto:hello@ai-hub-os.com">문의·오류 신고 <span aria-hidden="true">↗</span></a>
           </div>
         </aside>
 
@@ -145,100 +133,36 @@
           <div class="page-wrap">
             <header class="page-header">
               <div>
-                <p class="page-kicker" data-page-kicker>Builders Lounge</p>
-                <h2 data-page-title>오늘의 작업공간</h2>
-                <p class="page-description" data-page-description>필요한 작업을 고르고, 결과를 확인하고, 다음 행동을 정합니다.</p>
+                <p class="page-kicker" data-page-kicker>BUILDERS LOUNGE</p>
+                <h2 data-page-title>오늘 무엇을 만들어볼까요?</h2>
+                <p class="page-description" data-page-description>AI 도구, 진행 중인 작업과 결과물을 한곳에서 확인합니다.</p>
               </div>
-              <span class="page-status" data-page-status>미리보기</span>
+              <span class="page-status" data-page-status>MVP 데모</span>
             </header>
 
             <div class="lounge-notice" role="status" aria-live="polite" data-lounge-notice>
-              현재는 작업공간 화면을 먼저 제공합니다. 멤버십과 기존 기능 연결은 준비가 끝난 뒤 별도로 켭니다.
+              아래 작업과 사용량은 화면 확인용 샘플입니다. 실제 파일은 업로드되거나 처리되지 않습니다.
             </div>
 
-            <section class="view-panel is-visible" id="view-home" data-view-panel="home">
-              <div class="home-intro">
-                <p class="section-label">WORKSPACE HOME</p>
-                <h3 id="home-title">작업을 시작할 위치를 고르세요.</h3>
-                <p>진행 중인 작업과 저장한 결과물을 한 화면에서 확인할 수 있습니다.</p>
-              </div>
-
-              <div class="workspace-overview" aria-label="작업공간 요약">
-                <a class="overview-row overview-row-primary" href="#jobs" data-view-link="jobs">
-                  <span class="overview-index" aria-hidden="true">01</span>
-                  <span class="overview-copy"><strong>진행 중 작업</strong><small>멈춘 작업과 처리 상태를 확인합니다.</small></span>
-                  <span class="overview-value" data-overview-jobs>확인 중</span>
-                </a>
-                <a class="overview-row" href="#results" data-view-link="results">
-                  <span class="overview-index" aria-hidden="true">02</span>
-                  <span class="overview-copy"><strong>결과물</strong><small>완료된 결과와 다운로드 기록을 확인합니다.</small></span>
-                  <span class="overview-value" data-overview-results>확인 중</span>
-                </a>
-                <a class="overview-row" href="#files" data-view-link="files">
-                  <span class="overview-index" aria-hidden="true">03</span>
-                  <span class="overview-copy"><strong>파일</strong><small>작업에 사용한 업로드 파일을 관리합니다.</small></span>
-                  <span class="overview-value" data-overview-files>확인 중</span>
-                </a>
-                <a class="overview-row" href="#usage" data-view-link="usage">
-                  <span class="overview-index" aria-hidden="true">04</span>
-                  <span class="overview-copy"><strong>사용량</strong><small>멤버십 연결 후 크레딧과 사용 내역을 표시합니다.</small></span>
-                  <span class="overview-value" data-overview-usage>연결 전</span>
-                </a>
-              </div>
-
-              <div class="module-section">
-                <div class="section-heading-row">
-                  <div><p class="section-label">MODULES</p><h3>연결 예정 기능</h3></div>
-                  <span class="section-meta">이름과 상태만 표시</span>
-                </div>
-                <div class="module-list">
-                  <div class="module-row" data-connection-slot="meeting">
-                    <div class="module-row-main"><span class="module-mark" aria-hidden="true">A</span><div><strong>AI 회의록</strong><small>기존 회의록 기능 연결 예정</small></div></div>
-                    <span class="module-status">연결 예정</span>
-                  </div>
-                  <div class="module-row" data-connection-slot="shorts">
-                    <div class="module-row-main"><span class="module-mark" aria-hidden="true">B</span><div><strong>AI 쇼츠 스튜디오</strong><small>기존 쇼츠 제작 기능 연결 예정</small></div></div>
-                    <span class="module-status">연결 예정</span>
-                  </div>
-                </div>
-              </div>
+            <section class="view-panel is-visible" id="view-home" data-view-panel="home"><div data-home-mount></div></section>
+            <section class="view-panel" id="view-meeting" data-view-panel="meeting" hidden></section>
+            <section class="view-panel" id="view-shorts" data-view-panel="shorts" hidden></section>
+            <section class="view-panel" id="view-jobs" data-view-panel="jobs" hidden><div data-jobs-slot></div></section>
+            <section class="view-panel" id="view-results" data-view-panel="results" hidden><div data-results-slot></div></section>
+            <section class="view-panel" id="view-files" data-view-panel="files" hidden><div data-files-slot></div></section>
+            <section class="view-panel" id="view-usage" data-view-panel="usage" hidden><div data-usage-slot></div></section>
+            <section class="view-panel" id="view-membership" data-view-panel="membership" hidden>
+              <div class="panel-heading"><p class="section-label">MEMBERSHIP</p><h3>멤버십 상태</h3><p>로그인이나 결제를 연결하기 전 상태를 안내합니다.</p></div>
+              <div class="membership-status-card"><span class="status-mark status-mark-review" aria-hidden="true"></span><div><span class="sample-label">연결 준비 중</span><h4>멤버십 연결 준비 중</h4><p>향후 연결 순서는 멤버십 확인 → 로그인 승인 → 도구 권한 연결입니다. 이번 MVP에서는 외부 권한을 변경하지 않습니다.</p></div></div>
             </section>
-
-            <section class="view-panel" id="view-jobs" data-view-panel="jobs" hidden>
-              <div class="panel-heading"><p class="section-label">MY WORK</p><h3 id="jobs-title">진행 중 작업</h3><p>작업 상태와 다음에 필요한 행동을 확인합니다.</p></div>
-              <div class="module-slot" data-jobs-slot><p class="empty-title">진행 중인 작업이 없습니다.</p><p>기존 기능을 연결하면 이곳에 작업 상태가 표시됩니다.</p></div>
-            </section>
-
-            <section class="view-panel" id="view-results" data-view-panel="results" aria-labelledby="results-title" hidden>
-              <div class="panel-heading"><p class="section-label">OUTPUTS</p><h3 id="results-title">결과물</h3><p>완료된 결과와 보관 상태를 확인합니다.</p></div>
-              <div class="module-slot" data-results-slot><p class="empty-title">아직 결과물이 없습니다.</p><p>기존 기능 연결 후 완료된 결과가 이곳에 쌓입니다.</p></div>
-            </section>
-
-            <section class="view-panel" id="view-files" data-view-panel="files" aria-labelledby="files-title" hidden>
-              <div class="panel-heading"><p class="section-label">FILES</p><h3 id="files-title">파일</h3><p>업로드한 원본과 작업 파일을 관리합니다.</p></div>
-              <div class="module-slot" data-files-slot><p class="empty-title">업로드한 파일이 없습니다.</p><p>파일 기능 연결 후 파일 상태와 삭제 메뉴가 이곳에 표시됩니다.</p></div>
-            </section>
-
-            <section class="view-panel" id="view-usage" data-view-panel="usage" aria-labelledby="usage-title" hidden>
-              <div class="panel-heading"><p class="section-label">USAGE</p><h3 id="usage-title">사용량</h3><p>멤버십 연결 전에는 크레딧과 비용을 표시하지 않습니다.</p></div>
-              <div class="module-slot" data-usage-slot><p class="empty-title">멤버십 연결 전</p><p>연결이 승인되면 월별 사용량과 내역을 확인할 수 있습니다.</p></div>
-            </section>
-
-            <section class="view-panel" id="view-membership" data-view-panel="membership" aria-labelledby="membership-title" hidden>
-              <div class="panel-heading"><p class="section-label">MEMBERSHIP</p><h3 id="membership-title">멤버십 상태</h3><p>외부 권한을 변경하지 않고 현재 연결 상태만 안내합니다.</p></div>
-              <div class="membership-status-row"><span class="status-mark status-mark-review" aria-hidden="true"></span><div><strong>연결 대기</strong><p>OAuth와 YouTube 멤버십 연동은 별도 승인 후 진행합니다.</p></div></div>
-            </section>
-
-            <section class="view-panel" id="view-settings" data-view-panel="settings" hidden>
-              <div class="panel-heading"><p class="section-label">SETTINGS</p><h3 id="settings-title">설정</h3><p>작업공간의 표시와 알림 설정을 확인합니다.</p></div>
-              <div class="module-slot" data-settings-slot><p class="empty-title">설정 기능을 준비 중입니다.</p><p>계정·연결·삭제 항목은 승인된 흐름이 준비된 뒤 추가합니다.</p></div>
-            </section>
-
-            <section class="view-panel" id="view-help" data-view-panel="help" aria-labelledby="help-title" hidden>
-              <div class="panel-heading"><p class="section-label">HELP</p><h3 id="help-title">도움말</h3><p>작업공간의 현재 범위와 연결 상태를 안내합니다.</p></div>
+            <section class="view-panel" id="view-settings" data-view-panel="settings" hidden><div data-settings-slot></div></section>
+            <section class="view-panel" id="view-help" data-view-panel="help" hidden>
+              <div class="panel-heading"><p class="section-label">HELP</p><h3>도움말</h3><p>샘플 UI의 범위와 설정 방법을 안내합니다.</p></div>
               <div class="help-list">
-                <details open><summary>지금 사용할 수 있는 기능은 무엇인가요?</summary><p>현재는 작업공간의 홈과 작업·결과물·파일·사용량·계정 메뉴 골격을 확인할 수 있습니다. AI 회의록과 AI 쇼츠 스튜디오는 기존 기능 연결 예정 상태입니다.</p></details>
-                <details><summary>왜 멤버십 연결 전으로 표시되나요?</summary><p>이번 화면에는 OAuth, YouTube API, 결제나 외부 권한 변경을 넣지 않았습니다. 승인된 연결 흐름이 준비되면 상태를 갱신합니다.</p></details>
+                <details open><summary>샘플 데이터란 무엇인가요?</summary><p>화면 구성과 이동을 확인하기 위한 가상의 작업·결과·파일입니다. 모든 항목에 샘플 표시가 붙으며 실제 데이터가 아닙니다.</p></details>
+                <details><summary>실제 파일이 전송되나요?</summary><p>아니요. 파일 선택창, 업로드, AI API, 로그인과 결제는 아직 연결되어 있지 않습니다.</p></details>
+                <details><summary>AI 도구는 언제 연결되나요?</summary><p>연결 주소와 승인된 이용 범위가 준비되면 각 도구 화면에 실제 시작 동선을 추가합니다. 현재는 3단계 설명만 제공합니다.</p></details>
+                <details><summary>메뉴와 보기 설정을 초기화하려면?</summary><p>설정에서 보기 밀도와 샘플 표시를 바꿀 수 있습니다. 브라우저 저장값을 지우면 기본값(여유 있게·샘플 표시)으로 돌아갑니다.</p></details>
               </div>
             </section>
           </div>
@@ -247,7 +171,6 @@
     </div>
 
     <div class="visually-hidden" role="status" aria-live="polite" data-lounge-live></div>
-
     <script type="module" src="lounge/lounge.js"></script>
   </body>
 </html>
