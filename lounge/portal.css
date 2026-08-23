@@ -169,6 +169,12 @@ html[data-lounge-route="home"] .lounge-notice { display: none; }
 .portal-start-card .primary-button { width: 100%; margin-top: 17px; background: #4594ff; }
 .portal-rail-head h4 { font-size: 14px; }
 .portal-rail-head > span { min-height: 22px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 999px; background: #f1f4f7; color: var(--lounge-muted); font-size: 9px; }
+.portal-build-card { border-color: #cfe2fb; background: #f7fbff; }
+.portal-build-card .portal-rail-head > span { background: #e5f0ff; color: var(--lounge-blue-strong); font-weight: 900; }
+.portal-build-card > p { margin: 11px 0 13px; color: var(--lounge-sub); font-size: 9px; line-height: 1.55; }
+.portal-build-card > .primary-button { width: 100%; }
+.portal-build-actions { display: flex; align-items: center; gap: 8px; }
+.portal-build-actions .primary-button { flex: 1; }
 .portal-newsletter-card { width: 100%; margin-top: 13px; padding: 14px; display: grid; gap: 7px; border: 0; border-radius: 11px; background: #eff6ff; color: inherit; text-align: left; }
 .portal-newsletter-issue { color: var(--lounge-blue-strong); font-size: 8px; font-weight: 900; letter-spacing: .08em; }
 .portal-newsletter-card > strong { color: var(--lounge-navy); font-size: 13px; line-height: 1.35; }
@@ -300,7 +306,7 @@ html[data-lounge-route="home"] .lounge-notice { display: none; }
   .portal-hero-map { padding: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
   .portal-hero-map span { min-width: 0; display: grid; justify-items: center; gap: 5px; font-size: 9px; text-align: center; }
   .portal-hero-map b { width: 25px; height: 25px; }
-  .portal-hero-map i { width: 12px; height: 1px; margin: 12px -6px 0; }
+  .portal-hero-map i { display: none; }
   .portal-panel { padding: 17px 14px; border-radius: 12px; }
   .portal-panel-head h4 { font-size: 16px; }
   .portal-panel-note { display: none; }

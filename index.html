@@ -15,6 +15,8 @@
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="stylesheet" href="lounge/lounge.css" />
     <link rel="stylesheet" href="lounge/portal.css" />
+    <link rel="stylesheet" href="lounge/platform.css" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <title>Builders Lounge | AI Builders Lab</title>
   </head>
   <body class="lounge-page">
@@ -59,6 +61,7 @@
               </a>
             </nav>
             <span class="archive-visitor-count" id="loungeVisitorCount" aria-live="polite">방문 집계 중</span>
+            <div class="platform-account" data-platform-account><span class="platform-account-loading">계정 확인 중</span></div>
           </div>
         </div>
       </header>
@@ -115,8 +118,8 @@
             <div class="nav-group"><p class="nav-group-label">만들기</p><div class="nav-stack">
               <a class="nav-item" href="#meeting" data-view-link="meeting"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">AI 회의록</span></a>
               <a class="nav-item" href="#shorts" data-view-link="shorts"><span class="nav-icon" aria-hidden="true">▶</span><span class="nav-label">AI 쇼츠 스튜디오</span></a>
-              <a class="nav-item" href="#webtoon" data-view-link="webtoon"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">웹툰 제작기</span><span class="nav-note">원본 앱</span></a>
-              <a class="nav-item" href="#masterpiece" data-view-link="masterpiece"><span class="nav-icon" aria-hidden="true">♜</span><span class="nav-label">세계명화 프롬프트</span><span class="nav-note">원본 앱</span></a>
+              <a class="nav-item" href="#webtoon" data-view-link="webtoon"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">웹툰 제작기</span><span class="nav-note">빌드 사용</span></a>
+              <a class="nav-item" href="#masterpiece" data-view-link="masterpiece"><span class="nav-icon" aria-hidden="true">♜</span><span class="nav-label">세계명화 프롬프트</span><span class="nav-note">빌드 사용</span></a>
             </div></div>
 
             <div class="nav-group"><p class="nav-group-label">AI 도구</p><div class="nav-stack">
@@ -142,8 +145,9 @@
             </div></div>
 
             <div class="nav-group"><p class="nav-group-label">계정</p><div class="nav-stack">
-              <a class="nav-item" href="#usage" data-view-link="usage"><span class="nav-icon" aria-hidden="true">▥</span><span class="nav-label">사용량</span></a>
-              <a class="nav-item" href="#membership" data-view-link="membership"><span class="nav-icon" aria-hidden="true">○</span><span class="nav-label">멤버십 상태</span></a>
+              <a class="nav-item" href="#usage" data-view-link="usage"><span class="nav-icon" aria-hidden="true">▥</span><span class="nav-label">빌드 내역</span><span class="nav-note" data-build-balance>로그인 전</span></a>
+              <a class="nav-item" href="#membership" data-view-link="membership"><span class="nav-icon" aria-hidden="true">○</span><span class="nav-label">내 계정</span></a>
+              <a class="nav-item" href="#admin" data-view-link="admin" data-admin-only hidden><span class="nav-icon" aria-hidden="true">◆</span><span class="nav-label">관리자 설정</span></a>
             </div></div>
 
             <div class="nav-group"><p class="nav-group-label">지원</p><div class="nav-stack">
@@ -182,14 +186,14 @@
             <section class="view-panel" id="view-meeting" data-view-panel="meeting" hidden></section>
             <section class="view-panel" id="view-shorts" data-view-panel="shorts" hidden></section>
             <section class="view-panel" id="view-webtoon" data-view-panel="webtoon" hidden>
-              <div class="webtoon-embed-head"><div><p class="section-label">MAKE · WEBTOON</p><h3>웹툰 제작기</h3><p>오른쪽 본문에서 공감툰 원본 앱을 바로 사용합니다.</p></div><div class="webtoon-embed-actions"><span class="sample-label webtoon-live-label">원본 앱 표시 중</span><a class="secondary-button" href="https://aihubos.github.io/gonggamtoon/" target="_blank" rel="noopener">새 탭으로 열기 <span aria-hidden="true">↗</span></a></div></div>
+              <div class="webtoon-embed-head"><div><p class="section-label">MAKE · WEBTOON</p><h3>웹툰 제작기</h3><p>Google 로그인과 빌드 잔액을 공유해 공감툰 스토리와 프롬프트를 만듭니다.</p></div><div class="webtoon-embed-actions"><span class="sample-label webtoon-live-label">빌드 포인트 연결</span><a class="secondary-button" href="https://aihubos.github.io/gonggamtoon/" target="_blank" rel="noopener">새 탭으로 열기 <span aria-hidden="true">↗</span></a></div></div>
               <section class="webtoon-embed-card" aria-label="공감툰 원본 앱"><div class="webtoon-embed-bar"><span class="webtoon-embed-dot" aria-hidden="true"></span><strong>gonggamtoon</strong><span>공감툰 프롬프트 생성기</span><a href="https://github.com/aihubos/gonggamtoon" target="_blank" rel="noopener">원본 저장소 ↗</a></div><iframe class="webtoon-iframe" src="https://aihubos.github.io/gonggamtoon/" title="공감툰 프롬프트 생성기" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe></section>
-              <p class="webtoon-safety-note"><strong>연결 범위 안내</strong> 원본 앱은 오른쪽 영역에 표시되며, Lounge에는 API 키·로그인·결제·파일 업로드 기능을 복사하지 않습니다.</p>
+              <p class="webtoon-safety-note"><strong>API 키 안내</strong> 사용자는 API 키를 입력하지 않습니다. 관리자 계정이 서버에 저장한 키와 도구별 빌드 가격을 사용합니다. 로컬 실행에서는 Codex CLI 모드도 계속 선택할 수 있습니다.</p>
             </section>
             <section class="view-panel" id="view-masterpiece" data-view-panel="masterpiece" hidden>
-              <div class="app-embed-head"><div><p class="section-label">MAKE · MASTERPIECE</p><h3>세계명화 프롬프트</h3><p>명화와 캐릭터·배경을 조합해 이미지 생성 프롬프트를 만듭니다.</p></div><div class="app-embed-actions"><span class="sample-label app-live-label">원본 앱 표시 중</span><a class="secondary-button" href="https://aihubos.github.io/world-masterpiece-bot/" target="_blank" rel="noopener">새 탭으로 열기 <span aria-hidden="true">↗</span></a></div></div>
+              <div class="app-embed-head"><div><p class="section-label">MAKE · MASTERPIECE</p><h3>세계명화 프롬프트</h3><p>명화와 캐릭터·배경을 조합해 이미지 생성 프롬프트를 만듭니다.</p></div><div class="app-embed-actions"><span class="sample-label app-live-label">빌드 포인트 연결</span><a class="secondary-button" href="https://aihubos.github.io/world-masterpiece-bot/" target="_blank" rel="noopener">새 탭으로 열기 <span aria-hidden="true">↗</span></a></div></div>
               <section class="app-embed-card" aria-label="세계명화 프롬프트 원본 앱"><div class="app-embed-bar"><span class="app-embed-dot app-embed-dot-art" aria-hidden="true"></span><strong>world-masterpiece-bot</strong><span>Nanobanana Prompt Studio</span><a href="https://github.com/aihubos/world-masterpiece-bot" target="_blank" rel="noopener">원본 저장소 ↗</a></div><iframe class="app-iframe" src="https://aihubos.github.io/world-masterpiece-bot/" title="세계명화 프롬프트 스튜디오" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></section>
-              <p class="app-safety-note"><strong>이용 안내</strong> 원본 앱의 생성 기능은 사용자가 원본 앱에서 직접 설정한 키와 선택값으로만 동작합니다. Lounge에는 키를 저장하지 않습니다.</p>
+              <p class="app-safety-note"><strong>이용 안내</strong> 프롬프트 조합은 무료이며, 실제 이미지 생성만 관리자 API와 설정된 빌드를 사용합니다. API 키는 브라우저에 저장하지 않습니다.</p>
             </section>
             <section class="view-panel" id="view-token" data-view-panel="token" hidden>
               <div class="app-embed-head"><div><p class="section-label">AI TOOL · COST</p><h3>토큰 비용 계산기</h3><p>사용 토큰 수와 모델 비율을 바꾸며 예상 API 비용을 바로 계산합니다.</p></div><div class="app-embed-actions"><span class="sample-label app-live-label">바로 사용</span><a class="secondary-button" href="https://aihubos.github.io/token-calculator/" target="_blank" rel="noopener">새 탭으로 열기 <span aria-hidden="true">↗</span></a></div></div>
@@ -207,18 +211,19 @@
             <section class="view-panel" id="view-files" data-view-panel="files" hidden><div data-files-slot></div></section>
             <section class="view-panel" id="view-usage" data-view-panel="usage" hidden><div data-usage-slot></div></section>
             <section class="view-panel" id="view-membership" data-view-panel="membership" hidden>
-              <div class="panel-heading"><p class="section-label">MEMBERSHIP</p><h3>멤버십 상태</h3><p>로그인이나 결제를 연결하기 전 상태를 안내합니다.</p></div>
-              <div class="membership-status-card"><span class="status-mark status-mark-review" aria-hidden="true"></span><div><span class="sample-label">연결 준비 중</span><h4>멤버십 연결 준비 중</h4><p>향후 연결 순서는 멤버십 확인 → 로그인 승인 → 도구 권한 연결입니다. 현재 공개 버전에서는 외부 권한을 변경하지 않습니다.</p></div></div>
+              <div class="panel-heading"><p class="section-label">GOOGLE ACCOUNT</p><h3>내 계정</h3><p>Google 계정과 빌드 잔액을 확인합니다.</p></div>
+              <div class="membership-status-card"><span class="status-mark status-mark-review" aria-hidden="true"></span><div><span class="sample-label">빌드 포인트</span><h4 data-build-balance>로그인 전</h4><p>게시글을 새로 등록하면 1빌드가 적립됩니다. AI 도구 사용 시 관리자가 정한 빌드가 차감되며, 실패한 생성 요청은 자동으로 되돌려집니다.</p><button class="primary-button" type="button" data-platform-login-open>Google 계정 확인</button></div></div>
             </section>
+            <section class="view-panel" id="view-admin" data-view-panel="admin" hidden><div data-admin-slot></div></section>
             <section class="view-panel" id="view-settings" data-view-panel="settings" hidden><div data-settings-slot></div></section>
             <section class="view-panel" id="view-help" data-view-panel="help" hidden>
               <div class="panel-heading"><p class="section-label">HELP & POLICY</p><h3>이용 안내</h3><p>실제 운영 기능과 샘플 범위, 커뮤니티 이용 원칙을 안내합니다.</p></div>
               <div class="help-list">
-                <details open><summary>지금 실제로 이용할 수 있는 기능은 무엇인가요?</summary><p>프롬프트·뉴스레터·영상·짤방·게임과 자유게시판은 실제 공개 콘텐츠입니다. 웹툰·세계명화·토큰 계산기는 연결된 원본 앱에서 바로 사용할 수 있습니다.</p></details>
+                <details open><summary>빌드는 어떻게 적립하고 사용하나요?</summary><p>Google 로그인 후 자유게시판에 새 글을 등록하면 1빌드가 적립됩니다. 글을 삭제하면 해당 1빌드도 취소됩니다. 회의록·쇼츠·웹툰·세계명화 이미지 생성에는 관리자가 정한 빌드가 사용됩니다.</p></details>
                 <details><summary>샘플 데이터란 무엇인가요?</summary><p>화면 구성과 이동을 확인하기 위한 가상의 작업·결과·파일입니다. 모든 항목에 샘플 표시가 붙으며 실제 데이터가 아닙니다.</p></details>
-                <details><summary>실제 파일이 전송되나요?</summary><p>아니요. 파일 선택창, 업로드, AI API, 로그인과 결제는 아직 연결되어 있지 않습니다.</p></details>
-                <details><summary>AI 도구는 언제 연결되나요?</summary><p>연결 주소와 승인된 이용 범위가 준비되면 각 도구 화면에 실제 시작 동선을 추가합니다. 현재는 3단계 설명만 제공합니다.</p></details>
-                <details><summary>게시판 비밀번호와 개인정보는 어떻게 처리하나요?</summary><p>게시글·댓글은 닉네임과 작성 비밀번호 방식으로 동작합니다. 비밀번호는 브라우저에 저장하지 않으며, 공개 글에는 일반 텍스트만 허용합니다. 개인 정보·비밀값·내부 경로는 작성하지 마세요.</p></details>
+                <details><summary>실제 파일이 전송되나요?</summary><p>회의록 화면의 TXT·MD·SRT·VTT 파일은 브라우저에서 글자만 읽어 AI 서버로 전달합니다. 음성·영상 파일 업로드와 MP4 렌더링은 별도의 제작 API가 연결되기 전까지 실행하지 않습니다.</p></details>
+                <details><summary>API 키는 어디에 저장되나요?</summary><p>사용자 브라우저에는 저장하지 않습니다. Jeremy 관리자 계정이 입력한 키만 서버에서 암호화해 보관하며, 저장 후 화면에 다시 표시하지 않습니다.</p></details>
+                <details><summary>게시판 로그인과 개인정보는 어떻게 처리하나요?</summary><p>Builders Lounge에서는 Google 로그인 계정 이름으로 글과 댓글을 작성합니다. 로그인 토큰은 현재 탭의 메모리에만 유지합니다. 공개 글에는 일반 텍스트만 허용하므로 개인정보·비밀값·내부 경로를 작성하지 마세요.</p></details>
                 <details><summary>부적절한 글이나 운영 문제는 어디에 알리나요?</summary><p>하단 문의하기 또는 hello@ai-hub-os.com으로 글 주소와 사유를 보내 주세요. 운영자는 Report Hub와 공유된 관리자 기능으로 필요한 조치를 확인합니다.</p></details>
                 <details><summary>뉴스레터·영상·프롬프트 출처는 어디인가요?</summary><p>Vault 후보를 공개 가능한 내용으로 다시 작성하고 원문 링크를 붙입니다. 외부 뉴스레터·영상·기사 전문을 복사하지 않으며, 원본 프로젝트와 YouTube는 사용자가 직접 열 때만 불러옵니다.</p></details>
                 <details><summary>게임과 영상이 보이지 않으면 어떻게 하나요?</summary><p>브라우저가 iframe을 차단할 수 있습니다. 각 카드의 새 탭 링크로 원본을 열어 주세요. 자동 재생은 하지 않고 선택한 콘텐츠 하나만 표시합니다.</p></details>
@@ -261,6 +266,19 @@
       </form>
       <div class="portal-search-results" data-global-search-results></div>
       <p class="portal-search-note">게시판 검색은 Report Hub와 공유된 실제 게시글을 대상으로 합니다.</p>
+    </dialog>
+
+    <dialog class="platform-login-dialog" data-platform-login-dialog aria-labelledby="platform-login-title">
+      <section class="platform-login-card">
+        <div class="platform-login-head"><div><p>BUILDERS LOUNGE ACCOUNT</p><h2 id="platform-login-title">Google 계정으로 시작하기</h2></div><button class="platform-login-close" type="button" data-platform-login-close aria-label="로그인 창 닫기">×</button></div>
+        <ul class="platform-login-benefits">
+          <li><b>+1</b><span>게시글 한 건을 등록하면 1빌드가 적립됩니다.</span></li>
+          <li><b>AI</b><span>빌드로 회의록·쇼츠·웹툰·세계명화 생성 기능을 사용합니다.</span></li>
+          <li><b>KEY</b><span>사용자는 API 키를 입력하지 않습니다. 관리자가 서버에서 설정합니다.</span></li>
+        </ul>
+        <div class="platform-google-button" data-google-signin-button></div>
+        <p class="platform-login-status" data-platform-login-status role="status"></p>
+      </section>
     </dialog>
 
     <div class="visually-hidden" role="status" aria-live="polite" data-lounge-live></div>

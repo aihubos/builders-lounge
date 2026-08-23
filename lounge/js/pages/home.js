@@ -1,10 +1,10 @@
 import { getFeaturedPrompts, getLatestNewsletter, publishedItems } from "../../community-data.js";
 
 const MODULES = Object.freeze([
-  { id: "webtoon", title: "웹툰 제작기", description: "대화와 아이디어를 공감 카드로 바꿉니다.", detail: "원본 앱", icon: "▣", action: "webtoon", accent: "blue", live: true },
-  { id: "shorts", title: "AI 쇼츠 스튜디오", description: "긴 영상에서 짧은 콘텐츠 후보를 찾습니다.", detail: "샘플 흐름", icon: "▶", action: "shorts", accent: "navy" },
-  { id: "masterpiece", title: "세계명화 프롬프트", description: "명화와 캐릭터를 새로운 장면으로 조합합니다.", detail: "원본 앱", icon: "♜", action: "masterpiece", accent: "orange", live: true },
-  { id: "token", title: "토큰 비용 계산기", description: "모델별 예상 API 비용을 비교합니다.", detail: "바로 사용", icon: "₩", action: "token", accent: "green", live: true },
+  { id: "meeting", title: "AI 회의록", description: "회의 기록을 결정사항과 할 일로 정리합니다.", icon: "✦", action: "meeting", accent: "blue" },
+  { id: "shorts", title: "AI 쇼츠 스튜디오", description: "주제와 대본을 쇼츠 제작안으로 바꿉니다.", icon: "▶", action: "shorts", accent: "navy" },
+  { id: "webtoon", title: "웹툰 제작기", description: "대화와 아이디어를 공감 카드로 바꿉니다.", icon: "▣", action: "webtoon", accent: "green" },
+  { id: "masterpiece", title: "세계명화 프롬프트", description: "명화와 캐릭터를 새로운 장면으로 조합합니다.", icon: "♜", action: "masterpiece", accent: "orange" },
 ]);
 
 function normalizeOptions(rootOrOptions, maybeOptions = {}) {
@@ -27,7 +27,17 @@ function statusMeta(status) {
 }
 
 function renderTool(module) {
-  return `<button class="portal-tool-card portal-tool-${module.accent}" type="button" data-home-module="${module.action}"><span class="portal-tool-icon" aria-hidden="true">${module.icon}</span><span class="portal-tool-copy"><span><strong>${module.title}</strong><em>${module.detail}</em></span><small>${module.description}</small></span><span class="portal-row-arrow" aria-hidden="true">→</span></button>`;
+  const setting = window.BuildersPlatform?.getTool?.(module.id);
+  const detail = setting?.enabled ? `${Number(setting.cost || 0).toLocaleString("ko-KR")}빌드` : "API 준비 중";
+  return `<button class="portal-tool-card portal-tool-${module.accent}" type="button" data-home-module="${module.action}"><span class="portal-tool-icon" aria-hidden="true">${module.icon}</span><span class="portal-tool-copy"><span><strong>${module.title}</strong><em>${detail}</em></span><small>${module.description}</small></span><span class="portal-row-arrow" aria-hidden="true">→</span></button>`;
+}
+
+function renderBuildCard(session) {
+  if (!session?.authenticated) {
+    return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><p class="section-label">MY BUILDS</p><h4>빌드 포인트</h4></div><span>로그인 전</span></div><p>Google 로그인 후 게시글을 새로 등록하면 1빌드가 적립됩니다.</p><button class="primary-button" type="button" data-home-login>Google 로그인</button></section>`;
+  }
+  const user = session.user || {};
+  return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><p class="section-label">MY BUILDS</p><h4>${escapeHtml(user.name || "빌더")}님의 빌드</h4></div><span>${Number(user.balance || 0).toLocaleString("ko-KR")}빌드</span></div><p>글을 쓰면 +1빌드, AI 도구를 실행하면 관리자가 정한 빌드가 사용됩니다.</p><div class="portal-build-actions"><button class="primary-button" type="button" data-home-write>글 쓰고 적립</button><button class="text-button" type="button" data-home-nav="usage">내역 보기</button></div></section>`;
 }
 
 function feedItems() {
@@ -92,14 +102,15 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
   const memes = publishedItems("memes");
   const projects = memes.filter((item) => item.category === "빌더 결과물").slice(0, 4);
   const feed = feedItems();
+  const session = window.BuildersPlatform?.snapshot?.() || null;
   root.__homeCallbacks = { onNavigate, onModuleOpen, onWrite };
 
   root.innerHTML = `<section class="lounge-home portal-home" aria-labelledby="home-dashboard-title">
     <div class="portal-home-layout">
       <div class="portal-home-main">
         <section class="portal-home-hero">
-          <div class="portal-home-hero-copy"><span class="portal-live-badge"><i aria-hidden="true"></i> BUILDERS COMMUNITY</span><h3 id="home-dashboard-title">만들고, 나누고,<br><strong>함께 성장해요.</strong></h3><p>AI 도구와 프롬프트를 사용하고, 빌더들의 실제 경험과 결과물을 한곳에서 만나보세요.</p><div class="portal-home-hero-actions"><button class="primary-button" type="button" data-home-nav="prompts">프롬프트 둘러보기 <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-home-write>첫 글 남기기</button></div></div>
-          <div class="portal-hero-map" aria-label="Builders Lounge 이용 흐름"><span><b>01</b>도구 고르기</span><i></i><span><b>02</b>직접 만들기</span><i></i><span><b>03</b>경험 나누기</span></div>
+          <div class="portal-home-hero-copy"><span class="portal-live-badge"><i aria-hidden="true"></i> BUILDERS COMMUNITY</span><h3 id="home-dashboard-title">만들고, 나누고,<br><strong>함께 성장해요.</strong></h3><p>게시판에 경험을 나누어 빌드를 모으고, AI 회의록·쇼츠·웹툰·이미지 제작에 사용해 보세요.</p><div class="portal-home-hero-actions"><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기 <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-home-nav="meeting">AI 도구 둘러보기</button></div></div>
+          <div class="portal-hero-map" aria-label="Builders Lounge 이용 흐름"><span><b>01</b>Google 로그인</span><i></i><span><b>02</b>글 작성 · 1빌드 적립</span><i></i><span><b>03</b>AI 도구에서 사용</span></div>
         </section>
 
         <section class="portal-panel portal-feed-panel" aria-labelledby="home-feed-title">
@@ -114,7 +125,7 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
         </section>
 
         <section class="portal-panel portal-tools-panel" aria-labelledby="home-tools-title">
-          <div class="portal-panel-head"><div><p class="section-label">BUILD WITH AI</p><h4 id="home-tools-title">오늘 바로 써보는 제작 도구</h4></div><span class="portal-panel-note">원본 앱 3개 · 샘플 흐름 1개</span></div>
+          <div class="portal-panel-head"><div><p class="section-label">BUILD WITH AI</p><h4 id="home-tools-title">빌드로 사용하는 AI 제작 도구</h4></div><span class="portal-panel-note">가격·모델·API는 관리자 설정</span></div>
           <div class="portal-tool-grid">${MODULES.map(renderTool).join("")}</div>
         </section>
 
@@ -125,7 +136,9 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
       </div>
 
       <aside class="portal-home-rail" aria-label="Builders Lounge 추천 정보">
-        <section class="portal-rail-card portal-start-card"><span class="portal-rail-eyebrow">처음 오셨나요?</span><h4>3분이면 빌더가<br>될 수 있어요.</h4><ol><li><b>1</b><span><strong>프롬프트 고르기</strong><small>검증된 공개 템플릿부터</small></span></li><li><b>2</b><span><strong>도구로 만들어보기</strong><small>웹툰·영상·이미지·계산기</small></span></li><li><b>3</b><span><strong>경험 공유하기</strong><small>질문과 결과물을 게시판에</small></span></li></ol><button class="primary-button" type="button" data-home-nav="prompts">첫 프롬프트 고르기</button></section>
+        <section class="portal-rail-card portal-start-card"><span class="portal-rail-eyebrow">처음 오셨나요?</span><h4>글 하나가<br>1빌드가 돼요.</h4><ol><li><b>1</b><span><strong>Google 계정으로 로그인</strong><small>계정과 빌드 잔액을 안전하게 연결</small></span></li><li><b>2</b><span><strong>게시판에 경험 나누기</strong><small>새 글 등록 완료 시 1빌드 적립</small></span></li><li><b>3</b><span><strong>AI 제작 도구 사용</strong><small>회의록·쇼츠·웹툰·이미지 생성</small></span></li></ol><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></section>
+
+        ${renderBuildCard(session)}
 
         <section class="portal-rail-card portal-rail-section"><div class="portal-rail-head"><div><p class="section-label">WEEKLY LETTER</p><h4>AI 빌더스 랩 뉴스레터</h4></div><span>${newsletters.length}개</span></div>${renderNewsletterSide(newsletter)}</section>
 
@@ -135,9 +148,9 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
 
         <section class="portal-rail-card portal-channel-card"><p class="section-label">OFFICIAL CHANNELS</p><h4>라운지 밖에서도 만나요</h4><div><a href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener"><span class="channel-dot channel-kakao" aria-hidden="true">K</span>카카오 오픈채팅 <b aria-hidden="true">↗</b></a><a href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener"><span class="channel-dot channel-daangn" aria-hidden="true">당</span>당근 모임 <b aria-hidden="true">↗</b></a></div></section>
 
-        <section class="portal-rail-card portal-work-card"><div class="portal-rail-head"><div><p class="section-label">MY WORK · SAMPLE</p><h4>작업 현황</h4></div><button class="text-button" type="button" data-home-nav="jobs">보기</button></div>${jobs.length ? `<ul>${jobs.slice(0, 2).map(renderRecentJob).join("")}</ul>` : `<p>설정에서 샘플 데이터를 켜면 작업 예시가 표시됩니다.</p>`}<div class="portal-work-counts"><span>결과물 <b>${results.length}</b></span><span>파일 <b>${files.length}</b></span><span>사용량 <b>${usage ? `${usage.used}/${usage.total}` : "연결 전"}</b></span></div></section>
+        <section class="portal-rail-card portal-work-card"><div class="portal-rail-head"><div><p class="section-label">DEMO WORK</p><h4>샘플 작업</h4></div><button class="text-button" type="button" data-home-nav="jobs">보기</button></div>${jobs.length ? `<ul>${jobs.slice(0, 2).map(renderRecentJob).join("")}</ul>` : `<p>설정에서 샘플 데이터를 켜면 작업 예시가 표시됩니다.</p>`}<div class="portal-work-counts"><span>결과물 <b>${results.length}</b></span><span>파일 <b>${files.length}</b></span><span>샘플 사용량 <b>${usage ? `${usage.used}/${usage.total}` : "숨김"}</b></span></div></section>
 
-        <p class="portal-home-disclosure">게시판과 공개 콘텐츠는 실제로 작동합니다. 작업·파일·사용량은 화면 확인용 샘플이며 로그인·결제는 아직 연결되지 않았습니다.</p>
+        <p class="portal-home-disclosure">게시판·Google 계정·빌드 원장은 실제 운영 데이터입니다. 샘플 작업·파일은 별도 표시됩니다. API 키는 관리자만 서버에 설정하며 사용자 브라우저에는 전달되지 않습니다.</p>
       </aside>
     </div>
   </section>`;
@@ -148,6 +161,7 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
       if (nav) { root.__homeCallbacks?.onNavigate(nav.dataset.homeNav); return; }
       const module = event.target.closest("[data-home-module]");
       if (module) { root.__homeCallbacks?.onModuleOpen({ action: module.dataset.homeModule }); return; }
+      if (event.target.closest("[data-home-login]")) { window.BuildersPlatform?.openLogin?.(); return; }
       if (event.target.closest("[data-home-write]")) { root.__homeCallbacks?.onWrite(); return; }
       if (event.target.closest("[data-home-search]")) { window.dispatchEvent(new CustomEvent("lounge:searchopen")); return; }
       const copy = event.target.closest("[data-home-copy]");

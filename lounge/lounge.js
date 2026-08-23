@@ -1,5 +1,7 @@
+import "./platform.js";
 import { renderHome } from "./js/pages/home.js";
 import { mountJobs } from "./jobs.js";
+import { mountAdmin } from "./admin.js";
 import "./settings.js";
 import "./placeholders.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";
@@ -32,22 +34,23 @@ const searchForm = document.querySelector("[data-global-search-form]");
 
 const viewMeta = Object.freeze({
   home: { kicker: "BUILDERS LOUNGE · COMMUNITY", title: "만들고, 나누고, 함께 성장해요", description: "AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 만나보세요.", status: "커뮤니티 운영 중" },
-  meeting: { kicker: "만들기", title: "AI 회의록", description: "회의 파일을 정리하고 검토하는 샘플 흐름을 확인합니다.", status: "샘플 화면" },
-  shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "영상에서 후보 구간을 찾는 샘플 흐름을 확인합니다.", status: "샘플 화면" },
-  webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 프롬프트 원본 앱을 오른쪽 본문에서 바로 사용합니다.", status: "원본 앱 연결" },
-  masterpiece: { kicker: "만들기", title: "세계명화 프롬프트", description: "명화와 캐릭터·배경을 조합하는 원본 앱을 바로 사용합니다.", status: "원본 앱 연결" },
+  meeting: { kicker: "만들기", title: "AI 회의록", description: "회의 기록을 실행 가능한 회의록으로 만들고 빌드로 결제합니다.", status: "빌드 포인트" },
+  shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "대본이나 주제를 쇼츠 제작안으로 만들고 빌드로 결제합니다.", status: "빌드 포인트" },
+  webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 제작기가 Google 로그인과 빌드 잔액을 공유합니다.", status: "빌드 포인트" },
+  masterpiece: { kicker: "만들기", title: "세계명화 프롬프트", description: "프롬프트는 무료로 만들고 이미지 생성에 빌드를 사용합니다.", status: "빌드 포인트" },
   token: { kicker: "AI 도구", title: "토큰 비용 계산기", description: "사용 토큰 수에 따른 예상 API 비용을 바로 계산합니다.", status: "바로 사용" },
   prompts: { kicker: "AI 도구", title: "프롬프트 모음", description: "상황별 공개 프롬프트를 찾아 복사하고 직접 고쳐 씁니다.", status: "공개 콘텐츠" },
   newsletter: { kicker: "콘텐츠", title: "AI 빌더스 랩 뉴스레터", description: "AI 도구와 빌더의 실전 경험을 짧고 꾸준하게 읽습니다.", status: "읽기용 아카이브" },
   videos: { kicker: "콘텐츠", title: "영상 모음", description: "요약을 먼저 보고 원하는 영상만 눌러 재생합니다.", status: "선택 재생" },
   memes: { kicker: "콘텐츠", title: "짤방", description: "AI·개발 공감 밈과 빌더 결과물을 함께 봅니다.", status: "공개 콘텐츠" },
-  board: { kicker: "커뮤니티", title: "자유게시판", description: "Report Hub와 같은 글·댓글을 닉네임으로 나눕니다.", status: "실시간 게시판" },
+  board: { kicker: "커뮤니티", title: "자유게시판", description: "Report Hub와 같은 글·댓글을 Google 계정으로 나눕니다.", status: "실시간 게시판" },
   games: { kicker: "커뮤니티", title: "게임방", description: "한 번에 하나의 게임만 불러와 가볍게 즐깁니다.", status: "선택 실행" },
   jobs: { kicker: "내 작업", title: "진행 중 작업", description: "샘플 작업의 상태와 진행률을 확인합니다.", status: "샘플 데이터" },
   results: { kicker: "내 작업", title: "결과물", description: "완료된 샘플 결과를 미리 확인합니다.", status: "샘플 데이터" },
   files: { kicker: "내 작업", title: "파일", description: "작업에 사용된 샘플 파일 목록을 확인합니다.", status: "샘플 데이터" },
-  usage: { kicker: "계정", title: "사용량", description: "멤버십 연결 전에는 샘플 사용량만 표시합니다.", status: "연결 전" },
-  membership: { kicker: "계정", title: "멤버십 상태", description: "로그인·결제 연결 전의 현재 상태를 안내합니다.", status: "연결 전" },
+  usage: { kicker: "계정", title: "빌드 내역", description: "적립·사용·환불·관리자 조정 내역을 확인합니다.", status: "실시간 잔액" },
+  membership: { kicker: "계정", title: "내 계정", description: "Google 계정과 현재 빌드 잔액을 확인합니다.", status: "Google 로그인" },
+  admin: { kicker: "관리", title: "관리자 설정", description: "AI API·모델·빌드 가격·멤버 권한을 설정합니다.", status: "Jeremy 관리자" },
   settings: { kicker: "지원", title: "설정", description: "보기 밀도와 샘플 표시 여부를 바꿉니다.", status: "브라우저 저장" },
   help: { kicker: "지원", title: "이용 안내", description: "실제 운영 기능과 샘플 범위, 커뮤니티 이용 원칙을 확인합니다.", status: "운영 안내" },
 });
@@ -59,7 +62,7 @@ let searchReturnFocus = null;
 const SEARCH_TOOLS = Object.freeze([
   { id: "search-meeting", title: "AI 회의록", summary: "회의 기록을 결정사항과 할 일로 정리하는 제작 흐름", route: "meeting", typeLabel: "제작 도구", icon: "✦" },
   { id: "search-shorts", title: "AI 쇼츠 스튜디오", summary: "긴 영상에서 세로형 숏폼 후보를 찾는 제작 흐름", route: "shorts", typeLabel: "제작 도구", icon: "▶" },
-  { id: "search-webtoon", title: "웹툰 제작기", summary: "대화와 아이디어를 공감 카드로 바꾸는 원본 앱", route: "webtoon", typeLabel: "제작 도구", icon: "▣" },
+  { id: "search-webtoon", title: "웹툰 제작기", summary: "빌드 포인트로 대화와 아이디어를 공감 카드로 바꾸는 도구", route: "webtoon", typeLabel: "제작 도구", icon: "▣" },
   { id: "search-masterpiece", title: "세계명화 프롬프트", summary: "명화와 캐릭터를 조합하는 이미지 프롬프트 도구", route: "masterpiece", typeLabel: "제작 도구", icon: "♜" },
   { id: "search-token", title: "토큰 비용 계산기", summary: "모델별 예상 API 비용을 비교하는 원본 도구", route: "token", typeLabel: "AI 도구", icon: "₩" },
   { id: "search-board", title: "자유게시판", summary: "질문, 정보와 빌더 결과물을 나누는 통합 게시판", route: "board", typeLabel: "커뮤니티", icon: "☷" },
@@ -169,15 +172,18 @@ function formatDate(value) {
 }
 
 function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "home") {
-  if (view === "home") return "게시판과 공개 콘텐츠는 실제로 작동합니다. 작업·결과·파일·사용량만 화면 확인용 샘플입니다.";
-  if (view === "webtoon") return "웹툰 제작기 원본 앱을 오른쪽 본문에 표시합니다. Lounge에는 API 키·파일·생성 요청을 저장하지 않습니다.";
-  if (view === "masterpiece") return "세계명화 프롬프트 원본 앱을 오른쪽 본문에 표시합니다. 생성에 필요한 설정값은 원본 앱에서만 처리됩니다.";
+  if (view === "home") return "Google 로그인 후 게시글 한 건당 1빌드가 적립됩니다. API 키와 도구별 가격은 관리자만 설정합니다.";
+  if (view === "meeting") return "텍스트 회의 기록만 AI로 전달합니다. 성공한 생성 요청에만 설정된 빌드가 사용됩니다.";
+  if (view === "shorts") return "현재는 쇼츠 대본·컷 구성 생성입니다. 실제 MP4 제작은 관리자가 외부 제작 API를 연결하면 제공됩니다.";
+  if (view === "webtoon") return "웹툰 제작기는 Lounge 로그인과 빌드 잔액을 공유합니다. API 키는 서버에서만 사용합니다.";
+  if (view === "masterpiece") return "프롬프트 조합은 무료이며 실제 이미지 생성에만 설정된 빌드가 사용됩니다.";
   if (view === "token") return "토큰 비용 계산기는 원본 도구를 오른쪽 본문에 표시합니다. 입력한 계산값은 Lounge에 저장하지 않습니다.";
   if (view === "prompts") return "공개용으로 정리한 프롬프트만 제공합니다. 개인 정보·로컬 경로·비밀값은 포함하지 않습니다.";
   if (view === "newsletter") return "AI 빌더스 랩 뉴스레터는 직접 작성한 요약과 원문 출처를 제공하는 읽기용 아카이브입니다.";
   if (view === "videos") return "영상은 재생 버튼을 눌렀을 때만 youtube-nocookie.com 플레이어를 한 개 불러옵니다.";
   if (view === "memes") return "자체 제작 밈과 공개 프로젝트 결과물을 함께 소개합니다. 원본 프로젝트 링크를 확인해 주세요.";
-  if (view === "board") return "게시글과 댓글은 Report Hub 게시판과 공유됩니다. 작성 비밀번호는 브라우저에 저장하지 않습니다.";
+  if (view === "board") return "게시글과 댓글은 Report Hub와 공유됩니다. Google 로그인 후 새 글을 등록하면 1빌드가 적립됩니다.";
+  if (view === "admin") return "관리자만 API 키·모델·빌드 가격·멤버 잔액·삭제 권한을 설정할 수 있습니다. API 키는 다시 표시되지 않습니다.";
   if (view === "games") return "게임은 선택한 한 개만 본문에 표시합니다. 화면이 열리지 않으면 새 탭으로 이용할 수 있습니다.";
   return demoMode ? "아래 작업과 사용량은 화면 확인용 샘플입니다. 실제 파일은 업로드되거나 처리되지 않습니다." : "샘플 데이터가 숨겨져 있습니다. 실제 파일·AI 처리는 아직 연결되지 않았습니다.";
 }
@@ -203,13 +209,21 @@ function renderFiles(root, data) {
 
 function renderUsage(root, data) {
   if (!root) return;
-  const usage = data.usage;
-  if (!usage) {
-    root.innerHTML = `<div class="panel-heading"><p class="section-label">USAGE</p><h3>사용량</h3><p>멤버십 연결 전에는 사용량을 표시하지 않습니다.</p></div><div class="empty-state"><span class="empty-state-icon" aria-hidden="true">▥</span><strong>연결 전</strong><p>샘플 표시가 꺼져 있습니다. 실제 크레딧은 멤버십 연결 후 제공됩니다.</p></div>`;
+  const session = window.BuildersPlatform?.snapshot?.();
+  if (!session?.user) {
+    root.innerHTML = `<div class="panel-heading"><p class="section-label">BUILD LEDGER</p><h3>빌드 내역</h3><p>Google 로그인 후 적립과 사용 내역을 확인합니다.</p></div><div class="empty-state"><span class="empty-state-icon" aria-hidden="true">B</span><strong>로그인이 필요합니다.</strong><p>게시글을 등록하면 1빌드가 적립됩니다.</p><button class="primary-button" type="button" data-platform-login-open>Google 로그인</button></div>`;
     return;
   }
-  const percent = Math.round((usage.used / usage.total) * 100);
-  root.innerHTML = `<div class="panel-heading"><p class="section-label">USAGE</p><h3>사용량</h3><p>이번 달 사용량을 샘플로 보여줍니다.</p></div><section class="usage-card"><div class="usage-card-heading"><div><span class="sample-label">샘플 사용량</span><h4>${usage.used}<small> / ${usage.total}</small></h4></div><strong>${percent}%</strong></div><div class="usage-progress" role="progressbar" aria-label="샘플 사용량 ${percent}%" aria-valuenow="${usage.used}" aria-valuemin="0" aria-valuemax="${usage.total}"><i style="width:${percent}%"></i></div><div class="usage-breakdown"><div><span>AI 회의록</span><strong>${usage.meeting}</strong><small>샘플 크레딧</small></div><div><span>AI 쇼츠 스튜디오</span><strong>${usage.shorts}</strong><small>샘플 크레딧</small></div></div></section>`;
+  root.innerHTML = `<div class="panel-heading"><p class="section-label">BUILD LEDGER</p><h3>빌드 내역</h3><p>적립·사용·환불·관리자 조정 기록입니다.</p></div><section class="usage-card"><div class="usage-card-heading"><div><span class="sample-label">현재 잔액</span><h4>${Number(session.user.balance || 0).toLocaleString("ko-KR")}<small> 빌드</small></h4></div><strong>${escapeHtml(session.user.name || "빌더")}</strong></div><div class="file-list" data-build-ledger><div class="community-loading">내역을 불러오는 중입니다.</div></div></section>`;
+  window.BuildersPlatform.request("/lounge/me/ledger").then((response) => {
+    const list = root.querySelector("[data-build-ledger]");
+    if (!list) return;
+    const ledger = Array.isArray(response.ledger) ? response.ledger : [];
+    list.innerHTML = ledger.length ? ledger.map((entry) => `<article class="file-row"><div class="file-icon" aria-hidden="true">${Number(entry.delta) > 0 ? "+" : "−"}</div><div class="file-copy"><strong>${escapeHtml(entry.reason)}</strong><span>${formatDate(entry.created_at)} · 잔액 ${Number(entry.balance_after || 0).toLocaleString("ko-KR")}빌드</span></div><strong class="${Number(entry.delta) > 0 ? "status-success" : "danger-text"}">${Number(entry.delta) > 0 ? "+" : ""}${Number(entry.delta).toLocaleString("ko-KR")}</strong></article>`).join("") : '<div class="empty-state"><strong>아직 빌드 내역이 없습니다.</strong><p>첫 게시글을 작성하면 1빌드가 적립됩니다.</p></div>';
+  }).catch((error) => {
+    const list = root.querySelector("[data-build-ledger]");
+    if (list) list.innerHTML = `<div class="community-error-state"><strong>내역을 불러오지 못했습니다.</strong><p>${escapeHtml(error.message)}</p></div>`;
+  });
 }
 
 function updateCounts(data) {
@@ -302,12 +316,14 @@ function initializeModules() {
   const meeting = document.querySelector('[data-view-panel="meeting"]');
   const shorts = document.querySelector('[data-view-panel="shorts"]');
   const settings = document.querySelector("[data-settings-slot]");
+  const admin = document.querySelector("[data-admin-slot]");
   if (meeting) window.LoungePlaceholders?.render(meeting, { tool: "meeting" });
   if (shorts) window.LoungePlaceholders?.render(shorts, { tool: "shorts" });
   renderHomeModule();
   if (settings) window.LoungeSettings?.render(settings, { demoMode, onDemoChange: setDemoMode });
   renderDataModules();
   mountCommunity();
+  if (admin) mountAdmin(admin);
 }
 
 function bindNavigation() {
@@ -341,6 +357,10 @@ function bindNavigation() {
   window.addEventListener("popstate", () => showView(window.location.hash.slice(1), { announce: false }));
   window.addEventListener("lounge:navigate", (event) => showView(event.detail?.view, { updateHash: true }));
   window.addEventListener("lounge:searchopen", openGlobalSearch);
+  window.addEventListener("lounge:authchange", () => {
+    renderDataModules();
+    if (document.documentElement.dataset.loungeRoute === "home") renderHomeModule();
+  });
 }
 
 applySavedDensity();

@@ -45,6 +45,7 @@ button:disabled { cursor: not-allowed; }
 .nav-group-label { margin: 0 8px 7px; color: var(--lounge-muted); font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 .nav-stack { display: grid; gap: 3px; }
 .nav-item { position: relative; min-height: 42px; padding: 0 10px; display: flex; align-items: center; gap: 9px; border-radius: 10px; color: var(--lounge-sub); text-decoration: none; transition: background-color 180ms ease, color 180ms ease; }
+.nav-item[hidden], [data-admin-only][hidden] { display: none !important; }
 .nav-item:hover { background: #f7f9fb; color: var(--lounge-ink); }
 .nav-item.is-active { background: var(--lounge-blue-soft); color: var(--lounge-blue-strong); font-weight: 800; }
 .nav-item.is-active::before { content: ""; position: absolute; left: -14px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--lounge-blue); }
