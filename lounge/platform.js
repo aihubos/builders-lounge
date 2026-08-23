@@ -48,7 +48,7 @@ async function request(path, options = {}) {
   try {
     response = await fetch(API_BASE + path, { cache: "no-store", ...options, headers });
   } catch (error) {
-    const wrapped = new Error("서버에 연결하지 못했습니다. 네트워크 상태와 관리자 API 설정을 확인해 주세요.");
+    const wrapped = new Error("생성 서버와 연결이 끊어졌습니다. 잠시 후 다시 시도하거나, 관리자 설정에서 연결 방식을 OpenRouter로 저장해 주세요.");
     wrapped.code = "network_error";
     throw wrapped;
   }
