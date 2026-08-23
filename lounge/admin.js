@@ -1,9 +1,21 @@
 const PROVIDER_LABELS = Object.freeze({
-  openai: "OpenAI 호환",
+  openai: "OpenAI",
+  openrouter: "OpenRouter",
+  moonshot: "Kimi Moonshot",
   gemini: "Gemini 텍스트",
   "gemini-image": "Gemini 이미지",
   anthropic: "Anthropic",
   webhook: "외부 제작 API",
+});
+
+const PROVIDER_DEFAULTS = Object.freeze({
+  openai: { endpointUrl: "https://api.openai.com/v1/chat/completions", model: "gpt-5.4" },
+  openrouter: { endpointUrl: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-5.4" },
+  moonshot: { endpointUrl: "https://api.moonshot.ai/v1/chat/completions", model: "kimi-k2.5" },
+  gemini: { endpointUrl: "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent", model: "gemini-2.5-flash" },
+  "gemini-image": { endpointUrl: "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent", model: "gemini-3-pro-image-preview" },
+  anthropic: { endpointUrl: "https://api.anthropic.com/v1/messages", model: "claude-sonnet-4-6" },
+  webhook: { endpointUrl: "", model: "" },
 });
 
 function escapeHtml(value) {
@@ -27,8 +39,8 @@ function renderTool(tool) {
       <label>소모 빌드<input type="number" name="buildCost" min="0" max="10000" value="${Number(tool.cost || 0)}" required></label>
       <label>연결 방식<select name="provider">${Object.entries(PROVIDER_LABELS).map(([id, label]) => `<option value="${id}" ${tool.provider === id ? "selected" : ""}>${label}</option>`).join("")}</select></label>
     </div>
-    <label>API 주소<input type="url" name="endpointUrl" maxlength="700" value="${escapeHtml(tool.endpointUrl || "")}" required placeholder="https://..."></label>
-    <label>모델<input name="model" maxlength="120" value="${escapeHtml(tool.model || "")}" required placeholder="모델 이름"></label>
+    <label>API 주소<input type="url" name="endpointUrl" maxlength="700" value="${escapeHtml(tool.endpointUrl || "")}" required placeholder="https://openrouter.ai/api/v1/chat/completions"></label>
+    <label>모델<input name="model" maxlength="120" value="${escapeHtml(tool.model || "")}" required placeholder="openrouter 모델 또는 kimi-k2.5"></label>
     <label>API 키
       <input type="password" name="apiKey" maxlength="10000" autocomplete="new-password" placeholder="${tool.apiKeyConfigured ? "새 키를 입력할 때만 변경됩니다" : "서버에 암호화해 저장할 키"}">
     </label>
@@ -48,9 +60,9 @@ function renderUser(user, currentEmail) {
     <span class="admin-user-copy"><strong>${escapeHtml(user.display_name || user.email)}</strong><small>${escapeHtml(user.email)} · ${user.role === "admin" ? "관리자" : "멤버"}</small></span>
     <span class="admin-user-balance">${Number(user.build_balance || 0).toLocaleString("ko-KR")} 빌드</span>
     <form class="admin-user-adjust" data-admin-adjust-form="${escapeHtml(user.google_sub)}">
-      <input type="number" name="delta" step="1" placeholder="±빌드" aria-label="조정할 빌드" required>
-      <input name="reason" maxlength="200" placeholder="조정 이유" aria-label="조정 이유" required>
-      <button class="secondary-button" type="submit">반영</button>
+      <input type="number" name="delta" step="1" placeholder="예: 10 또는 -3" aria-label="조정할 빌드" required>
+      <input name="reason" maxlength="200" placeholder="충전 또는 회수 이유" aria-label="조정 이유" required>
+      <button class="secondary-button" type="submit">포인트 반영</button>
     </form>
     <button class="danger-button" type="button" data-admin-delete-user="${escapeHtml(user.google_sub)}" ${protectedUser ? "disabled" : ""}>계정 삭제</button>
   </article>`;
@@ -79,16 +91,16 @@ async function loadAdmin(root) {
     const admins = Array.isArray(settings.admins) ? settings.admins.filter((item) => Number(item.active || 0) === 1) : [];
     root.innerHTML = `<section class="admin-shell" aria-labelledby="admin-title">
       <div class="admin-summary">
-        <div><p class="section-label">BUILDERS LOUNGE · ADMIN</p><h3 id="admin-title">관리자 설정</h3><p>도구별 API·모델·가격과 멤버 빌드를 한곳에서 관리합니다.</p></div>
+        <div><p class="section-label">BUILDERS LOUNGE · ADMIN</p><h3 id="admin-title">관리자 설정</h3><p>글·댓글은 기본 1빌드, 이미지는 5빌드, 영상은 10빌드입니다. OpenRouter와 Kimi도 여기서 연결합니다.</p></div>
         <div class="admin-ready-list"><span data-ready="${settings.loginReady}">Google 로그인 ${settings.loginReady ? "완료" : "설정 필요"}</span><span data-ready="${settings.encryptionReady}">API 키 보관 ${settings.encryptionReady ? "완료" : "설정 필요"}</span><span>${users.length}명</span></div>
       </div>
       <section class="admin-section">
-        <div class="admin-section-head"><div><h4>AI 도구 설정</h4><p>키는 저장 후 다시 표시되지 않습니다. 새 키를 입력할 때만 교체됩니다.</p></div></div>
+        <div class="admin-section-head"><div><h4>AI 도구 설정</h4><p>연결 방식에서 OpenRouter 또는 Kimi Moonshot을 고르고, 키·모델·소모 빌드를 저장하세요. 키는 저장 후 다시 보이지 않습니다.</p></div></div>
         <div class="admin-tool-grid">${tools.map(renderTool).join("")}</div>
       </section>
       <section class="admin-section">
-        <div class="admin-section-head"><div><h4>멤버·빌드 관리</h4><p>양수는 충전, 음수는 회수입니다. 모든 조정은 관리자 기록에 남습니다.</p></div></div>
-        <div class="admin-user-list">${users.length ? users.map((user) => renderUser(user, session.user.email)).join("") : '<div class="community-empty-state">가입한 멤버가 없습니다.</div>'}</div>
+        <div class="admin-section-head"><div><h4>가입 회원·포인트 관리</h4><p>현재 잔액을 보고, 양수는 충전, 음수는 회수합니다. 모든 조정은 기록에 남습니다.</p></div><label class="admin-search-label">회원 검색<input type="search" data-admin-user-search placeholder="이름 또는 이메일"></label></div>
+        <div class="admin-user-list" data-admin-user-list>${users.length ? users.map((user) => renderUser(user, session.user.email)).join("") : '<div class="community-empty-state">가입한 멤버가 없습니다.</div>'}</div>
         <p class="admin-status" data-admin-user-status role="status"></p>
       </section>
       <section class="admin-section">
@@ -158,6 +170,24 @@ export function mountAdmin(root) {
     }
   });
 
+  root.addEventListener("input", (event) => {
+    const search = event.target.closest("[data-admin-user-search]");
+    if (search) {
+      const query = search.value.trim().toLocaleLowerCase("en-US");
+      root.querySelectorAll("[data-admin-user]").forEach((row) => {
+        row.hidden = query ? !row.textContent.toLocaleLowerCase("en-US").includes(query) : false;
+      });
+    }
+  });
+  root.addEventListener("change", (event) => {
+    const select = event.target.closest('select[name="provider"]');
+    if (!select) return;
+    const form = select.closest("[data-admin-tool-form]");
+    const preset = PROVIDER_DEFAULTS[select.value];
+    if (!form || !preset) return;
+    if (preset.endpointUrl) form.elements.endpointUrl.value = preset.endpointUrl;
+    if (preset.model) form.elements.model.value = preset.model;
+  });
   root.addEventListener("click", async (event) => {
     const platform = window.BuildersPlatform;
     if (event.target.closest("[data-admin-retry]")) { refresh(); return; }

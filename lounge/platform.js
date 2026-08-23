@@ -9,7 +9,7 @@ const ERROR_MESSAGES = Object.freeze({
   unverified_google_account: "확인된 Google 계정으로 로그인해 주세요.",
   admin_required: "관리자 계정만 사용할 수 있습니다.",
   not_owner: "본인이 작성한 글만 수정하거나 삭제할 수 있습니다.",
-  insufficient_builds: "빌드가 부족합니다. 게시글을 작성하거나 관리자에게 충전을 요청해 주세요.",
+  insufficient_builds: "빌드가 부족합니다. 글이나 댓글을 작성하거나 관리자에게 충전을 요청해 주세요.",
   tool_disabled: "관리자가 이 도구를 아직 열지 않았습니다.",
   tool_not_configured: "관리자 API 설정이 아직 완료되지 않았습니다.",
   config_encryption_not_ready: "서버의 API 키 보관 설정이 아직 완료되지 않았습니다.",

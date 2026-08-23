@@ -15,7 +15,7 @@ html { scroll-padding-top: 78px; }
 
 .portal-menu-toggle { display: none; }
 
-.portal-search-space {
+.portal-search-space { display: none !important;
   margin-top: 64px;
   border-bottom: 1px solid #dfe7f0;
   background: linear-gradient(100deg, #edf5ff 0%, #f6f9fc 52%, #eef4fb 100%);
@@ -355,3 +355,6 @@ html[data-lounge-route="home"] .lounge-notice { display: none; }
   .portal-tool-card, .portal-search-trigger { transition: none; }
   .portal-tool-card:hover { transform: none; }
 }
+
+.lounge-shell { padding-top: 8px; }
+@media (max-width: 700px) { .lounge-shell { padding-top: 4px; } }

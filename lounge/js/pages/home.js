@@ -34,10 +34,10 @@ function renderTool(module) {
 
 function renderBuildCard(session) {
   if (!session?.authenticated) {
-    return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><p class="section-label">MY BUILDS</p><h4>빌드 포인트</h4></div><span>로그인 전</span></div><p>Google 로그인 후 게시글을 새로 등록하면 1빌드가 적립됩니다.</p><button class="primary-button" type="button" data-home-login>Google 로그인</button></section>`;
+    return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><p class="section-label">MY BUILDS</p><h4>빌드 포인트</h4></div><span>로그인 전</span></div><p>Google 로그인 후 글이나 댓글을 남기면 각각 1빌드가 적립됩니다.</p><button class="primary-button" type="button" data-home-login>Google 로그인</button></section>`;
   }
   const user = session.user || {};
-  return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><p class="section-label">MY BUILDS</p><h4>${escapeHtml(user.name || "빌더")}님의 빌드</h4></div><span>${Number(user.balance || 0).toLocaleString("ko-KR")}빌드</span></div><p>글을 쓰면 +1빌드, AI 도구를 실행하면 관리자가 정한 빌드가 사용됩니다.</p><div class="portal-build-actions"><button class="primary-button" type="button" data-home-write>글 쓰고 적립</button><button class="text-button" type="button" data-home-nav="usage">내역 보기</button></div></section>`;
+  return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><p class="section-label">MY BUILDS</p><h4>${escapeHtml(user.name || "빌더")}님의 빌드</h4></div><span>${Number(user.balance || 0).toLocaleString("ko-KR")}빌드</span></div><p>글·댓글은 +1빌드, 이미지는 5빌드, 영상은 10빌드가 기본입니다. 관리자가 바꿀 수 있습니다.</p><div class="portal-build-actions"><button class="primary-button" type="button" data-home-write>글 쓰고 적립</button><button class="text-button" type="button" data-home-nav="usage">내역 보기</button></div></section>`;
 }
 
 function feedItems() {
@@ -110,11 +110,11 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
       <div class="portal-home-main">
         <section class="portal-home-hero">
           <div class="portal-home-hero-copy"><span class="portal-live-badge"><i aria-hidden="true"></i> BUILDERS COMMUNITY</span><h3 id="home-dashboard-title">만들고, 나누고,<br><strong>함께 성장해요.</strong></h3><p>게시판에 경험을 나누어 빌드를 모으고, AI 회의록·쇼츠·웹툰·이미지 제작에 사용해 보세요.</p><div class="portal-home-hero-actions"><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기 <span aria-hidden="true">→</span></button><button class="secondary-button" type="button" data-home-nav="meeting">AI 도구 둘러보기</button></div></div>
-          <div class="portal-hero-map" aria-label="Builders Lounge 이용 흐름"><span><b>01</b>Google 로그인</span><i></i><span><b>02</b>글 작성 · 1빌드 적립</span><i></i><span><b>03</b>AI 도구에서 사용</span></div>
+          <div class="portal-hero-map" aria-label="Builders Lounge 이용 흐름"><span><b>01</b>Google 로그인</span><i></i><span><b>02</b>글·댓글 작성 · 1빌드</span><i></i><span><b>03</b>AI 도구에서 사용</span></div>
         </section>
 
         <section class="portal-panel portal-feed-panel" aria-labelledby="home-feed-title">
-          <div class="portal-panel-head"><div><p class="section-label">LOUNGE NOW</p><h4 id="home-feed-title">라운지 모아보기</h4></div><button class="portal-search-link" type="button" data-home-search>전체 검색 <span aria-hidden="true">⌕</span></button></div>
+          <div class="portal-panel-head"><div><p class="section-label">LOUNGE NOW</p><h4 id="home-feed-title">라운지 모아보기</h4></div></div>
           <div class="portal-feed-tabs" role="group" aria-label="모아보기 분류"><button type="button" aria-pressed="true" data-home-feed-filter="all">추천</button><button type="button" aria-pressed="false" data-home-feed-filter="prompt">프롬프트</button><button type="button" aria-pressed="false" data-home-feed-filter="newsletter">뉴스레터</button><button type="button" aria-pressed="false" data-home-feed-filter="video">영상</button><button type="button" aria-pressed="false" data-home-feed-filter="play">놀이터</button></div>
           <div class="portal-feed-list">${feed.map(renderFeedRow).join("")}</div>
         </section>
@@ -136,7 +136,7 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
       </div>
 
       <aside class="portal-home-rail" aria-label="Builders Lounge 추천 정보">
-        <section class="portal-rail-card portal-start-card"><span class="portal-rail-eyebrow">처음 오셨나요?</span><h4>글 하나가<br>1빌드가 돼요.</h4><ol><li><b>1</b><span><strong>Google 계정으로 로그인</strong><small>계정과 빌드 잔액을 안전하게 연결</small></span></li><li><b>2</b><span><strong>게시판에 경험 나누기</strong><small>새 글 등록 완료 시 1빌드 적립</small></span></li><li><b>3</b><span><strong>AI 제작 도구 사용</strong><small>회의록·쇼츠·웹툰·이미지 생성</small></span></li></ol><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></section>
+        <section class="portal-rail-card portal-start-card"><span class="portal-rail-eyebrow">처음 오셨나요?</span><h4>글 하나가<br>1빌드가 돼요.</h4><ol><li><b>1</b><span><strong>Google 계정으로 로그인</strong><small>계정과 빌드 잔액을 안전하게 연결</small></span></li><li><b>2</b><span><strong>게시판에 경험 나누기</strong><small>글 또는 댓글 1건당 1빌드 적립</small></span></li><li><b>3</b><span><strong>AI 제작 도구 사용</strong><small>회의록·쇼츠·웹툰·이미지 생성</small></span></li></ol><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></section>
 
         ${renderBuildCard(session)}
 
