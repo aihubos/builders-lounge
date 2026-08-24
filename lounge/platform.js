@@ -352,6 +352,47 @@ function requirePlatformLogin() {
 }
 
 const shorts = Object.freeze({
+  async status({ jobId = "", requestId = "" }) {
+    requirePlatformLogin();
+    const path = jobId
+      ? `/lounge/shorts/${encodeURIComponent(jobId)}`
+      : `/lounge/shorts?requestId=${encodeURIComponent(requestId)}`;
+    if (!jobId && !requestId) throw new Error("복구할 쇼츠 작업을 확인하지 못했습니다.");
+    const data = await request(path);
+    applyBalance(data.balance);
+    return data;
+  },
+  async media({ mediaUrl }) {
+    requirePlatformLogin();
+    let target;
+    try { target = new URL(String(mediaUrl || "")); }
+    catch { throw new Error("저장된 영상 주소를 확인하지 못했습니다."); }
+    const apiOrigin = new URL(API_BASE).origin;
+    if (target.origin !== apiOrigin || !target.pathname.startsWith("/lounge/shorts/")) {
+      throw new Error("저장된 영상 주소를 확인하지 못했습니다.");
+    }
+    let response;
+    try {
+      response = await fetch(target.href, {
+        cache: "no-store",
+        headers: { Authorization: `Bearer ${state.credential}` },
+      });
+    } catch {
+      throw Object.assign(new Error("저장된 영상과 연결이 끊어졌습니다. 잠시 후 다시 확인해 주세요."), { code: "network_error" });
+    }
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      const error = new Error(errorMessage(body?.error, body?.message || "저장된 영상을 불러오지 못했습니다."));
+      error.code = body?.error || "request_failed";
+      error.status = response.status;
+      throw error;
+    }
+    const video = await response.blob();
+    if (!video.size || !String(video.type || response.headers.get("Content-Type") || "").startsWith("video/webm")) {
+      throw new Error("저장된 WebM 영상 파일을 확인하지 못했습니다.");
+    }
+    return video;
+  },
   async prepare({ requestId = crypto.randomUUID(), topic, settings }) {
     requirePlatformLogin();
     const data = await request("/lounge/shorts/prepare", {

@@ -8,6 +8,12 @@
 .shorts-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .shorts-flow span { padding: 10px 12px; border-radius: 999px; background: #eef2f7; color: #64748b; font-size: 13px; font-weight: 700; text-align: center; }
 .shorts-flow span[aria-current="step"] { background: #1457d9; color: #fff; }
+.shorts-recovery { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 20px; border: 1px solid var(--lounge-border, #e5e8eb); border-radius: 16px; background: var(--lounge-blue-soft, #e8f3ff); }
+.shorts-recovery[hidden] { display: none; }
+.shorts-recovery[data-error="true"] { border-color: #fecdd3; background: #fff1f2; }
+.shorts-recovery strong { color: var(--lounge-navy, #000c3d); }
+.shorts-recovery p { margin: 5px 0 0; color: var(--lounge-sub, #6b7684); font-size: 13px; line-height: 1.55; }
+.shorts-recovery .shorts-actions { flex: 0 0 auto; margin: 0; }
 .shorts-panel { padding: clamp(20px, 4vw, 36px); border: 1px solid #dbe5f4; border-radius: 26px; background: #fff; box-shadow: 0 16px 44px rgba(15, 23, 42, .06); }
 .shorts-panel label { display: grid; gap: 8px; color: #1e293b; font-weight: 750; }
 .shorts-panel textarea, .shorts-panel input, .shorts-panel select { width: 100%; min-width: 0; border: 1px solid #cbd5e1; border-radius: 14px; background: #fff; color: #0f172a; font: inherit; padding: 13px 14px; }
@@ -45,6 +51,8 @@
 .shorts-result-copy p { color: #334155; font-size: 18px; font-weight: 750; }
 .shorts-result-copy .secondary-button { width: fit-content; }
 .shorts-result-copy small { color: #64748b; }
+.shorts-recovery-note { margin-bottom: 20px; padding: 14px 16px; border: 1px solid #fed7aa; border-radius: 14px; background: #fff7ed; color: #9a3412; }
+.shorts-recovery-note p { margin: 5px 0 0; font-size: 13px; line-height: 1.55; }
 [data-shorts-publish] { display: grid; gap: 14px; margin-top: 28px; padding-top: 24px; border-top: 1px solid #e2e8f0; }
 [data-shorts-publish] h4 { margin: 0; font-size: 24px; }
 [data-shorts-publish] > p { margin: 0; color: #64748b; }
@@ -63,7 +71,7 @@
 .shorts-license a { color: #1457d9; }
 
 @media (max-width: 768px) {
-  .shorts-heading, .shorts-panel-head { align-items: stretch; flex-direction: column; }
+  .shorts-heading, .shorts-panel-head, .shorts-recovery { align-items: stretch; flex-direction: column; }
   .shorts-cost { min-width: 0; text-align: left; }
   .shorts-flow { grid-template-columns: repeat(2, 1fr); }
   .shorts-settings-grid, .shorts-publish-grid, .shorts-result-grid { grid-template-columns: 1fr; }
