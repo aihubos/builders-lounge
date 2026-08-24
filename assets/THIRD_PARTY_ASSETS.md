@@ -44,3 +44,31 @@
 - LLM Wiki 원문 GitHub Gist: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
 
 다운로드 메뉴도 외부 로고를 내려받지 않고 명칭과 출처 설명만 표시합니다.
+
+## MoneyPrinterTurbo
+
+쇼츠 제작기는 Harry의 오픈소스 프로젝트 [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo)의 제작 흐름을 참고해 개발했습니다. 이 표기는 원저작자의 후원, 인증 또는 공식 제휴를 의미하지 않습니다.
+
+```text
+MIT License
+
+Copyright (c) 2024 Harry
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

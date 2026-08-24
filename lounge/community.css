@@ -163,6 +163,8 @@
 .board-detail-card h4 { margin: 14px 0 8px; color: var(--lounge-navy); font-size: 27px; letter-spacing: -.06em; }
 .board-detail-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--lounge-muted); font-size: 11px; }
 .board-detail-content { margin: 25px 0 0; padding-top: 20px; border-top: 1px solid #eef1f4; color: var(--lounge-ink); font-size: 14px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.board-media-badge { display: inline-flex; align-items: center; width: fit-content; margin-left: 6px; padding: 3px 7px; border-radius: 999px; background: #ecfdf5; color: #047857; font-size: 10px; font-style: normal; font-weight: 800; vertical-align: middle; }
+.board-detail-media { display: block; width: min(100%, 420px); max-height: 70vh; margin: 22px auto 0; border-radius: 18px; background: #0f172a; object-fit: contain; }
 .board-detail-actions { margin-top: 22px; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .danger-text { color: #a13b37; }
 .board-comments { margin-top: 14px; }

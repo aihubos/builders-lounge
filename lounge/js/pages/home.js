@@ -37,7 +37,7 @@ function renderBuildCard(session) {
     return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><p class="section-label">MY BUILDS</p><h4>빌드 포인트</h4></div><span>로그인 전</span></div><p>Google 로그인 후 글이나 댓글을 남기면 각각 1빌드가 적립됩니다.</p><button class="primary-button" type="button" data-home-login>Google 로그인</button></section>`;
   }
   const user = session.user || {};
-  return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><p class="section-label">MY BUILDS</p><h4>${escapeHtml(user.name || "빌더")}님의 빌드</h4></div><span>${Number(user.balance || 0).toLocaleString("ko-KR")}빌드</span></div><p>글·댓글은 +1빌드, 이미지는 5빌드, 영상은 10빌드가 기본입니다. 관리자가 바꿀 수 있습니다.</p><div class="portal-build-actions"><button class="primary-button" type="button" data-home-write>글 쓰고 적립</button><button class="text-button" type="button" data-home-nav="usage">내역 보기</button></div></section>`;
+  return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><p class="section-label">MY BUILDS</p><h4>${escapeHtml(user.name || "빌더")}님의 빌드</h4></div><span>${Number(user.balance || 0).toLocaleString("ko-KR")}빌드</span></div><p>일반 글·댓글은 +1빌드, 쇼츠 영상은 저장 성공 시 5빌드입니다. 쇼츠 게시 등록에는 추가 적립이나 차감이 없습니다.</p><div class="portal-build-actions"><button class="primary-button" type="button" data-home-write>글 쓰고 적립</button><button class="text-button" type="button" data-home-nav="usage">내역 보기</button></div></section>`;
 }
 
 function feedItems() {

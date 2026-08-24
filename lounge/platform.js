@@ -19,6 +19,19 @@ const ERROR_MESSAGES = Object.freeze({
   request_already_used: "같은 생성 요청이 이미 처리되었습니다. 다시 눌러 새 요청을 시작해 주세요.",
   prompt_required: "생성할 내용을 입력해 주세요.",
   invalid_endpoint: "API 주소는 외부 HTTPS 주소만 사용할 수 있습니다.",
+  shorts_cost_misconfigured: "쇼츠 사용 비용이 Build 5로 설정되어 있지 않습니다.",
+  shorts_topic_too_short: "만들고 싶은 내용을 한 문장으로 조금 더 적어 주세요.",
+  shorts_storage_not_configured: "영상 저장소가 아직 연결되지 않았습니다.",
+  shorts_webm_required: "이 브라우저에서 WebM 영상을 만들지 못했습니다.",
+  shorts_file_size_invalid: "영상 파일 크기를 확인하지 못했거나 25MB를 넘었습니다.",
+  shorts_reservation_released: "이 작업의 Build 예약은 이미 해제되었습니다.",
+  shorts_already_completed: "이미 완성된 영상은 취소할 수 없습니다.",
+  shorts_not_completed: "영상 저장이 끝난 뒤 게시할 수 있습니다.",
+  shorts_rights_confirmation_required: "사용할 자료와 게시 내용의 권리를 확인해 주세요.",
+  shorts_media_missing: "저장된 영상을 찾지 못했습니다.",
+  shorts_publish_failed: "게시판에 등록하지 못했습니다. 같은 버튼으로 다시 시도해 주세요.",
+  shorts_upload_commit_failed: "영상 저장은 끝났지만 Build 확정 상태를 확인하지 못했습니다. 다시 시도하지 말고 관리자에게 알려 주세요.",
+  shorts_use_studio: "쇼츠는 AI 쇼츠 스튜디오 화면에서 만들어 주세요.",
   server_error: "서버에서 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.",
 });
 
@@ -332,6 +345,58 @@ async function generate(toolId, input) {
   return data;
 }
 
+function requirePlatformLogin() {
+  if (state.user && state.credential) return;
+  openLogin();
+  throw Object.assign(new Error(ERROR_MESSAGES.login_required), { code: "login_required" });
+}
+
+const shorts = Object.freeze({
+  async prepare({ requestId = crypto.randomUUID(), topic, settings }) {
+    requirePlatformLogin();
+    const data = await request("/lounge/shorts/prepare", {
+      method: "POST",
+      headers: { "X-Request-Id": requestId },
+      body: JSON.stringify({ requestId, topic, settings }),
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async upload({ requestId = crypto.randomUUID(), jobId, video, mimeType = "video/webm" }) {
+    requirePlatformLogin();
+    if (!(video instanceof Blob) || !jobId) throw new Error("업로드할 영상을 확인하지 못했습니다.");
+    const data = await request(`/lounge/shorts/${encodeURIComponent(jobId)}/upload`, {
+      method: "POST",
+      headers: {
+        "Content-Type": mimeType,
+        "X-Request-Id": requestId,
+        "X-File-Size": String(video.size),
+      },
+      body: video,
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async release({ requestId = crypto.randomUUID(), jobId, reason = "user_cancelled" }) {
+    requirePlatformLogin();
+    const data = await request(`/lounge/shorts/${encodeURIComponent(jobId)}/release`, {
+      method: "POST",
+      headers: { "X-Request-Id": requestId },
+      body: JSON.stringify({ requestId, reason }),
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async publish({ publishRequestId = crypto.randomUUID(), jobId, title, content, rightsConfirmed }) {
+    requirePlatformLogin();
+    return request(`/lounge/shorts/${encodeURIComponent(jobId)}/publish`, {
+      method: "POST",
+      headers: { "X-Request-Id": publishRequestId },
+      body: JSON.stringify({ publishRequestId, title, content, rightsConfirmed }),
+    });
+  },
+});
+
 window.BuildersPlatform = Object.freeze({
   API_BASE,
   initialize,
@@ -344,6 +409,7 @@ window.BuildersPlatform = Object.freeze({
   getCredential,
   getTool,
   generate,
+  shorts,
   applyBalance,
   acceptCredential,
   errorMessage,
