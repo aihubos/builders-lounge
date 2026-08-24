@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="lounge/lounge.css" />
     <link rel="stylesheet" href="lounge/portal.css" />
     <link rel="stylesheet" href="lounge/platform.css" />
+    <link rel="stylesheet" href="lounge/shorts.css" />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <title>Builders Lounge | AI Builders Lab</title>
   </head>
@@ -98,7 +99,7 @@
               <p class="nav-group-label">만들기</p>
               <div class="nav-stack">
                 <a class="nav-item" href="#meeting" data-view-link="meeting"><span class="nav-label">AI 회의록</span></a>
-                <a class="nav-item" href="#shorts" data-view-link="shorts"><span class="nav-label">쇼츠 스튜디오</span></a>
+                <a class="nav-item" href="#shorts" data-view-link="shorts"><span class="nav-label">AI 쇼츠 스튜디오</span></a>
                 <a class="nav-item" href="#webtoon" data-view-link="webtoon"><span class="nav-label">웹툰 제작기</span></a>
                 <a class="nav-item" href="#masterpiece" data-view-link="masterpiece"><span class="nav-label">세계명화 프롬프트</span></a>
               </div>
@@ -164,16 +165,16 @@
             <section class="view-panel" id="view-usage" data-view-panel="usage" hidden><div data-usage-slot></div></section>
             <section class="view-panel" id="view-membership" data-view-panel="membership" hidden>
               <div class="panel-heading"><p class="section-label">GOOGLE ACCOUNT</p><h3>내 계정</h3><p>Google 계정과 빌드 잔액을 확인합니다.</p></div>
-              <div class="membership-status-card"><span class="status-mark status-mark-review" aria-hidden="true"></span><div><span class="sample-label">빌드 포인트</span><h4 data-build-balance>로그인 전</h4><p>글이나 댓글을 남기면 각각 1빌드가 적립됩니다. 이미지는 기본 5빌드, 영상은 기본 10빌드이며 관리자가 바꿀 수 있습니다. 실패한 생성은 자동으로 돌려줍니다.</p><button class="primary-button" type="button" data-platform-login-open>Google 계정 확인</button></div></div>
+                <div class="membership-status-card"><span class="status-mark status-mark-review" aria-hidden="true"></span><div><span class="sample-label">빌드 포인트</span><h4 data-build-balance>로그인 전</h4><p>글이나 댓글을 남기면 각각 1빌드가 적립됩니다. 쇼츠 영상은 저장 성공 시 5빌드를 사용하고, 실패하거나 취소하면 사용되지 않습니다.</p><button class="primary-button" type="button" data-platform-login-open>Google 계정 확인</button></div></div>
             </section>
             <section class="view-panel" id="view-admin" data-view-panel="admin" hidden><div data-admin-slot></div></section>
             <section class="view-panel" id="view-settings" data-view-panel="settings" hidden><div data-settings-slot></div></section>
             <section class="view-panel" id="view-help" data-view-panel="help" hidden>
               <div class="panel-heading"><p class="section-label">HELP & POLICY</p><h3>이용 안내</h3><p>실제 운영 기능과 샘플 범위, 커뮤니티 이용 원칙을 안내합니다.</p></div>
               <div class="help-list">
-                <details open><summary>빌드는 어떻게 적립하고 사용하나요?</summary><p>Google 로그인 후 글이나 댓글을 등록하면 각각 1빌드가 적립됩니다. 삭제하면 그 1빌드도 취소됩니다. 이미지는 기본 5빌드, 영상은 기본 10빌드이며 관리자 화면에서 바꿀 수 있습니다.</p></details>
+                <details open><summary>빌드는 어떻게 적립하고 사용하나요?</summary><p>Google 로그인 후 일반 글이나 댓글을 등록하면 각각 1빌드가 적립됩니다. 삭제하면 그 1빌드도 취소됩니다. 쇼츠 영상은 저장 성공 시 5빌드를 사용하며 쇼츠 게시판 등록에는 추가 적립이나 차감이 없습니다.</p></details>
                 <details><summary>샘플 데이터란 무엇인가요?</summary><p>화면 구성과 이동을 확인하기 위한 가상의 작업·결과·파일입니다. 모든 항목에 샘플 표시가 붙으며 실제 데이터가 아닙니다.</p></details>
-                <details><summary>실제 파일이 전송되나요?</summary><p>회의록 화면의 TXT·MD·SRT·VTT 파일은 브라우저에서 글자만 읽어 AI 서버로 전달합니다. 음성·영상 파일 업로드와 MP4 렌더링은 별도의 제작 API가 연결되기 전까지 실행하지 않습니다.</p></details>
+                <details><summary>실제 파일이 전송되나요?</summary><p>회의록 화면의 TXT·MD·SRT·VTT 파일은 브라우저에서 글자만 읽어 AI 서버로 전달합니다. 쇼츠는 MoneyPrinterTurbo(MPT)가 만든 MP4 또는 브라우저가 만든 WebM을 인증된 저장소에 보관하며, 사용자가 게시 버튼을 누르기 전에는 공개되지 않습니다.</p></details>
                 <details><summary>API 키는 어디에 저장되나요?</summary><p>사용자 브라우저에는 저장하지 않습니다. Jeremy 관리자 계정이 입력한 키만 서버에서 암호화해 보관하며, 저장 후 화면에 다시 표시하지 않습니다.</p></details>
                 <details><summary>게시판 로그인과 개인정보는 어떻게 처리하나요?</summary><p>Builders Lounge에서는 Google 로그인 계정 이름으로 글과 댓글을 작성합니다. 로그인 토큰은 현재 탭의 메모리에만 유지합니다. 공개 글에는 일반 텍스트만 허용하므로 개인정보·비밀값·내부 경로를 작성하지 마세요.</p></details>
                 <details><summary>부적절한 글이나 운영 문제는 어디에 알리나요?</summary><p>하단 문의하기 또는 hello@ai-hub-os.com으로 글 주소와 사유를 보내 주세요. 운영자는 Report Hub와 공유된 관리자 기능으로 필요한 조치를 확인합니다.</p></details>
@@ -190,6 +191,7 @@
                 <a href="#board" data-view-link="board">커뮤니티 운영</a>
                 <a href="mailto:hello@ai-hub-os.com">문의하기</a>
                 <a href="https://github.com/aihubos/builders-lounge" target="_blank" rel="noopener">공개 저장소</a>
+                <a href="THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener">오픈소스 라이선스</a>
               </nav>
               <small>© 2026 AI Builders Lab. Built for builders.</small>
             </footer>
@@ -220,6 +222,6 @@
     </dialog>
 
     <div class="visually-hidden" role="status" aria-live="polite" data-lounge-live></div>
-    <script type="module" src="lounge/lounge.js?v=20260824-no-hero-token"></script>
+    <script type="module" src="lounge/lounge.js?v=20260824-mpt-local-v1"></script>
   </body>
 </html>

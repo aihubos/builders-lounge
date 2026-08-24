@@ -11,6 +11,7 @@ const requiredFiles = [
   "robots.txt",
   "sitemap.xml",
   ".nojekyll",
+  "THIRD_PARTY_NOTICES.md",
   "assets/builders-lounge-logo.png",
   "lounge/lounge.css",
   "lounge/community.css",
@@ -18,6 +19,8 @@ const requiredFiles = [
   "lounge/platform.css",
   "lounge/lounge.js",
   "lounge/platform.js",
+  "lounge/shorts.css",
+  "lounge/shorts.js",
   "lounge/admin.js",
   "lounge/topbar.css",
   "lounge/topbar.js",
@@ -47,6 +50,7 @@ for (const file of [
   "robots.txt",
   "sitemap.xml",
   ".nojekyll",
+  "THIRD_PARTY_NOTICES.md",
 ]) {
   await cp(resolve(projectRoot, file), resolve(clientRoot, file));
 }
@@ -62,14 +66,14 @@ const html = await readFile(resolve(clientRoot, "index.html"), "utf8");
 if (!html.includes("data-lounge-shell") || !html.includes("AI 회의록") || !html.includes("AI 쇼츠 스튜디오")) {
   throw new Error("루트 Builders Lounge 화면 또는 연결 자리 이름이 없습니다.");
 }
-if (!html.includes("AI 빌더스 랩 뉴스레터") || !html.includes('data-community-view="board"')) {
+if (!html.includes('data-community-view="newsletter"') || !html.includes('data-community-view="board"')) {
   throw new Error("Builders Lounge 커뮤니티 화면이 없습니다.");
 }
-if (!html.includes('href="lounge/lounge.css"') || !html.includes('href="lounge/portal.css"') || !html.includes('src="lounge/lounge.js"')) {
+if (!html.includes('href="lounge/lounge.css"') || !html.includes('href="lounge/portal.css"') || !html.includes('href="lounge/shorts.css"') || !html.includes('src="lounge/lounge.js')) {
   throw new Error("루트에서 Lounge 지원 파일 경로를 찾을 수 없습니다.");
 }
-if (!html.includes('src="assets/builders-lounge-logo.png"') || !html.includes("portal-search-space") || !html.includes("portal-quick-links")) {
-  throw new Error("Builders Lounge 통합 로고, 검색 또는 빠른 메뉴 카드가 없습니다.");
+if (!html.includes('src="assets/builders-lounge-logo.png"') || !html.includes("data-home-mount") || !html.includes("portal-mobile-nav")) {
+  throw new Error("Builders Lounge 통합 로고, 홈 마운트 또는 모바일 메뉴가 없습니다.");
 }
 if (html.includes('src="assets/report-hub-logo.png"') || html.includes("lounge-portal-header")) throw new Error("이전 Report Hub 로고 또는 이중 상단 헤더가 남아 있습니다.");
 if (/noindex\s*,?\s*nofollow/i.test(html) || html.includes("공개 홈페이지")) {

@@ -19,6 +19,32 @@ const ERROR_MESSAGES = Object.freeze({
   request_already_used: "같은 생성 요청이 이미 처리되었습니다. 다시 눌러 새 요청을 시작해 주세요.",
   prompt_required: "생성할 내용을 입력해 주세요.",
   invalid_endpoint: "API 주소는 외부 HTTPS 주소만 사용할 수 있습니다.",
+  shorts_cost_misconfigured: "쇼츠 사용 비용이 Build 5로 설정되어 있지 않습니다.",
+  shorts_topic_too_short: "만들고 싶은 내용을 한 문장으로 조금 더 적어 주세요.",
+  shorts_storage_not_configured: "영상 저장소가 아직 연결되지 않았습니다.",
+  shorts_webm_required: "이 브라우저에서 WebM 영상을 만들지 못했습니다.",
+  shorts_file_size_invalid: "영상 파일 크기를 확인하지 못했거나 25MB를 넘었습니다.",
+  shorts_reservation_released: "이 작업의 Build 예약은 이미 해제되었습니다.",
+  shorts_already_completed: "이미 완성된 영상은 취소할 수 없습니다.",
+  shorts_not_completed: "영상 저장이 끝난 뒤 게시할 수 있습니다.",
+  shorts_rights_confirmation_required: "사용할 자료와 게시 내용의 권리를 확인해 주세요.",
+  shorts_media_missing: "저장된 영상을 찾지 못했습니다.",
+  shorts_publish_failed: "게시판에 등록하지 못했습니다. 같은 버튼으로 다시 시도해 주세요.",
+  shorts_upload_commit_failed: "영상 저장은 끝났지만 Build 확정 상태를 확인하지 못했습니다. 다시 시도하지 말고 관리자에게 알려 주세요.",
+  shorts_renderer_not_configured: "MoneyPrinterTurbo 렌더 서버가 아직 연결되지 않았습니다.",
+  shorts_renderer_unreachable: "영상 렌더 서버와 연결이 끊어졌습니다. 기존 작업 상태를 다시 확인해 주세요.",
+  shorts_renderer_request_failed: "영상 렌더 서버가 작업을 처리하지 못했습니다. 기존 작업 상태를 다시 확인해 주세요.",
+  shorts_renderer_invalid_response: "영상 렌더 서버 응답을 확인하지 못했습니다.",
+  shorts_renderer_video_fetch_failed: "완성된 MP4를 렌더 서버에서 가져오지 못했습니다.",
+  shorts_renderer_media_type_invalid: "렌더 서버가 MP4가 아닌 파일을 반환했습니다.",
+  shorts_renderer_video_url_invalid: "렌더 서버의 완성 영상 주소가 허용된 작업 경로와 다릅니다.",
+  shorts_renderer_storage_failed: "완성된 MP4를 안전한 저장소에 보관하지 못해 Build 예약을 해제했습니다.",
+  shorts_mp4_structure_invalid: "완성 파일의 MP4 구조를 확인하지 못해 Build 예약을 해제했습니다.",
+  shorts_render_not_started: "아직 시작하지 않은 렌더 작업입니다.",
+  shorts_render_plan_incomplete: "렌더할 제작안의 장면 구성이 부족해 Build 예약을 해제했습니다.",
+  shorts_reservation_expired: "30분이 지나 Build 예약이 해제되었습니다. 새로 시작해 주세요.",
+  shorts_upload_in_progress: "같은 영상의 저장을 이미 처리하고 있습니다. 작업 상태를 다시 확인해 주세요.",
+  shorts_use_studio: "쇼츠는 AI 쇼츠 스튜디오 화면에서 만들어 주세요.",
   server_error: "서버에서 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.",
 });
 
@@ -332,6 +358,132 @@ async function generate(toolId, input) {
   return data;
 }
 
+function requirePlatformLogin() {
+  if (state.user && state.credential) return;
+  openLogin();
+  throw Object.assign(new Error(ERROR_MESSAGES.login_required), { code: "login_required" });
+}
+
+const shorts = Object.freeze({
+  async recent() {
+    requirePlatformLogin();
+    const data = await request("/lounge/shorts/recent");
+    if (!data || typeof data !== "object" || typeof data.found !== "boolean") {
+      throw Object.assign(new Error("최근 쇼츠 작업 응답을 확인하지 못했습니다."), { code: "shorts_recent_invalid_response" });
+    }
+    const hasRequestId = typeof data.requestId === "string" && data.requestId.trim().length > 0;
+    const hasJobId = typeof data.jobId === "string" && data.jobId.trim().length > 0;
+    if (data.found && (!hasRequestId || !hasJobId)) {
+      throw Object.assign(new Error("최근 쇼츠 작업의 요청·작업 번호를 확인하지 못했습니다."), { code: "shorts_recent_invalid_response" });
+    }
+    if (typeof data.balance === "number" && Number.isFinite(data.balance)) applyBalance(data.balance);
+    return data;
+  },
+  async status({ jobId = "", requestId = "" }) {
+    requirePlatformLogin();
+    const path = jobId
+      ? `/lounge/shorts/${encodeURIComponent(jobId)}`
+      : `/lounge/shorts?requestId=${encodeURIComponent(requestId)}`;
+    if (!jobId && !requestId) throw new Error("복구할 쇼츠 작업을 확인하지 못했습니다.");
+    const data = await request(path);
+    applyBalance(data.balance);
+    return data;
+  },
+  async media({ mediaUrl }) {
+    requirePlatformLogin();
+    let target;
+    try { target = new URL(String(mediaUrl || "")); }
+    catch { throw new Error("저장된 영상 주소를 확인하지 못했습니다."); }
+    const apiOrigin = new URL(API_BASE).origin;
+    if (target.origin !== apiOrigin || !target.pathname.startsWith("/lounge/shorts/")) {
+      throw new Error("저장된 영상 주소를 확인하지 못했습니다.");
+    }
+    let response;
+    try {
+      response = await fetch(target.href, {
+        cache: "no-store",
+        headers: { Authorization: `Bearer ${state.credential}` },
+      });
+    } catch {
+      throw Object.assign(new Error("저장된 영상과 연결이 끊어졌습니다. 잠시 후 다시 확인해 주세요."), { code: "network_error" });
+    }
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      const error = new Error(errorMessage(body?.error, body?.message || "저장된 영상을 불러오지 못했습니다."));
+      error.code = body?.error || "request_failed";
+      error.status = response.status;
+      throw error;
+    }
+    const video = await response.blob();
+    const mediaType = String(video.type || response.headers.get("Content-Type") || "").split(";", 1)[0].trim();
+    if (!video.size || !["video/webm", "video/mp4"].includes(mediaType)) {
+      throw new Error("저장된 영상 파일 형식을 확인하지 못했습니다.");
+    }
+    return video;
+  },
+  async prepare({ requestId = crypto.randomUUID(), topic, settings }) {
+    requirePlatformLogin();
+    const data = await request("/lounge/shorts/prepare", {
+      method: "POST",
+      headers: { "X-Request-Id": requestId },
+      body: JSON.stringify({ requestId, topic, settings }),
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async render({ jobId }) {
+    requirePlatformLogin();
+    if (!jobId) throw new Error("렌더할 쇼츠 작업을 확인하지 못했습니다.");
+    const data = await request(`/lounge/shorts/${encodeURIComponent(jobId)}/render`, {
+      method: "POST",
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async renderSync({ jobId }) {
+    requirePlatformLogin();
+    if (!jobId) throw new Error("확인할 렌더 작업을 찾지 못했습니다.");
+    const data = await request(`/lounge/shorts/${encodeURIComponent(jobId)}/render/sync`, {
+      method: "POST",
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async upload({ requestId = crypto.randomUUID(), jobId, video, mimeType = "video/webm" }) {
+    requirePlatformLogin();
+    if (!(video instanceof Blob) || !jobId) throw new Error("업로드할 영상을 확인하지 못했습니다.");
+    const data = await request(`/lounge/shorts/${encodeURIComponent(jobId)}/upload`, {
+      method: "POST",
+      headers: {
+        "Content-Type": mimeType,
+        "X-Request-Id": requestId,
+        "X-File-Size": String(video.size),
+      },
+      body: video,
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async release({ requestId = crypto.randomUUID(), jobId, reason = "user_cancelled" }) {
+    requirePlatformLogin();
+    const data = await request(`/lounge/shorts/${encodeURIComponent(jobId)}/release`, {
+      method: "POST",
+      headers: { "X-Request-Id": requestId },
+      body: JSON.stringify({ requestId, reason }),
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async publish({ publishRequestId = crypto.randomUUID(), jobId, title, content, rightsConfirmed }) {
+    requirePlatformLogin();
+    return request(`/lounge/shorts/${encodeURIComponent(jobId)}/publish`, {
+      method: "POST",
+      headers: { "X-Request-Id": publishRequestId },
+      body: JSON.stringify({ publishRequestId, title, content, rightsConfirmed }),
+    });
+  },
+});
+
 window.BuildersPlatform = Object.freeze({
   API_BASE,
   initialize,
@@ -344,6 +496,7 @@ window.BuildersPlatform = Object.freeze({
   getCredential,
   getTool,
   generate,
+  shorts,
   applyBalance,
   acceptCredential,
   errorMessage,

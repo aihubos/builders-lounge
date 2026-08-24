@@ -1,12 +1,13 @@
-import "./platform.js";
-import { renderHome } from "./js/pages/home.js?v=20260824-no-hero";
+import "./platform.js?v=20260824-mpt-local-v1";
+import { renderHome } from "./js/pages/home.js?v=20260824-shorts-studio";
 import { mountJobs } from "./jobs.js";
 import { mountAdmin } from "./admin.js";
 import "./settings.js";
 import "./placeholders.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";
 import { mountReportHubTopbar } from "./topbar.js";
-import { mountCommunity } from "./community.js";
+import { mountCommunity } from "./community.js?v=20260824-shorts-studio";
+import { mountShorts } from "./shorts.js?v=20260824-mpt-local-v1";
 import { publishedItems } from "./community-data.js";
 
 const ROUTE_STORAGE_KEY = "ai-builders-lounge-route";
@@ -35,7 +36,7 @@ const searchForm = document.querySelector("[data-global-search-form]");
 const viewMeta = Object.freeze({
   home: { kicker: "BUILDERS LOUNGE · COMMUNITY", title: "만들고, 나누고, 함께 성장해요", description: "AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 만나보세요.", status: "커뮤니티 운영 중" },
   meeting: { kicker: "만들기", title: "AI 회의록", description: "회의 기록을 실행 가능한 회의록으로 만들고 빌드로 결제합니다.", status: "빌드 포인트" },
-  shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "대본이나 주제를 쇼츠 제작안으로 만들고 빌드로 결제합니다.", status: "빌드 포인트" },
+  shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "한 문장을 실제 세로형 MP4 또는 WebM 영상으로 만들고, 완성 뒤 선택해 게시합니다.", status: "영상 완성 시 Build 5" },
   webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 제작기가 Google 로그인과 빌드 잔액을 공유합니다.", status: "빌드 포인트" },
   masterpiece: { kicker: "만들기", title: "세계명화 프롬프트", description: "프롬프트는 무료로 만들고 이미지 생성에 빌드를 사용합니다.", status: "빌드 포인트" },
   prompts: { kicker: "AI 도구", title: "프롬프트 모음", description: "상황별 공개 프롬프트를 찾아 복사하고 직접 고쳐 씁니다.", status: "공개 콘텐츠" },
@@ -172,7 +173,7 @@ function formatDate(value) {
 function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "home") {
   if (view === "home") return "Google 로그인 후 게시글 한 건당 1빌드가 적립됩니다. API 키와 도구별 가격은 관리자만 설정합니다.";
   if (view === "meeting") return "텍스트 회의 기록만 AI로 전달합니다. 성공한 생성 요청에만 설정된 빌드가 사용됩니다.";
-  if (view === "shorts") return "현재는 쇼츠 대본·컷 구성 생성입니다. 실제 MP4 제작은 관리자가 외부 제작 API를 연결하면 제공됩니다.";
+  if (view === "shorts") return "한 문장을 제작안으로 확장해 실제 세로형 영상을 만들고, 완성 뒤 게시 여부를 직접 선택합니다.";
   if (view === "webtoon") return "웹툰 제작기는 Lounge 로그인과 빌드 잔액을 공유합니다. API 키는 서버에서만 사용합니다.";
   if (view === "masterpiece") return "프롬프트 조합은 무료이며 실제 이미지 생성에만 설정된 빌드가 사용됩니다.";
   if (view === "prompts") return "공개용으로 정리한 프롬프트만 제공합니다. 개인 정보·로컬 경로·비밀값은 포함하지 않습니다.";
@@ -315,7 +316,7 @@ function initializeModules() {
   const settings = document.querySelector("[data-settings-slot]");
   const admin = document.querySelector("[data-admin-slot]");
   if (meeting) window.LoungePlaceholders?.render(meeting, { tool: "meeting" });
-  if (shorts) window.LoungePlaceholders?.render(shorts, { tool: "shorts" });
+  if (shorts) mountShorts(shorts);
   renderHomeModule();
   if (settings) window.LoungeSettings?.render(settings, { demoMode, onDemoChange: setDemoMode });
   renderDataModules();
