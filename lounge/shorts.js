@@ -249,6 +249,9 @@ export function mountShorts(root) {
     serverStatus: "",
     renderBlocked: false,
     restoring: false,
+    preparing: false,
+    recentLookupAttempted: false,
+    recentLookupInFlight: false,
     busy: false,
   };
 
@@ -457,7 +460,7 @@ export function mountShorts(root) {
 
   const recoverStoredJob = async () => {
     const saved = readRecoveryState();
-    if (!saved || state.restoring) return;
+    if (!saved || state.restoring || state.busy || state.preparing) return;
     restoreInputs(saved);
     state.requestId = saved.requestId;
     state.jobId = saved.jobId;
@@ -527,6 +530,45 @@ export function mountShorts(root) {
     }
   };
 
+  const discoverRecentJob = async () => {
+    if (state.recentLookupAttempted || state.recentLookupInFlight) return;
+    if (!window.BuildersPlatform?.snapshot?.().authenticated) return;
+    if (state.busy || state.restoring || state.preparing || state.requestId || state.jobId || readRecoveryState()) return;
+    state.recentLookupAttempted = true;
+    state.recentLookupInFlight = true;
+    try {
+      const recent = await window.BuildersPlatform.shorts.recent();
+      if (state.busy || state.restoring || state.preparing || state.requestId || state.jobId || readRecoveryState()) return;
+      if (!recent || typeof recent !== "object" || typeof recent.found !== "boolean") {
+        throw new Error("최근 쇼츠 작업 응답을 확인하지 못했습니다.");
+      }
+      if (recent.found === false) return;
+      const hasRequestId = typeof recent.requestId === "string" && recent.requestId.trim().length > 0;
+      const hasJobId = typeof recent.jobId === "string" && recent.jobId.trim().length > 0;
+      if (!hasRequestId || !hasJobId) throw new Error("최근 쇼츠 작업의 요청·작업 번호를 확인하지 못했습니다.");
+      const recentSettings = recent.settings && typeof recent.settings === "object" ? recent.settings : {};
+      writeRecoveryState({
+        requestId: recent.requestId,
+        jobId: recent.jobId,
+        publishRequestId: String(recent.publishRequestId || "").slice(0, 128),
+        topic: String(recent.topic || "").slice(0, 300),
+        settings: {
+          subtitles: recentSettings.subtitles !== false,
+          subtitleStyle: ["basic", "emphasis", "minimal"].includes(recentSettings.subtitleStyle) ? recentSettings.subtitleStyle : "basic",
+          voice: recentSettings.voice === true,
+          voiceId: String(recentSettings.voiceId || "auto").slice(0, 80),
+        },
+      });
+      if (!readRecoveryState()) throw new Error("최근 쇼츠 작업을 브라우저에 저장하지 못했습니다.");
+      void recoverStoredJob();
+    } catch (error) {
+      if (state.busy || state.restoring || state.preparing || state.requestId || state.jobId || readRecoveryState()) return;
+      statusText(root, `최근 쇼츠 작업을 자동으로 확인하지 못했습니다. ${error?.message || "서버 응답을 확인하지 못했습니다."} 새 쇼츠는 바로 시작할 수 있습니다.`, true);
+    } finally {
+      state.recentLookupInFlight = false;
+    }
+  };
+
   inputPanel.addEventListener("click", (event) => {
     const example = event.target.closest("[data-example]");
     if (example) { topicInput.value = example.dataset.example; topicInput.focus(); }
@@ -543,6 +585,7 @@ export function mountShorts(root) {
     state.publishRequestId = "";
     state.published = null;
     persistRecovery();
+    state.preparing = true;
     setBusy(true);
     statusText(root, "요청을 확인하고 제작 내용을 만들고 있어요.");
     try {
@@ -566,7 +609,10 @@ export function mountShorts(root) {
         showRecovery("요청 응답을 끝까지 확인하지 못했습니다.", `${error.message} 같은 requestId의 서버 작업을 다시 조회합니다.`, true);
         statusText(root, "새 요청을 보내지 않고 기존 예약 상태만 다시 확인해 주세요.", true);
       }
-    } finally { setBusy(false); }
+    } finally {
+      state.preparing = false;
+      setBusy(false);
+    }
   });
 
   planPanel.addEventListener("click", async (event) => {
@@ -718,12 +764,18 @@ export function mountShorts(root) {
     const authenticated = Boolean(snapshot.authenticated);
     const becameAuthenticated = authenticated && !wasAuthenticated;
     wasAuthenticated = authenticated;
-    if (!readRecoveryState()) return;
-    recoveryPanel.querySelector("[data-platform-login-open]").hidden = authenticated;
-    recoveryPanel.querySelector("[data-shorts-recover]").hidden = !authenticated;
-    if (becameAuthenticated) void recoverStoredJob();
+    const saved = readRecoveryState();
+    if (saved) {
+      recoveryPanel.querySelector("[data-platform-login-open]").hidden = authenticated;
+      recoveryPanel.querySelector("[data-shorts-recover]").hidden = !authenticated;
+      if (becameAuthenticated) void recoverStoredJob();
+      return;
+    }
+    if (authenticated) void discoverRecentJob();
   });
   window.addEventListener("online", () => {
-    if (readRecoveryState() && window.BuildersPlatform?.snapshot?.().authenticated) void recoverStoredJob();
+    if (!window.BuildersPlatform?.snapshot?.().authenticated) return;
+    if (readRecoveryState()) void recoverStoredJob();
+    else void discoverRecentJob();
   });
 }

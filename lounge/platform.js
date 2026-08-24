@@ -352,6 +352,20 @@ function requirePlatformLogin() {
 }
 
 const shorts = Object.freeze({
+  async recent() {
+    requirePlatformLogin();
+    const data = await request("/lounge/shorts/recent");
+    if (!data || typeof data !== "object" || typeof data.found !== "boolean") {
+      throw Object.assign(new Error("최근 쇼츠 작업 응답을 확인하지 못했습니다."), { code: "shorts_recent_invalid_response" });
+    }
+    const hasRequestId = typeof data.requestId === "string" && data.requestId.trim().length > 0;
+    const hasJobId = typeof data.jobId === "string" && data.jobId.trim().length > 0;
+    if (data.found && (!hasRequestId || !hasJobId)) {
+      throw Object.assign(new Error("최근 쇼츠 작업의 요청·작업 번호를 확인하지 못했습니다."), { code: "shorts_recent_invalid_response" });
+    }
+    if (typeof data.balance === "number" && Number.isFinite(data.balance)) applyBalance(data.balance);
+    return data;
+  },
   async status({ jobId = "", requestId = "" }) {
     requirePlatformLogin();
     const path = jobId

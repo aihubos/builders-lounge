@@ -1,4 +1,4 @@
-import "./platform.js?v=20260824-shorts-recovery";
+import "./platform.js?v=20260824-shorts-recovery-v2";
 import { renderHome } from "./js/pages/home.js?v=20260824-shorts-studio";
 import { mountJobs } from "./jobs.js";
 import { mountAdmin } from "./admin.js";
@@ -7,7 +7,7 @@ import "./placeholders.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";
 import { mountReportHubTopbar } from "./topbar.js";
 import { mountCommunity } from "./community.js?v=20260824-shorts-studio";
-import { mountShorts } from "./shorts.js?v=20260824-shorts-recovery";
+import { mountShorts } from "./shorts.js?v=20260824-shorts-recovery-v2";
 import { publishedItems } from "./community-data.js";
 
 const ROUTE_STORAGE_KEY = "ai-builders-lounge-route";
