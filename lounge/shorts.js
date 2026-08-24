@@ -13,6 +13,12 @@ const NON_RESERVED_PREPARE_ERRORS = new Set([
   "login_required", "invalid_google_token", "insufficient_builds", "tool_disabled",
   "tool_not_configured", "shorts_cost_misconfigured", "shorts_topic_too_short",
 ]);
+const RETRYABLE_RENDER_ERRORS = new Set([
+  "network_error",
+  "server_error",
+  "shorts_renderer_unreachable",
+  "shorts_renderer_request_failed",
+]);
 
 function isHttpsUrl(value) {
   try { return new URL(String(value || "")).protocol === "https:"; } catch { return false; }
@@ -264,6 +270,8 @@ export function mountShorts(root) {
     recentLookupAttempted: false,
     recentLookupInFlight: false,
     rendererReady: false,
+    authenticated: false,
+    progressTimer: 0,
     busy: false,
   };
 
@@ -273,6 +281,11 @@ export function mountShorts(root) {
       <div class="shorts-cost"><strong>Build 5</strong><span>영상 저장 성공 시 사용</span></div>
     </header>
     <div class="shorts-flow" aria-label="쇼츠 제작 단계"><span data-step="input" aria-current="step">1 한 문장</span><span data-step="plan">2 제작 내용</span><span data-step="video">3 영상 결과</span><span data-step="publish">4 수동 게시</span></div>
+    <section class="shorts-production-progress" data-shorts-progress hidden aria-live="polite">
+      <span class="shorts-progress-animation" aria-hidden="true"><i></i></span>
+      <div class="shorts-progress-copy"><strong data-shorts-progress-label>제작 준비 중</strong><p data-shorts-progress-detail>작업을 시작하고 있어요.</p><progress data-shorts-progress-bar max="100" value="0">0%</progress></div>
+      <b data-shorts-progress-value>0%</b>
+    </section>
     <section class="shorts-recovery" data-shorts-recovery hidden>
       <div><strong data-recovery-title>진행 중인 작업을 확인하고 있어요.</strong><p data-recovery-copy>서버 상태를 확인한 뒤 이어서 보여 드립니다.</p></div>
       <div class="shorts-actions"><button class="secondary-button" type="button" data-platform-login-open hidden>Google 로그인</button><button class="primary-button" type="button" data-shorts-recover>상태 다시 확인</button></div>
@@ -289,7 +302,11 @@ export function mountShorts(root) {
         </div>
       </details>
       <p class="shorts-note">영상 완성 시 Build 5 사용 · 실패하거나 취소되면 사용되지 않아요.</p>
-      <button class="primary-button" type="button" data-shorts-prepare>내용 만들기</button>
+      <div class="shorts-login-gate" data-shorts-login-gate>
+        <div><strong>Google 로그인 후 제작할 수 있어요.</strong><p>사이트 상단과 같은 계정으로 빌드 잔액과 작업을 연결합니다.</p></div>
+        <button class="secondary-button" type="button" data-platform-login-open>Google 로그인</button>
+      </div>
+      <button class="primary-button" type="button" data-shorts-prepare data-auth-required disabled>Google 로그인 후 제작</button>
     </section>
     <section class="shorts-panel" data-shorts-plan hidden></section>
     <section class="shorts-panel" data-shorts-result hidden></section>
@@ -301,11 +318,47 @@ export function mountShorts(root) {
   const planPanel = root.querySelector("[data-shorts-plan]");
   const resultPanel = root.querySelector("[data-shorts-result]");
   const recoveryPanel = root.querySelector("[data-shorts-recovery]");
+  const progressPanel = root.querySelector("[data-shorts-progress]");
+  const progressLabel = progressPanel.querySelector("[data-shorts-progress-label]");
+  const progressDetail = progressPanel.querySelector("[data-shorts-progress-detail]");
+  const progressBar = progressPanel.querySelector("[data-shorts-progress-bar]");
+  const progressValue = progressPanel.querySelector("[data-shorts-progress-value]");
   const topicInput = inputPanel.querySelector("textarea");
   const subtitlesInput = inputPanel.querySelector('[name="subtitles"]');
   const subtitleStyleInput = inputPanel.querySelector('[name="subtitleStyle"]');
   const voiceInput = inputPanel.querySelector('[name="voice"]');
   const voiceIdInput = inputPanel.querySelector('[name="voiceId"]');
+  const prepareButton = inputPanel.querySelector("[data-shorts-prepare]");
+  const loginGate = inputPanel.querySelector("[data-shorts-login-gate]");
+
+  const stopProgressAnimation = () => {
+    if (state.progressTimer) window.clearInterval(state.progressTimer);
+    state.progressTimer = 0;
+  };
+  const showProgress = (value, label, detail, mode = "working") => {
+    const percent = Math.max(0, Math.min(100, Math.trunc(Number(value) || 0)));
+    progressPanel.hidden = false;
+    progressPanel.dataset.mode = mode;
+    progressLabel.textContent = label;
+    progressDetail.textContent = detail;
+    progressBar.value = percent;
+    progressBar.textContent = `${percent}%`;
+    progressValue.textContent = `${percent}%`;
+  };
+  const hideProgress = () => {
+    stopProgressAnimation();
+    progressPanel.hidden = true;
+    progressPanel.dataset.mode = "idle";
+  };
+  const startEstimatedProgress = () => {
+    stopProgressAnimation();
+    let percent = 6;
+    showProgress(percent, "제작 내용을 구성하고 있어요", "AI가 핵심 문장과 장면 순서를 정리합니다. 이 단계의 %는 예상 진행률입니다.");
+    state.progressTimer = window.setInterval(() => {
+      percent = Math.min(88, percent + Math.max(1, Math.ceil((88 - percent) * 0.08)));
+      showProgress(percent, "제작 내용을 구성하고 있어요", "완성되면 장면별 문구와 화면 설명을 직접 수정할 수 있어요.");
+    }, 650);
+  };
 
   const setStep = (step) => root.querySelectorAll("[data-step]").forEach((item) => {
     if (item.dataset.step === step) item.setAttribute("aria-current", "step");
@@ -379,8 +432,14 @@ export function mountShorts(root) {
       else if (control.matches('[name="subtitles"], [name="subtitleStyle"]') && state.rendererReady) control.disabled = true;
       else if (control.matches('[name="subtitleStyle"]')) control.disabled = !subtitlesInput.checked || busy;
       else if (control.matches("[data-rights-submit]")) control.disabled = busy || !root.querySelector('[name="rights"]')?.checked;
-      else if (control.matches("[data-shorts-render]")) control.disabled = busy || state.renderBlocked;
+      else if (control.matches("[data-auth-required]")) control.disabled = busy || state.renderBlocked || !state.authenticated;
       else control.disabled = busy;
+    });
+    prepareButton.textContent = state.authenticated ? "제작 내용 만들기" : "Google 로그인 후 제작";
+    loginGate.hidden = state.authenticated;
+    root.querySelectorAll("[data-shorts-plan-login]").forEach((notice) => { notice.hidden = state.authenticated; });
+    root.querySelectorAll("[data-shorts-render]").forEach((button) => {
+      button.textContent = state.authenticated ? "수정 내용 저장하고 영상 만들기" : "Google 로그인 후 영상 제작";
     });
   };
   const resetPreparedState = ({ clearStored = true } = {}) => {
@@ -398,6 +457,7 @@ export function mountShorts(root) {
     state.serverStatus = "";
     state.renderBlocked = false;
     state.restoring = false;
+    hideProgress();
     if (clearStored) clearRecoveryState();
     hideRecovery();
     planPanel.hidden = true;
@@ -415,13 +475,49 @@ export function mountShorts(root) {
     inputPanel.hidden = true;
     resultPanel.hidden = true;
     planPanel.hidden = false;
+    hideProgress();
     const topic = topicInput.value.trim() || "복구된 쇼츠 작업";
     planPanel.innerHTML = `<div class="shorts-panel-head"><div><span>${restored ? "서버에서 복구한 제작 내용" : "AI가 정리한 제작 내용"}</span><h4>${escapeHtml(topic)}</h4></div><span class="shorts-reserved">Build 5 사용 예정</span></div>
-      <label>상세 프롬프트<textarea data-detailed-prompt rows="10" readonly>${escapeHtml(plan.detailedPrompt || "")}</textarea></label>
-      <div class="shorts-scenes"><strong>장면 구성 ${scenes.length}개</strong>${scenes.map((scene, index) => `<article><span>${index + 1}</span><div><b>${escapeHtml(scene.title)}</b><p>${escapeHtml(scene.subtitle || scene.narration)}</p></div></article>`).join("")}</div>
-      <div class="shorts-actions"><button class="secondary-button" type="button" data-shorts-cancel>생성 취소</button><button class="primary-button" type="button" data-shorts-render>이대로 영상 만들기</button></div>`;
+      <p class="shorts-edit-guide"><strong>영상 제작 전에 내용을 고칠 수 있어요.</strong><span>전체 방향, 장면 제목, 화면 구성, 내레이션과 자막을 수정한 뒤 최종 제작을 눌러 주세요.</span></p>
+      <form data-shorts-plan-form>
+        <label>전체 제작 방향<textarea name="detailedPrompt" data-detailed-prompt rows="7" minlength="5" maxlength="30000" required>${escapeHtml(plan.detailedPrompt || "")}</textarea></label>
+        <div class="shorts-scenes shorts-scene-editors"><strong>장면 구성 ${scenes.length}개</strong>${scenes.map((scene, index) => `<article data-scene-editor>
+          <span>${index + 1}</span>
+          <div class="shorts-scene-fields">
+            <label>장면 제목<input data-scene-title maxlength="80" required value="${escapeHtml(scene.title || `장면 ${index + 1}`)}"></label>
+            <label>화면 구성<textarea data-scene-visual rows="2" maxlength="400" required>${escapeHtml(scene.visual || "")}</textarea></label>
+            <label>내레이션<textarea data-scene-narration rows="3" maxlength="600" required>${escapeHtml(scene.narration || scene.subtitle || "")}</textarea></label>
+            <div class="shorts-scene-row"><label>화면 자막<input data-scene-subtitle maxlength="140" required value="${escapeHtml(scene.subtitle || scene.narration || "")}"></label><label>장면 길이(초)<input data-scene-duration type="number" min="2" max="8" step="1" required value="${Math.max(2, Math.min(8, Math.trunc(Number(scene.durationSeconds) || 4)))}"></label></div>
+          </div>
+        </article>`).join("")}</div>
+      </form>
+      <div class="shorts-plan-login" data-shorts-plan-login${state.authenticated ? " hidden" : ""}><span>Google 로그인 상태에서만 최종 영상을 제작할 수 있어요.</span><button class="secondary-button" type="button" data-platform-login-open>Google 로그인</button></div>
+      <div class="shorts-actions"><button class="secondary-button" type="button" data-shorts-cancel>생성 취소</button><button class="primary-button" type="button" data-shorts-render data-auth-required${state.authenticated ? "" : " disabled"}>${state.authenticated ? "수정 내용 저장하고 영상 만들기" : "Google 로그인 후 영상 제작"}</button></div>`;
     setStep("plan");
     persistRecovery();
+  };
+
+  const editedPlan = () => {
+    const form = planPanel.querySelector("[data-shorts-plan-form]");
+    if (!form) throw new Error("수정할 제작 내용을 찾지 못했습니다.");
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      throw new Error("비어 있거나 범위를 벗어난 제작 내용을 확인해 주세요.");
+    }
+    const detailedPrompt = form.elements.detailedPrompt.value.trim();
+    const scenes = [...form.querySelectorAll("[data-scene-editor]")].map((card, index) => ({
+      id: index + 1,
+      title: card.querySelector("[data-scene-title]").value.trim(),
+      visual: card.querySelector("[data-scene-visual]").value.trim(),
+      narration: card.querySelector("[data-scene-narration]").value.trim(),
+      subtitle: card.querySelector("[data-scene-subtitle]").value.trim(),
+      durationSeconds: Math.max(2, Math.min(8, Math.trunc(Number(card.querySelector("[data-scene-duration]").value) || 4))),
+      audioUrl: "",
+    }));
+    if (detailedPrompt.length < 5 || scenes.length < 2 || scenes.some((scene) => !scene.title || !scene.visual || !scene.narration || !scene.subtitle)) {
+      throw new Error("전체 제작 방향과 각 장면의 제목·화면·내레이션·자막을 모두 적어 주세요.");
+    }
+    return { detailedPrompt, scenes, narrationUrl: "" };
   };
 
   const boardPostUrl = (postId) => {
@@ -464,6 +560,8 @@ export function mountShorts(root) {
     inputPanel.hidden = true;
     planPanel.hidden = true;
     resultPanel.hidden = false;
+    stopProgressAnimation();
+    showProgress(100, "쇼츠 영상이 완성됐어요", "영상 저장과 Build 5 확정을 서버에서 확인했습니다.", "complete");
     const deleted = publishStatus === "deleted";
     if (deleted) state.publishRequestId = "";
     const topic = topicInput.value.trim() || "완성된 쇼츠 영상";
@@ -551,6 +649,8 @@ export function mountShorts(root) {
 
   const pollRenderer = async (initial, { restored = false } = {}) => {
     let server = initial;
+    let retryCount = 0;
+    let lastProgress = Math.max(0, Math.min(99, Math.trunc(Number(initial?.renderProgress) || 0)));
     while (true) {
       applyServerState(server);
       if (TERMINAL_RELEASE_STATUSES.has(server.status) || server.reservationExpired === true) {
@@ -570,9 +670,54 @@ export function mountShorts(root) {
       }
       persistRecovery();
       const progress = Math.max(0, Math.min(99, Math.trunc(Number(server.renderProgress) || 0)));
+      lastProgress = Math.max(lastProgress, progress);
+      showProgress(lastProgress, "쇼츠 영상을 제작하고 있어요", "MoneyPrinterTurbo가 한국어 음성·자막과 세로 영상을 합성합니다.");
       statusText(root, `MoneyPrinterTurbo가 한국어 음성·자막 영상을 만들고 있어요. ${progress}%`);
       await wait(1500);
-      server = await window.BuildersPlatform.shorts.renderSync({ jobId: state.jobId });
+      try {
+        server = await window.BuildersPlatform.shorts.renderSync({ jobId: state.jobId });
+        retryCount = 0;
+      } catch (error) {
+        if (!RETRYABLE_RENDER_ERRORS.has(error?.code) || retryCount >= 5) throw error;
+        retryCount += 1;
+        showProgress(lastProgress, "영상 작업 연결을 다시 확인하고 있어요", `완료 여부를 ${retryCount}/6회 다시 확인합니다. 새 Build 요청은 보내지 않습니다.`, "reconnecting");
+        statusText(root, `영상 작업은 유지됩니다. 서버 연결을 다시 확인하고 있어요. ${lastProgress}%`);
+        await wait(1800);
+      }
+    }
+  };
+
+  const reconcileRenderFailure = async (originalError) => {
+    try {
+      const server = await window.BuildersPlatform.shorts.status({ jobId: state.jobId, requestId: state.requestId });
+      applyServerState(server);
+      if (TERMINAL_RELEASE_STATUSES.has(server.status) || server.reservationExpired === true) {
+        finishReleasedServerState(server);
+        return;
+      }
+      if (server.status === "completed") {
+        await finishCompletedServerState(server, { restored: true });
+        return;
+      }
+      if (ACTIVE_JOB_STATUSES.has(server.status) && server.reservationStatus === "reserved" && state.plan?.scenes?.length) {
+        if (server.renderStarted === true && server.renderState === "processing") {
+          const progress = Math.max(0, Math.min(99, Math.trunc(Number(server.renderProgress) || 0)));
+          showProgress(progress, "영상 작업은 서버에서 계속되고 있어요", "상태 다시 확인을 누르면 기존 작업만 이어서 확인합니다.", "reconnecting");
+          showRecovery("영상 작업 연결을 다시 확인해 주세요.", `${originalError.message} 기존 작업은 유지되며 새 Build 예약은 만들지 않습니다.`);
+          statusText(root, `서버에서 기존 영상 작업 ${progress}% 상태를 확인했습니다.`, true);
+          return;
+        }
+        state.renderBlocked = false;
+        renderPlan(state.plan, { restored: true });
+        statusText(root, "제작 내용과 Build 예약을 복원했습니다. 수정 내용을 확인한 뒤 다시 영상 제작을 눌러 주세요.");
+        return;
+      }
+      throw new Error("서버가 알 수 없는 쇼츠 상태를 반환했습니다.");
+    } catch (statusError) {
+      state.renderBlocked = true;
+      showProgress(0, "작업 상태를 확인하지 못했어요", "상태 다시 확인을 누르면 새 요청 없이 기존 작업만 조회합니다.", "failed");
+      showRecovery("작업 결과를 아직 확인하지 못했습니다.", `${statusError.message || originalError.message} 새 생성 요청은 보내지 않습니다.`, true);
+      statusText(root, "기존 작업의 완료 또는 Build 해제를 확인한 뒤 다시 제작할 수 있습니다.", true);
     }
   };
 
@@ -682,6 +827,11 @@ export function mountShorts(root) {
 
   inputPanel.querySelector("[data-shorts-prepare]").addEventListener("click", async () => {
     if (state.busy) return;
+    if (!state.authenticated) {
+      window.BuildersPlatform?.openLogin?.();
+      statusText(root, "Google 로그인 후 제작할 수 있어요.", true);
+      return;
+    }
     const topic = topicInput.value.trim();
     if (topic.length < 5) { statusText(root, "누구에게 무엇을 보여 줄지 조금 더 적어 주세요.", true); topicInput.focus(); return; }
     state.requestId = crypto.randomUUID();
@@ -691,6 +841,7 @@ export function mountShorts(root) {
     persistRecovery();
     state.preparing = true;
     setBusy(true);
+    startEstimatedProgress();
     statusText(root, "요청을 확인하고 제작 내용을 만들고 있어요.");
     try {
       const plan = await window.BuildersPlatform.shorts.prepare({
@@ -703,13 +854,18 @@ export function mountShorts(root) {
       }
       state.jobId = plan.jobId;
       state.serverStatus = plan.status;
+      stopProgressAnimation();
+      showProgress(100, "제작 내용이 완성됐어요", "이제 장면별 내용을 직접 수정한 뒤 영상 제작을 시작할 수 있어요.", "complete");
+      await wait(260);
       renderPlan(plan);
-      statusText(root, "제작 내용을 확인한 뒤 영상을 만들어 주세요. 아직 게시되지 않았습니다.");
+      statusText(root, "제작 내용을 자유롭게 수정한 뒤 영상 만들기를 눌러 주세요. 아직 게시되지 않았습니다.");
     } catch (error) {
+      stopProgressAnimation();
       if (NON_RESERVED_PREPARE_ERRORS.has(error.code)) {
         resetPreparedState();
         statusText(root, error.message, true);
       } else {
+        showProgress(0, "제작 요청 상태를 확인하고 있어요", "같은 요청 번호로 서버 상태만 다시 확인합니다.", "reconnecting");
         showRecovery("요청 응답을 끝까지 확인하지 못했습니다.", `${error.message} 같은 requestId의 서버 작업을 다시 조회합니다.`, true);
         statusText(root, "새 요청을 보내지 않고 기존 예약 상태만 다시 확인해 주세요.", true);
       }
@@ -738,15 +894,44 @@ export function mountShorts(root) {
       return;
     }
     if (!event.target.closest("[data-shorts-render]")) return;
-    setBusy(true);
-    setStep("video");
+    if (!state.authenticated) {
+      window.BuildersPlatform?.openLogin?.();
+      statusText(root, "Google 로그인 후 최종 영상을 제작할 수 있어요.", true);
+      return;
+    }
+    let planEdits;
     try {
+      planEdits = editedPlan();
+    } catch (error) {
+      statusText(root, error.message, true);
+      return;
+    }
+    setBusy(true);
+    showProgress(3, "수정한 제작 내용을 저장하고 있어요", "장면별 문구와 화면 구성을 최종 영상에 반영합니다.");
+    try {
+      const updated = await window.BuildersPlatform.shorts.updatePlan({
+        jobId: state.jobId,
+        detailedPrompt: planEdits.detailedPrompt,
+        scenes: planEdits.scenes,
+      });
+      if (updated.jobId !== state.jobId || updated.reservationStatus !== "reserved" || !Array.isArray(updated.scenes) || updated.scenes.length < 2) {
+        throw new Error("수정한 제작 내용의 서버 저장 상태를 확인하지 못했습니다.");
+      }
+      state.plan = {
+        detailedPrompt: updated.detailedPrompt,
+        scenes: updated.scenes,
+        narrationUrl: updated.narrationUrl || "",
+      };
+      persistRecovery();
+      setStep("video");
       if (state.rendererReady) {
+        showProgress(6, "쇼츠 영상 제작을 시작하고 있어요", "MoneyPrinterTurbo에 수정한 제작 내용을 전달합니다.");
         statusText(root, "MoneyPrinterTurbo에 한국어 음성·자막 영상 작업을 보내고 있어요.");
         const started = await window.BuildersPlatform.shorts.render({ jobId: state.jobId });
         await pollRenderer(started);
         return;
       }
+      showProgress(0, "쇼츠 영상을 제작하고 있어요", "브라우저에서 장면과 자막을 합성합니다.");
       statusText(root, "영상을 합치고 있어요. 0%");
       let blob;
       try {
@@ -756,7 +941,10 @@ export function mountShorts(root) {
           subtitleStyle: subtitleStyleInput.value,
           voice: voiceInput.checked,
           narrationUrl: state.plan.narrationUrl,
-          onProgress: (progress) => statusText(root, `영상을 합치고 있어요. ${progress}%`),
+          onProgress: (progress) => {
+            showProgress(progress, "쇼츠 영상을 제작하고 있어요", "브라우저에서 장면과 자막을 합성합니다.");
+            statusText(root, `영상을 합치고 있어요. ${progress}%`);
+          },
         });
       } catch (renderError) {
         const released = await window.BuildersPlatform.shorts.release({ jobId: state.jobId, requestId: state.requestId, reason: "render_failed" });
@@ -768,6 +956,7 @@ export function mountShorts(root) {
         return;
       }
       state.video = blob;
+      showProgress(98, "완성 영상을 저장하고 있어요", "영상 파일과 Build 사용 결과를 서버에서 확인합니다.");
       statusText(root, "완성된 영상을 안전하게 저장하고 있어요.");
       let uploaded;
       try {
@@ -781,8 +970,7 @@ export function mountShorts(root) {
         const ambiguous = uploadError.code === "network_error" || Number(uploadError.status || 0) >= 500;
         if (ambiguous) {
           persistRecovery();
-          showRecovery("영상 저장 응답이 끊겼습니다.", `${uploadError.message} 같은 작업의 서버 상태를 다시 확인해 주세요.`, true);
-          statusText(root, "업로드 성공 여부를 확인하기 전에는 Build 완료나 실패로 표시하지 않습니다.", true);
+          await reconcileRenderFailure(uploadError);
           return;
         }
         const released = await window.BuildersPlatform.shorts.release({ jobId: state.jobId, requestId: state.requestId, reason: "upload_failed" });
@@ -795,10 +983,8 @@ export function mountShorts(root) {
       }
       await finishCompletedServerState(uploaded, { video: blob });
     } catch (error) {
-      state.renderBlocked = true;
       persistRecovery();
-      showRecovery("작업 결과를 확정하지 못했습니다.", `${error.message} 서버 상태를 다시 확인해 주세요.`, true);
-      statusText(root, "예약·확정·해제 중 하나가 서버에서 확인될 때까지 새 요청을 보내지 않습니다.", true);
+      await reconcileRenderFailure(error);
     } finally { setBusy(false); }
   });
 
@@ -859,6 +1045,8 @@ export function mountShorts(root) {
   window.BuildersPlatform?.subscribe?.((snapshot) => {
     applyRendererAvailability(snapshot);
     const authenticated = Boolean(snapshot.authenticated);
+    state.authenticated = authenticated;
+    setBusy(state.busy);
     const becameAuthenticated = authenticated && !wasAuthenticated;
     wasAuthenticated = authenticated;
     const saved = readRecoveryState();

@@ -69,7 +69,7 @@ if (!html.includes("data-lounge-shell") || !html.includes("AI 회의록") || !ht
 if (!html.includes('data-community-view="newsletter"') || !html.includes('data-community-view="board"')) {
   throw new Error("Builders Lounge 커뮤니티 화면이 없습니다.");
 }
-if (!html.includes('href="lounge/lounge.css"') || !html.includes('href="lounge/portal.css"') || !html.includes('href="lounge/shorts.css"') || !html.includes('src="lounge/lounge.js')) {
+if (!html.includes('href="lounge/lounge.css"') || !html.includes('href="lounge/portal.css"') || !html.includes('href="lounge/shorts.css') || !html.includes('src="lounge/lounge.js')) {
   throw new Error("루트에서 Lounge 지원 파일 경로를 찾을 수 없습니다.");
 }
 if (!html.includes('src="assets/builders-lounge-logo.png"') || !html.includes("data-home-mount") || !html.includes("portal-mobile-nav")) {

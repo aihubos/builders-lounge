@@ -34,6 +34,7 @@ const ERROR_MESSAGES = Object.freeze({
   shorts_renderer_not_configured: "MoneyPrinterTurbo 렌더 서버가 아직 연결되지 않았습니다.",
   shorts_renderer_unreachable: "영상 렌더 서버와 연결이 끊어졌습니다. 기존 작업 상태를 다시 확인해 주세요.",
   shorts_renderer_request_failed: "영상 렌더 서버가 작업을 처리하지 못했습니다. 기존 작업 상태를 다시 확인해 주세요.",
+  shorts_renderer_task_missing: "영상 서버에서 이전 작업을 찾지 못해 Build 예약을 해제했습니다. 새로 시작해 주세요.",
   shorts_renderer_invalid_response: "영상 렌더 서버 응답을 확인하지 못했습니다.",
   shorts_renderer_video_fetch_failed: "완성된 MP4를 렌더 서버에서 가져오지 못했습니다.",
   shorts_renderer_media_type_invalid: "렌더 서버가 MP4가 아닌 파일을 반환했습니다.",
@@ -42,6 +43,8 @@ const ERROR_MESSAGES = Object.freeze({
   shorts_mp4_structure_invalid: "완성 파일의 MP4 구조를 확인하지 못해 Build 예약을 해제했습니다.",
   shorts_render_not_started: "아직 시작하지 않은 렌더 작업입니다.",
   shorts_render_plan_incomplete: "렌더할 제작안의 장면 구성이 부족해 Build 예약을 해제했습니다.",
+  shorts_plan_invalid: "제작 방향과 장면 내용을 모두 확인해 주세요.",
+  shorts_plan_locked: "영상 제작이 시작되어 제작 내용을 더 이상 수정할 수 없습니다.",
   shorts_reservation_expired: "30분이 지나 Build 예약이 해제되었습니다. 새로 시작해 주세요.",
   shorts_upload_in_progress: "같은 영상의 저장을 이미 처리하고 있습니다. 작업 상태를 다시 확인해 주세요.",
   shorts_use_studio: "쇼츠는 AI 쇼츠 스튜디오 화면에서 만들어 주세요.",
@@ -74,7 +77,7 @@ async function request(path, options = {}) {
   try {
     response = await fetch(API_BASE + path, { cache: "no-store", ...options, headers });
   } catch (error) {
-    const wrapped = new Error("생성 서버와 연결이 끊어졌습니다. 잠시 후 다시 시도하거나, 관리자 설정에서 연결 방식을 OpenRouter로 저장해 주세요.");
+    const wrapped = new Error("서버와 연결이 끊어졌습니다. 인터넷 연결을 확인하고 잠시 후 다시 시도해 주세요.");
     wrapped.code = "network_error";
     throw wrapped;
   }
@@ -427,6 +430,16 @@ const shorts = Object.freeze({
       method: "POST",
       headers: { "X-Request-Id": requestId },
       body: JSON.stringify({ requestId, topic, settings }),
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async updatePlan({ jobId, detailedPrompt, scenes }) {
+    requirePlatformLogin();
+    if (!jobId) throw new Error("수정할 쇼츠 작업을 확인하지 못했습니다.");
+    const data = await request(`/lounge/shorts/${encodeURIComponent(jobId)}/plan`, {
+      method: "PATCH",
+      body: JSON.stringify({ detailedPrompt, scenes }),
     });
     applyBalance(data.balance);
     return data;
