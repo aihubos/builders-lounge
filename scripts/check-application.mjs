@@ -101,7 +101,9 @@ const nonVisitorScripts = loungeScript.replace(topbarScript, "").replace(communi
 expect(!/\b(XMLHttpRequest|FormData)\b/.test(nonVisitorScripts) && !/\bfetch\s*\(/.test(nonVisitorScripts), "허용되지 않은 외부 요청·업로드 로직이 있습니다.");
 expect(communityScript.includes("reportmode-request-board.report-request-board.workers.dev") && communityScript.includes("/board/posts"), "통합 게시판 API 연결이 없습니다.");
 expect(platformScript.includes("/lounge/me") && platformScript.includes("/lounge/tools/") && indexHtml.includes("https://accounts.google.com/gsi/client"), "Google 로그인 또는 빌드 도구 API 연결이 없습니다.");
-expect(shortsScript.includes("renderWebm") && shortsScript.includes("BuildersPlatform.shorts.upload") && shortsScript.includes("BuildersPlatform.shorts.publish"), "쇼츠 렌더·저장·수동 게시 흐름이 없습니다.");
+expect(shortsScript.includes("renderWebm") && shortsScript.includes("BuildersPlatform.shorts.upload") && shortsScript.includes("BuildersPlatform.shorts.render") && shortsScript.includes("BuildersPlatform.shorts.renderSync") && shortsScript.includes("BuildersPlatform.shorts.publish"), "쇼츠 MPT·브라우저 렌더·저장·수동 게시 흐름이 없습니다.");
+expect(platformScript.includes("shortsRendererReady") || shortsScript.includes("shortsRendererReady"), "쇼츠 렌더 서버 준비 상태 계약이 없습니다.");
+expect(platformScript.includes('"video/mp4"') && shortsScript.includes('"video/mp4"') && shortsScript.includes("MPT_KOREAN_VOICE"), "쇼츠 MP4·한국어 음성 표시 계약이 없습니다.");
 expect(shortsScript.includes("게시 버튼을 누르기 전에는 게시되지 않습니다") && shortsScript.includes("rewardBuilds") && communityScript.includes("board-detail-media"), "쇼츠 수동 게시 또는 게시판 영상 표시 계약이 없습니다.");
 expect(!/localStorage\.(setItem|getItem)\([^\n]*(credential|token|api.?key)/i.test(platformScript), "로그인 토큰이나 API 키를 브라우저 영구 저장소에 보관하고 있습니다.");
 expect(indexHtml.includes("쇼츠 영상은 저장 성공 시 5빌드") && indexHtml.includes("data-admin-slot") && indexHtml.includes("data-platform-account"), "빌드 포인트 또는 관리자 화면 연결이 없습니다.");

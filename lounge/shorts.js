@@ -7,6 +7,8 @@ const EXAMPLES = [
 const RECOVERY_STORAGE_KEY = "builders-lounge-shorts-recovery-v1";
 const ACTIVE_JOB_STATUSES = new Set(["reserving", "processing"]);
 const TERMINAL_RELEASE_STATUSES = new Set(["released", "expired"]);
+const SUPPORTED_MEDIA_TYPES = new Set(["video/webm", "video/mp4"]);
+const MPT_KOREAN_VOICE = "ko-KR-HyunsuMultilingualNeural-Male";
 const NON_RESERVED_PREPARE_ERRORS = new Set([
   "login_required", "invalid_google_token", "insufficient_builds", "tool_disabled",
   "tool_not_configured", "shorts_cost_misconfigured", "shorts_topic_too_short",
@@ -14,6 +16,14 @@ const NON_RESERVED_PREPARE_ERRORS = new Set([
 
 function isHttpsUrl(value) {
   try { return new URL(String(value || "")).protocol === "https:"; } catch { return false; }
+}
+
+function isSafeMediaUrl(value) {
+  try {
+    const url = new URL(String(value || ""), window.location.href);
+    return url.protocol === "https:"
+      || (url.protocol === "http:" && ["127.0.0.1", "localhost"].includes(url.hostname));
+  } catch { return false; }
 }
 
 function readRecoveryState() {
@@ -243,6 +253,7 @@ export function mountShorts(root) {
     video: null,
     previewUrl: "",
     mediaUrl: "",
+    mediaType: "",
     publishRequestId: "",
     published: null,
     publishStatus: "",
@@ -252,12 +263,13 @@ export function mountShorts(root) {
     preparing: false,
     recentLookupAttempted: false,
     recentLookupInFlight: false,
+    rendererReady: false,
     busy: false,
   };
 
   root.innerHTML = `<section class="shorts-studio" aria-labelledby="shorts-title">
     <header class="shorts-heading">
-      <div><p class="section-label">MAKE · VERTICAL VIDEO</p><h3 id="shorts-title">쇼츠 만들기</h3><p>주제 한 문장만 적으면 AI가 제작 내용을 정리해 실제 WebM 영상을 만듭니다.</p></div>
+      <div><p class="section-label">MAKE · VERTICAL VIDEO</p><h3 id="shorts-title">쇼츠 만들기</h3><p>주제 한 문장만 적으면 AI가 제작 내용을 정리해 실제 세로 영상을 만듭니다.</p></div>
       <div class="shorts-cost"><strong>Build 5</strong><span>영상 저장 성공 시 사용</span></div>
     </header>
     <div class="shorts-flow" aria-label="쇼츠 제작 단계"><span data-step="input" aria-current="step">1 한 문장</span><span data-step="plan">2 제작 내용</span><span data-step="video">3 영상 결과</span><span data-step="publish">4 수동 게시</span></div>
@@ -268,12 +280,12 @@ export function mountShorts(root) {
     <section class="shorts-panel" data-shorts-input>
       <label class="shorts-topic">만들고 싶은 쇼츠<textarea rows="4" minlength="5" maxlength="300" placeholder="예: 회의 메모를 결정과 할 일 중심으로 정리하는 방법을 알려줘."></textarea><small>5자 이상 300자 이하로 적어 주세요.</small></label>
       <div class="shorts-examples" aria-label="입력 예시">${EXAMPLES.map((example) => `<button type="button" data-example="${escapeHtml(example)}">${escapeHtml(example)}</button>`).join("")}</div>
-      <details class="shorts-settings"><summary>상세 설정 <small>원하면 자막과 음성을 바꿀 수 있어요.</small></summary>
+      <details class="shorts-settings"><summary>상세 설정 <small>자막과 음성 적용 상태를 확인할 수 있어요.</small></summary>
         <div class="shorts-settings-grid">
           <label class="shorts-switch"><input type="checkbox" name="subtitles" checked><span>자막 사용</span><small>영상 내용을 화면 글자로 보여줍니다.</small></label>
           <label>자막 스타일<select name="subtitleStyle"><option value="basic">기본</option><option value="emphasis">강조</option><option value="minimal">간결</option></select></label>
-          <label class="shorts-switch"><input type="checkbox" name="voice" data-unsupported disabled><span>음성 사용</span><small>운영 렌더 서버 연결 후 제공할 예정입니다.</small></label>
-          <label>목소리 선택<select name="voiceId" data-unsupported disabled><option value="auto">렌더 서버 연결 필요</option></select></label>
+          <label class="shorts-switch"><input type="checkbox" name="voice" data-renderer-control disabled><span>한국어 음성 사용</span><small data-renderer-voice-note>렌더 서버가 연결되면 한국어 음성을 포함합니다.</small></label>
+          <label>목소리 선택<select name="voiceId" data-renderer-control disabled><option value="${MPT_KOREAN_VOICE}">한국어 남성 음성</option></select></label>
         </div>
       </details>
       <p class="shorts-note">영상 완성 시 Build 5 사용 · 실패하거나 취소되면 사용되지 않아요.</p>
@@ -302,8 +314,8 @@ export function mountShorts(root) {
   const currentSettings = () => ({
     subtitles: subtitlesInput.checked,
     subtitleStyle: subtitleStyleInput.value,
-    voice: voiceInput.checked,
-    voiceId: voiceIdInput.value,
+    voice: state.rendererReady ? true : voiceInput.checked,
+    voiceId: state.rendererReady ? MPT_KOREAN_VOICE : voiceIdInput.value,
   });
   const persistRecovery = () => {
     if (!state.requestId && !state.jobId) return;
@@ -318,12 +330,33 @@ export function mountShorts(root) {
   const restoreInputs = (saved) => {
     if (!saved) return;
     topicInput.value = saved.topic || topicInput.value;
-    subtitlesInput.checked = saved.settings.subtitles;
+    subtitlesInput.checked = state.rendererReady ? true : saved.settings.subtitles;
     subtitleStyleInput.value = saved.settings.subtitleStyle;
-    voiceInput.checked = saved.settings.voice && !voiceInput.disabled;
-    voiceIdInput.value = saved.settings.voiceId;
-    subtitleStyleInput.disabled = !subtitlesInput.checked;
-    voiceIdInput.disabled = !voiceInput.checked;
+    voiceInput.checked = state.rendererReady ? true : saved.settings.voice;
+    voiceIdInput.value = saved.settings.voiceId === MPT_KOREAN_VOICE ? saved.settings.voiceId : MPT_KOREAN_VOICE;
+    subtitlesInput.disabled = state.rendererReady;
+    subtitleStyleInput.disabled = state.rendererReady || !subtitlesInput.checked;
+    voiceInput.disabled = true;
+    voiceIdInput.disabled = true;
+  };
+  const applyRendererAvailability = (snapshot) => {
+    if (!snapshot?.config || typeof snapshot.config.shortsRendererReady !== "boolean") return;
+    state.rendererReady = snapshot.config.shortsRendererReady;
+    const voiceNote = inputPanel.querySelector("[data-renderer-voice-note]");
+    voiceInput.checked = state.rendererReady;
+    voiceInput.disabled = true;
+    voiceIdInput.value = MPT_KOREAN_VOICE;
+    voiceIdInput.disabled = true;
+    if (state.rendererReady) {
+      subtitlesInput.checked = true;
+      subtitlesInput.disabled = true;
+      subtitleStyleInput.disabled = true;
+      if (voiceNote) voiceNote.textContent = "MoneyPrinterTurbo가 한국어 음성과 자막을 함께 만듭니다.";
+    } else {
+      subtitlesInput.disabled = state.busy;
+      subtitleStyleInput.disabled = state.busy || !subtitlesInput.checked;
+      if (voiceNote) voiceNote.textContent = "렌더 서버가 연결되기 전에는 브라우저 무음 WebM으로 만듭니다.";
+    }
   };
   const showRecovery = (title, copy, error = false) => {
     const authenticated = Boolean(window.BuildersPlatform?.snapshot?.().authenticated);
@@ -341,9 +374,9 @@ export function mountShorts(root) {
   const setBusy = (busy) => {
     state.busy = busy;
     root.querySelectorAll("button, textarea, select, input").forEach((control) => {
-      if (control.matches("[data-unsupported]")) control.disabled = true;
+      if (control.matches("[data-renderer-control]")) control.disabled = true;
       else if (state.published && control.closest("[data-shorts-publish]")) control.disabled = true;
-      else if (control.matches('[name="voiceId"]')) control.disabled = !voiceInput.checked || busy;
+      else if (control.matches('[name="subtitles"], [name="subtitleStyle"]') && state.rendererReady) control.disabled = true;
       else if (control.matches('[name="subtitleStyle"]')) control.disabled = !subtitlesInput.checked || busy;
       else if (control.matches("[data-rights-submit]")) control.disabled = busy || !root.querySelector('[name="rights"]')?.checked;
       else if (control.matches("[data-shorts-render]")) control.disabled = busy || state.renderBlocked;
@@ -358,6 +391,7 @@ export function mountShorts(root) {
     state.video = null;
     state.previewUrl = "";
     state.mediaUrl = "";
+    state.mediaType = "";
     state.publishRequestId = "";
     state.published = null;
     state.publishStatus = "";
@@ -414,10 +448,14 @@ export function mountShorts(root) {
     persistRecovery();
   };
 
-  const renderResult = ({ mediaUrl, video, publishStatus = "", published = null, restored = false } = {}) => {
-    if (!(video instanceof Blob) || !video.size) throw new Error("복원할 WebM 영상 파일을 확인하지 못했습니다.");
+  const renderResult = ({ mediaUrl, video, mediaType = "", publishStatus = "", published = null, restored = false } = {}) => {
+    const resolvedMediaType = String(mediaType || video?.type || "").split(";", 1)[0].trim();
+    if (!(video instanceof Blob) || !video.size || !SUPPORTED_MEDIA_TYPES.has(resolvedMediaType)) {
+      throw new Error("복원할 영상 파일 형식을 확인하지 못했습니다.");
+    }
     state.video = video;
     state.mediaUrl = mediaUrl;
+    state.mediaType = resolvedMediaType;
     state.publishStatus = publishStatus;
     state.published = null;
     if (state.previewUrl) URL.revokeObjectURL(state.previewUrl);
@@ -430,10 +468,12 @@ export function mountShorts(root) {
     if (deleted) state.publishRequestId = "";
     const topic = topicInput.value.trim() || "완성된 쇼츠 영상";
     const detailedPrompt = String(state.plan?.detailedPrompt || "완성된 쇼츠 영상을 공유합니다.").slice(0, 5000);
+    const extension = resolvedMediaType === "video/mp4" ? "mp4" : "webm";
+    const formatLabel = extension.toUpperCase();
     resultPanel.innerHTML = `<div class="shorts-panel-head"><div><span>${restored ? "서버에서 복구한 영상" : "영상이 완성됐어요"}</span><h4>게시 전 결과를 확인해 주세요.</h4></div><span class="shorts-completed">Build 5 사용 완료</span></div>
       ${deleted ? '<div class="shorts-recovery-note"><strong>기존 게시글은 삭제되었습니다.</strong><p>이전 공개 링크와 성공 화면은 재사용하지 않습니다. 아래 내용을 확인하고 새 게시 요청으로 다시 등록할 수 있습니다.</p></div>' : ""}
       <div class="shorts-result-grid"><video controls playsinline preload="metadata" src="${escapeHtml(state.previewUrl)}" aria-label="완성된 쇼츠 미리보기"></video>
-        <div class="shorts-result-copy"><p>이 영상은 ${published ? "게시판에 등록된 상태입니다." : "아직 게시판에 등록되지 않았습니다."}</p><a class="secondary-button" download="builders-shorts-${escapeHtml(state.jobId)}.webm" href="${escapeHtml(state.previewUrl)}">다운로드</a><small>${(video.size / 1024 / 1024).toFixed(1)}MB · WebM · 세로형 9:16</small></div></div>
+        <div class="shorts-result-copy"><p>이 영상은 ${published ? "게시판에 등록된 상태입니다." : "아직 게시판에 등록되지 않았습니다."}</p><a class="secondary-button" download="builders-shorts-${escapeHtml(state.jobId)}.${extension}" href="${escapeHtml(state.previewUrl)}">다운로드</a><small>${(video.size / 1024 / 1024).toFixed(1)}MB · ${formatLabel} · 세로형 9:16</small></div></div>
       <form data-shorts-publish><h4>게시판에 등록</h4><p>제목, 설명, 영상과 등록 위치를 확인해 주세요. 버튼을 누르기 전에는 게시되지 않습니다.</p>
         <div class="shorts-publish-grid"><label>게시글 제목<input name="title" minlength="4" maxlength="100" required value="${escapeHtml(topic.slice(0, 100))}"></label><label>등록 위치<input value="공개 게시판 · 정보 공유" readonly></label></div>
         <label>게시글 설명<textarea name="content" minlength="10" maxlength="5000" required>${escapeHtml(detailedPrompt)}</textarea></label>
@@ -458,6 +498,84 @@ export function mountShorts(root) {
     if (saved.requestId && server.requestId !== saved.requestId) throw new Error("저장된 요청과 서버 요청 번호가 일치하지 않습니다.");
   };
 
+  const applyServerState = (server) => {
+    validateRecoveredIdentity(server, { jobId: state.jobId, requestId: state.requestId });
+    state.requestId = server.requestId;
+    state.jobId = server.jobId;
+    state.serverStatus = server.status;
+    const scenes = Array.isArray(server.scenes) ? server.scenes : [];
+    if (scenes.length) {
+      state.plan = {
+        detailedPrompt: server.detailedPrompt || state.plan?.detailedPrompt || "",
+        scenes,
+        narrationUrl: server.narrationUrl || "",
+      };
+    }
+  };
+
+  const finishReleasedServerState = (server) => {
+    if (server.reservationStatus !== "released" || !server.releaseEventId) {
+      throw new Error("Build 예약 해제 원장 상태를 확인하지 못했습니다.");
+    }
+    const expired = server.status === "expired" || server.reservationExpired === true;
+    resetPreparedState();
+    statusText(root, expired
+      ? "30분이 지난 작업의 Build 5 예약 해제를 확인했습니다. 새로 시작해 주세요."
+      : "중단된 작업의 Build 5 예약 해제를 확인했습니다. 새로 시작해 주세요.");
+  };
+
+  const finishCompletedServerState = async (server, { restored = false, video = null } = {}) => {
+    applyServerState(server);
+    if (server.status !== "completed" || server.reservationStatus !== "confirmed" || !server.confirmationEventId) {
+      throw new Error("Build 5 확정 원장 상태를 확인하지 못했습니다.");
+    }
+    const mediaType = String(server.mediaType || "").split(";", 1)[0].trim();
+    if (!SUPPORTED_MEDIA_TYPES.has(mediaType) || !isSafeMediaUrl(server.mediaUrl)) {
+      throw new Error("완료된 영구 영상 주소와 형식을 확인하지 못했습니다.");
+    }
+    const publishStatus = String(server.publishStatus || "");
+    if (server.publishedPostId && !["active", "deleted"].includes(publishStatus)) {
+      throw new Error("게시글의 현재 공개 상태를 확인하지 못했습니다.");
+    }
+    if (publishStatus === "active" && (!server.publishedPostId || !server.publishRequestId)) {
+      throw new Error("게시된 글의 요청 번호와 게시글 번호를 확인하지 못했습니다.");
+    }
+    const storedVideo = video || await window.BuildersPlatform.shorts.media({ mediaUrl: server.mediaUrl });
+    const returnedMediaType = String(storedVideo?.type || mediaType).split(";", 1)[0].trim();
+    if (returnedMediaType !== mediaType) throw new Error("서버 상태와 저장 영상 형식이 일치하지 않습니다.");
+    const published = publishStatus === "active" && server.publishedPostId && server.publishRequestId
+      ? { postId: server.publishedPostId, publishRequestId: server.publishRequestId, jobId: server.jobId, postUrl: boardPostUrl(server.publishedPostId) }
+      : null;
+    renderResult({ mediaUrl: server.mediaUrl, mediaType, video: storedVideo, publishStatus, published, restored });
+  };
+
+  const pollRenderer = async (initial, { restored = false } = {}) => {
+    let server = initial;
+    while (true) {
+      applyServerState(server);
+      if (TERMINAL_RELEASE_STATUSES.has(server.status) || server.reservationExpired === true) {
+        finishReleasedServerState(server);
+        return;
+      }
+      if (server.status === "completed") {
+        await finishCompletedServerState(server, { restored });
+        return;
+      }
+      if (!ACTIVE_JOB_STATUSES.has(server.status)
+        || server.reservationStatus !== "reserved"
+        || !server.reservationEventId
+        || server.renderStarted !== true
+        || server.renderState !== "processing") {
+        throw new Error("MPT 렌더 작업의 예약·진행 상태를 확인하지 못했습니다.");
+      }
+      persistRecovery();
+      const progress = Math.max(0, Math.min(99, Math.trunc(Number(server.renderProgress) || 0)));
+      statusText(root, `MoneyPrinterTurbo가 한국어 음성·자막 영상을 만들고 있어요. ${progress}%`);
+      await wait(1500);
+      server = await window.BuildersPlatform.shorts.renderSync({ jobId: state.jobId });
+    }
+  };
+
   const recoverStoredJob = async () => {
     const saved = readRecoveryState();
     if (!saved || state.restoring || state.busy || state.preparing) return;
@@ -477,23 +595,22 @@ export function mountShorts(root) {
     try {
       const server = await window.BuildersPlatform.shorts.status({ jobId: saved.jobId, requestId: saved.requestId });
       validateRecoveredIdentity(server, saved);
-      state.requestId = server.requestId;
-      state.jobId = server.jobId;
-      state.serverStatus = server.status;
-      state.plan = { detailedPrompt: server.detailedPrompt || "", scenes: Array.isArray(server.scenes) ? server.scenes : [], narrationUrl: server.narrationUrl || "" };
+      applyServerState(server);
       if (TERMINAL_RELEASE_STATUSES.has(server.status) || server.reservationExpired === true) {
-        if (server.reservationStatus !== "released" || !server.releaseEventId) throw new Error("Build 예약 해제 원장 상태를 확인하지 못했습니다.");
-        const expired = server.status === "expired" || server.reservationExpired === true;
-        resetPreparedState();
-        statusText(root, expired ? "30분이 지난 작업의 Build 5 예약 해제를 확인했습니다. 새로 시작해 주세요." : "취소된 작업의 Build 5 예약 해제를 확인했습니다. 새로 시작해 주세요.");
+        finishReleasedServerState(server);
         return;
       }
       if (ACTIVE_JOB_STATUSES.has(server.status)) {
         if (server.reservationStatus !== "reserved" || !server.reservationEventId) throw new Error("Build 5 예약 원장 상태를 확인하지 못했습니다.");
         persistRecovery();
-        if (server.status === "processing" && state.plan.scenes.length) {
+        if (server.status === "processing" && state.plan?.scenes?.length) {
           renderPlan(state.plan, { restored: true });
-          statusText(root, "예약된 기존 제작 내용을 복원했습니다. 새 Build 예약은 만들지 않았습니다.");
+          if (server.renderStarted === true && server.renderState === "processing") {
+            setStep("video");
+            await pollRenderer(server, { restored: true });
+          } else {
+            statusText(root, "예약된 기존 제작 내용을 복원했습니다. 새 Build 예약은 만들지 않았습니다.");
+          }
         } else {
           showRecovery("제작 내용을 준비하고 있어요.", "같은 작업을 서버에서 다시 확인하면 새 Build 예약 없이 이어집니다.");
           setStep("plan");
@@ -502,20 +619,7 @@ export function mountShorts(root) {
         return;
       }
       if (server.status !== "completed") throw new Error("서버가 알 수 없는 쇼츠 상태를 반환했습니다.");
-      if (server.reservationStatus !== "confirmed" || !server.confirmationEventId) throw new Error("Build 5 확정 원장 상태를 확인하지 못했습니다.");
-      if (server.mediaType !== "video/webm" || !isHttpsUrl(server.mediaUrl)) throw new Error("완료된 WebM 영구 주소를 확인하지 못했습니다.");
-      const publishStatus = String(server.publishStatus || "");
-      if (server.publishedPostId && !["active", "deleted"].includes(publishStatus)) {
-        throw new Error("게시글의 현재 공개 상태를 확인하지 못했습니다.");
-      }
-      if (publishStatus === "active" && (!server.publishedPostId || !server.publishRequestId)) {
-        throw new Error("게시된 글의 요청 번호와 게시글 번호를 확인하지 못했습니다.");
-      }
-      const video = await window.BuildersPlatform.shorts.media({ mediaUrl: server.mediaUrl });
-      const published = publishStatus === "active" && server.publishedPostId && server.publishRequestId
-        ? { postId: server.publishedPostId, publishRequestId: server.publishRequestId, jobId: server.jobId, postUrl: boardPostUrl(server.publishedPostId) }
-        : null;
-      renderResult({ mediaUrl: server.mediaUrl, video, publishStatus, published, restored: true });
+      await finishCompletedServerState(server, { restored: true });
     } catch (error) {
       if (error.code === "shorts_job_not_found") {
         resetPreparedState();
@@ -637,6 +741,12 @@ export function mountShorts(root) {
     setBusy(true);
     setStep("video");
     try {
+      if (state.rendererReady) {
+        statusText(root, "MoneyPrinterTurbo에 한국어 음성·자막 영상 작업을 보내고 있어요.");
+        const started = await window.BuildersPlatform.shorts.render({ jobId: state.jobId });
+        await pollRenderer(started);
+        return;
+      }
       statusText(root, "영상을 합치고 있어요. 0%");
       let blob;
       try {
@@ -683,21 +793,7 @@ export function mountShorts(root) {
         statusText(root, `${uploadError.message} Build 5 예약 해제를 확인했습니다.`, true);
         return;
       }
-      const completed = uploaded.jobId === state.jobId
-        && uploaded.requestId === state.requestId
-        && uploaded.status === "completed"
-        && uploaded.reservationStatus === "confirmed"
-        && Boolean(uploaded.confirmationEventId)
-        && uploaded.mediaType === "video/webm"
-        && isHttpsUrl(uploaded.mediaUrl);
-      if (!completed) {
-        persistRecovery();
-        showRecovery("영상 저장 완료 응답을 확인하지 못했습니다.", "서버 상태를 다시 조회해 Build 확정과 영구 영상 주소를 확인해 주세요.", true);
-        statusText(root, "서버 확인 전에는 영상 완료로 표시하지 않습니다.", true);
-        return;
-      }
-      state.serverStatus = "completed";
-      renderResult({ mediaUrl: uploaded.mediaUrl, video: blob });
+      await finishCompletedServerState(uploaded, { video: blob });
     } catch (error) {
       state.renderBlocked = true;
       persistRecovery();
@@ -761,6 +857,7 @@ export function mountShorts(root) {
   }
   let wasAuthenticated = false;
   window.BuildersPlatform?.subscribe?.((snapshot) => {
+    applyRendererAvailability(snapshot);
     const authenticated = Boolean(snapshot.authenticated);
     const becameAuthenticated = authenticated && !wasAuthenticated;
     wasAuthenticated = authenticated;

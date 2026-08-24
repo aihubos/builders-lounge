@@ -31,6 +31,19 @@ const ERROR_MESSAGES = Object.freeze({
   shorts_media_missing: "저장된 영상을 찾지 못했습니다.",
   shorts_publish_failed: "게시판에 등록하지 못했습니다. 같은 버튼으로 다시 시도해 주세요.",
   shorts_upload_commit_failed: "영상 저장은 끝났지만 Build 확정 상태를 확인하지 못했습니다. 다시 시도하지 말고 관리자에게 알려 주세요.",
+  shorts_renderer_not_configured: "MoneyPrinterTurbo 렌더 서버가 아직 연결되지 않았습니다.",
+  shorts_renderer_unreachable: "영상 렌더 서버와 연결이 끊어졌습니다. 기존 작업 상태를 다시 확인해 주세요.",
+  shorts_renderer_request_failed: "영상 렌더 서버가 작업을 처리하지 못했습니다. 기존 작업 상태를 다시 확인해 주세요.",
+  shorts_renderer_invalid_response: "영상 렌더 서버 응답을 확인하지 못했습니다.",
+  shorts_renderer_video_fetch_failed: "완성된 MP4를 렌더 서버에서 가져오지 못했습니다.",
+  shorts_renderer_media_type_invalid: "렌더 서버가 MP4가 아닌 파일을 반환했습니다.",
+  shorts_renderer_video_url_invalid: "렌더 서버의 완성 영상 주소가 허용된 작업 경로와 다릅니다.",
+  shorts_renderer_storage_failed: "완성된 MP4를 안전한 저장소에 보관하지 못해 Build 예약을 해제했습니다.",
+  shorts_mp4_structure_invalid: "완성 파일의 MP4 구조를 확인하지 못해 Build 예약을 해제했습니다.",
+  shorts_render_not_started: "아직 시작하지 않은 렌더 작업입니다.",
+  shorts_render_plan_incomplete: "렌더할 제작안의 장면 구성이 부족해 Build 예약을 해제했습니다.",
+  shorts_reservation_expired: "30분이 지나 Build 예약이 해제되었습니다. 새로 시작해 주세요.",
+  shorts_upload_in_progress: "같은 영상의 저장을 이미 처리하고 있습니다. 작업 상태를 다시 확인해 주세요.",
   shorts_use_studio: "쇼츠는 AI 쇼츠 스튜디오 화면에서 만들어 주세요.",
   server_error: "서버에서 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.",
 });
@@ -402,8 +415,9 @@ const shorts = Object.freeze({
       throw error;
     }
     const video = await response.blob();
-    if (!video.size || !String(video.type || response.headers.get("Content-Type") || "").startsWith("video/webm")) {
-      throw new Error("저장된 WebM 영상 파일을 확인하지 못했습니다.");
+    const mediaType = String(video.type || response.headers.get("Content-Type") || "").split(";", 1)[0].trim();
+    if (!video.size || !["video/webm", "video/mp4"].includes(mediaType)) {
+      throw new Error("저장된 영상 파일 형식을 확인하지 못했습니다.");
     }
     return video;
   },
@@ -413,6 +427,24 @@ const shorts = Object.freeze({
       method: "POST",
       headers: { "X-Request-Id": requestId },
       body: JSON.stringify({ requestId, topic, settings }),
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async render({ jobId }) {
+    requirePlatformLogin();
+    if (!jobId) throw new Error("렌더할 쇼츠 작업을 확인하지 못했습니다.");
+    const data = await request(`/lounge/shorts/${encodeURIComponent(jobId)}/render`, {
+      method: "POST",
+    });
+    applyBalance(data.balance);
+    return data;
+  },
+  async renderSync({ jobId }) {
+    requirePlatformLogin();
+    if (!jobId) throw new Error("확인할 렌더 작업을 찾지 못했습니다.");
+    const data = await request(`/lounge/shorts/${encodeURIComponent(jobId)}/render/sync`, {
+      method: "POST",
     });
     applyBalance(data.balance);
     return data;
