@@ -1,7 +1,7 @@
 import "./platform.js?v=20260825-editable-progress-v2";
 import { renderHome } from "./js/pages/home.js?v=20260824-shorts-studio";
 import { mountJobs } from "./jobs.js";
-import { mountAdmin } from "./admin.js";
+import { mountAdmin } from "./admin.js?v=20260825-masterpiece-provider-v1";
 import "./settings.js";
 import "./placeholders.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";

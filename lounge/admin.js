@@ -18,6 +18,12 @@ const PROVIDER_DEFAULTS = Object.freeze({
   webhook: { endpointUrl: "", model: "" },
 });
 
+const MASTERPIECE_PROVIDER_DEFAULTS = Object.freeze({
+  ...PROVIDER_DEFAULTS,
+  openai: { endpointUrl: "https://api.openai.com/v1/images/generations", model: "gpt-image-1.5" },
+  openrouter: { endpointUrl: "https://openrouter.ai/api/v1/chat/completions", model: "google/gemini-3.1-flash-image" },
+});
+
 function escapeHtml(value) {
   return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
@@ -41,6 +47,7 @@ function renderTool(tool) {
     </div>
     <label>API 주소<input type="url" name="endpointUrl" maxlength="700" value="${escapeHtml(tool.endpointUrl || "")}" required placeholder="https://openrouter.ai/api/v1/chat/completions"></label>
     <label>모델<input name="model" maxlength="120" value="${escapeHtml(tool.model || "")}" required placeholder="openrouter 모델 또는 kimi-k2.5"></label>
+    ${tool.id === "masterpiece" ? '<p class="build-tool-guide">세계명화는 OpenRouter 또는 OpenAI의 이미지 생성 모델을 사용합니다. 연결 방식을 바꾸면 알맞은 이미지 모델이 자동 입력됩니다.</p>' : ""}
     <label>API 키
       <input type="password" name="apiKey" maxlength="10000" autocomplete="new-password" placeholder="${tool.apiKeyConfigured ? "새 키를 입력할 때만 변경됩니다" : "서버에 암호화해 저장할 키"}">
     </label>
@@ -183,7 +190,8 @@ export function mountAdmin(root) {
     const select = event.target.closest('select[name="provider"]');
     if (!select) return;
     const form = select.closest("[data-admin-tool-form]");
-    const preset = PROVIDER_DEFAULTS[select.value];
+    const presets = form?.dataset.adminToolForm === "masterpiece" ? MASTERPIECE_PROVIDER_DEFAULTS : PROVIDER_DEFAULTS;
+    const preset = presets[select.value];
     if (!form || !preset) return;
     if (preset.endpointUrl) form.elements.endpointUrl.value = preset.endpointUrl;
     if (preset.model) form.elements.model.value = preset.model;
@@ -229,4 +237,3 @@ export function mountAdmin(root) {
   void refresh();
   return { refresh };
 }
-
