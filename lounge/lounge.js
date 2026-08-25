@@ -1,12 +1,11 @@
-import "./platform.js?v=20260825-editable-progress-v2";
-import { renderHome } from "./js/pages/home.js?v=20260824-shorts-studio";
+import "./platform.js?v=20260825-damoang-layout-v1";
+import { renderHome } from "./js/pages/home.js?v=20260825-damoang-layout-v1";
 import { mountJobs } from "./jobs.js";
 import { mountAdmin } from "./admin.js?v=20260825-masterpiece-provider-v1";
 import "./settings.js";
-import "./placeholders.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";
 import { mountReportHubTopbar } from "./topbar.js";
-import { mountCommunity } from "./community.js?v=20260824-shorts-studio";
+import { mountCommunity } from "./community.js?v=20260825-damoang-layout-v1";
 import { mountShorts } from "./shorts.js?v=20260825-editable-progress-v2";
 import { publishedItems } from "./community-data.js";
 
@@ -35,7 +34,6 @@ const searchForm = document.querySelector("[data-global-search-form]");
 
 const viewMeta = Object.freeze({
   home: { kicker: "BUILDERS LOUNGE · COMMUNITY", title: "만들고, 나누고, 함께 성장해요", description: "AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 만나보세요.", status: "커뮤니티 운영 중" },
-  meeting: { kicker: "만들기", title: "AI 회의록", description: "회의 기록을 실행 가능한 회의록으로 만들고 빌드로 결제합니다.", status: "빌드 포인트" },
   shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "한 문장을 실제 세로형 MP4 또는 WebM 영상으로 만들고, 완성 뒤 선택해 게시합니다.", status: "영상 완성 시 Build 5" },
   webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 제작기가 Google 로그인과 빌드 잔액을 공유합니다.", status: "빌드 포인트" },
   masterpiece: { kicker: "만들기", title: "세계명화 프롬프트", description: "프롬프트는 무료로 만들고 이미지 생성에 빌드를 사용합니다.", status: "빌드 포인트" },
@@ -60,7 +58,6 @@ let jobsController = null;
 let searchReturnFocus = null;
 
 const SEARCH_TOOLS = Object.freeze([
-  { id: "search-meeting", title: "AI 회의록", summary: "회의 기록을 결정사항과 할 일로 정리하는 제작 흐름", route: "meeting", typeLabel: "제작 도구", icon: "✦" },
   { id: "search-shorts", title: "AI 쇼츠 스튜디오", summary: "긴 영상에서 세로형 숏폼 후보를 찾는 제작 흐름", route: "shorts", typeLabel: "제작 도구", icon: "▶" },
   { id: "search-webtoon", title: "웹툰 제작기", summary: "빌드 포인트로 대화와 아이디어를 공감 카드로 바꾸는 도구", route: "webtoon", typeLabel: "제작 도구", icon: "▣" },
   { id: "search-masterpiece", title: "세계명화 프롬프트", summary: "명화와 캐릭터를 조합하는 이미지 프롬프트 도구", route: "masterpiece", typeLabel: "제작 도구", icon: "♜" },
@@ -172,7 +169,6 @@ function formatDate(value) {
 
 function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "home") {
   if (view === "home") return "Google 로그인 후 게시글 한 건당 1빌드가 적립됩니다. API 키와 도구별 가격은 관리자만 설정합니다.";
-  if (view === "meeting") return "텍스트 회의 기록만 AI로 전달합니다. 성공한 생성 요청에만 설정된 빌드가 사용됩니다.";
   if (view === "shorts") return "한 문장을 제작안으로 확장해 실제 세로형 영상을 만들고, 완성 뒤 게시 여부를 직접 선택합니다.";
   if (view === "webtoon") return "웹툰 제작기는 Lounge 로그인과 빌드 잔액을 공유합니다. API 키는 서버에서만 사용합니다.";
   if (view === "masterpiece") return "프롬프트 조합은 무료이며 실제 이미지 생성에만 설정된 빌드가 사용됩니다.";
@@ -193,7 +189,7 @@ function renderResults(root, data) {
     return;
   }
   const result = data.results[0];
-  root.innerHTML = `<div class="panel-heading"><p class="section-label">OUTPUTS</p><h3>결과물</h3><p>완료된 샘플 결과를 미리 확인합니다.</p></div><article class="result-card"><div class="result-card-head"><div><span class="sample-label">샘플 결과</span><h4>${escapeHtml(result.title)}</h4><p>${result.formats.map(escapeHtml).join(" · ")}</p></div><span class="result-date">${formatDate(result.createdAt)}</span></div><details class="result-preview"><summary>샘플 미리보기 <span aria-hidden="true">＋</span></summary><div class="result-preview-body"><strong>요약</strong><p>${escapeHtml(result.summary)}</p><ul><li>결정사항 3개</li><li>할 일 5개</li></ul></div></details><p class="disabled-note">실제 다운로드 주소는 MVP 범위에 포함하지 않습니다.</p></article>`;
+  root.innerHTML = `<div class="panel-heading"><p class="section-label">OUTPUTS</p><h3>결과물</h3><p>완료된 샘플 결과를 미리 확인합니다.</p></div><article class="result-card"><div class="result-card-head"><div><span class="sample-label">샘플 결과</span><h4>${escapeHtml(result.title)}</h4><p>${result.formats.map(escapeHtml).join(" · ")}</p></div><span class="result-date">${formatDate(result.createdAt)}</span></div><details class="result-preview"><summary>샘플 미리보기 <span aria-hidden="true">＋</span></summary><div class="result-preview-body"><strong>요약</strong><p>${escapeHtml(result.summary)}</p><ul><li>장면 3개</li><li>대사 5개</li></ul></div></details><p class="disabled-note">실제 다운로드 주소는 MVP 범위에 포함하지 않습니다.</p></article>`;
 }
 
 function renderFiles(root, data) {
@@ -250,7 +246,7 @@ function renderHomeModule() {
   renderHome(home, {
     data: getDemoSnapshot(demoMode),
     onNavigate: (view) => showView(view, { updateHash: true }),
-    onModuleOpen: (module) => showView(module.action || "meeting", { updateHash: true }),
+    onModuleOpen: (module) => showView(module.action || "shorts", { updateHash: true }),
     onWrite: () => { showView("board", { updateHash: true }); window.dispatchEvent(new CustomEvent("lounge:boardwrite")); },
   });
   window.LoungeCommunity?.refreshHomePreview?.();
@@ -311,11 +307,9 @@ function showView(requestedView, { updateHash = false, announce = true } = {}) {
 }
 
 function initializeModules() {
-  const meeting = document.querySelector('[data-view-panel="meeting"]');
   const shorts = document.querySelector('[data-view-panel="shorts"]');
   const settings = document.querySelector("[data-settings-slot]");
   const admin = document.querySelector("[data-admin-slot]");
-  if (meeting) window.LoungePlaceholders?.render(meeting, { tool: "meeting" });
   if (shorts) mountShorts(shorts);
   renderHomeModule();
   if (settings) window.LoungeSettings?.render(settings, { demoMode, onDemoChange: setDemoMode });

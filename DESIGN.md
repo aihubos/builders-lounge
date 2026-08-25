@@ -65,7 +65,9 @@
 
 ## 3. 타이포그래피
 
-기본 글꼴은 `-apple-system`, `BlinkMacSystemFont`, `Apple SD Gothic Neo`, `Pretendard`, `Noto Sans KR`, `sans-serif` 순서다. 별도 웹폰트는 내려받지 않는다.
+교육 홈페이지 기본 글꼴은 `-apple-system`, `BlinkMacSystemFont`, `Apple SD Gothic Neo`, `Pretendard`, `Noto Sans KR`, `sans-serif` 순서다. 별도 웹폰트는 내려받지 않는다.
+
+Builders Lounge 공개 커뮤니티는 다모앙형 읽기 리듬을 따른다. 본문 글꼴은 Wanted Sans Variable을 실제로 불러오고, 제목보다 글 목록이 먼저 보이게 한다.
 
 | 역할 | 크기 | 굵기 | 행간 | 자간 |
 |---|---:|---:|---:|---:|
@@ -140,7 +142,7 @@ CSS에서는 작은 글 크기를 `--font-small: 0.875rem` 토큰으로 사용�
 
 ## Lounge 확장 토큰
 
-`/lounge`의 공통 화면은 기존 교육 홈페이지의 흰색·네이비·블루 체계를 그대로 사용한다. 새 화면도 카드 그림자 대신 표면색과 구분선을 우선하고, 기능 연결 전 상태를 과장하지 않는다.
+`/lounge`의 공통 화면은 기존 교육 홈페이지의 흰색·네이비·블루 체계를 그대로 사용한다. 새 화면도 카드 그림자 대신 표면색과 구분선을 우선하고, 기능 연결 전 상태를 과장하지 않는다. 공개 홈은 다모앙처럼 고정 상단, 왼쪽 게시판 메뉴, 본문 글 목록, 오른쪽 안내 순서로 읽히게 한다.
 
 - `--lounge-content-width: 720px`: 설정·도움말과 기능 연결 안내의 읽기 폭
 - `--lounge-section-gap: var(--space-8)`: 화면 섹션 간 간격
@@ -151,6 +153,13 @@ CSS에서는 작은 글 크기를 `--font-small: 0.875rem` 토큰으로 사용�
 - `--lounge-focus-ring-width: 3px`: 키보드 포커스 링 두께
 - `--lounge-motion-duration: 180ms`: 색상·투명도 전환 시간
 - `--lounge-motion-ease: cubic-bezier(0.22, 1, 0.36, 1)`: 전환 easing
+- `--lounge-font-sans: "Wanted Sans Variable", "Wanted Sans", "Apple SD Gothic Neo", Pretendard, "Noto Sans KR", sans-serif`: 라운지 본문 글꼴
+- `--lounge-font-weight-body: 400`: 본문 기본 굵기
+- `--lounge-letter-spacing: -0.025em`: 본문 자간
+- `--lounge-topbar-height: 64px`: 데스크톱 상단 높이
+- `--lounge-topbar-height-mobile: 56px`: 모바일 상단 높이
+- `--lounge-sidebar-width: 220px`: 왼쪽 게시판 메뉴 폭
+- `--lounge-content-max: 1400px`: 본문과 메뉴를 묶는 최대 폭
 
 ## 설치 페이지 확장 토큰
 
@@ -209,4 +218,4 @@ CSS에서는 작은 글 크기를 `--font-small: 0.875rem` 토큰으로 사용�
 - `--lounge-label-size: 0.75rem`, `--lounge-body-size: 0.9375rem`, `--lounge-title-size: clamp(1.75rem, 3vw, 2.75rem)`: 앱 전용 글자 크기
 - `--lounge-shadow: 0 4px 16px rgba(7, 19, 49, 0.08)`: 모바일 메뉴와 상단바에만 허용하는 낮은 그림자
 
-앱 본문은 흰색 배경과 1px 구분선을 기본으로 하며, 동일 크기 기능 카드를 반복하지 않는다. 회의록과 쇼츠 연결 자리는 비활성 상태와 `기존 기능 연결 예정` 문구를 함께 표시한다.
+앱 본문은 흰색 배경과 1px 구분선을 기본으로 하며, 동일 크기 기능 카드를 반복하지 않는다. AI 회의록 메뉴와 제작 화면은 공개 라운지에서 제거한다. 쇼츠 스튜디오는 만들기 메뉴에 유지한다.

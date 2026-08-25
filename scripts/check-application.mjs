@@ -86,9 +86,9 @@ expect(indexHtml.includes('<link rel="canonical" href="https://aihubos.github.io
 expect(indexHtml.includes('<meta property="og:url" content="https://aihubos.github.io/builders-lounge/" />'), "OG 루트 주소가 없습니다.");
 expect(!/noindex\s*,?\s*nofollow/i.test(indexHtml), "루트 검색 제외 설정이 남아 있습니다.");
 expect(!indexHtml.includes("공개 홈페이지") && !indexHtml.includes("topbar-home-link"), "이전 홈페이지 링크가 남아 있습니다.");
-expect(indexHtml.includes("AI 회의록") && indexHtml.includes("AI 쇼츠 스튜디오"), "연결 예정 기능 표기가 없습니다.");
+expect(!indexHtml.includes("AI 회의록") && indexHtml.includes("AI 쇼츠 스튜디오"), "AI 회의록이 남아 있거나 쇼츠 스튜디오가 없습니다.");
 expect(indexHtml.includes('data-community-view="newsletter"') && indexHtml.includes('data-community-view="board"'), "커뮤니티 화면 표기가 없습니다.");
-for (const route of ["home", "meeting", "shorts", "webtoon", "masterpiece", "prompts", "newsletter", "videos", "memes", "board", "games", "usage", "admin", "help"]) {
+for (const route of ["home", "shorts", "webtoon", "masterpiece", "prompts", "newsletter", "videos", "memes", "board", "games", "usage", "admin", "help"]) {
   expect(indexHtml.includes(`data-view-link="${route}"`) && indexHtml.includes(`data-view-panel="${route}"`), `직접 메뉴 화면 연결이 없습니다: ${route}`);
 }
 for (const route of ["jobs", "results", "files", "membership", "settings"]) {

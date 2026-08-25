@@ -18,7 +18,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  height: 64px;
+  height: var(--lounge-topbar-height);
   border-bottom: 1px solid rgba(229, 232, 235, 0.96);
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(18px);
@@ -98,20 +98,16 @@
 }
 
 @media (max-width: 700px) {
-  .archive-topbar { height: 68px; }
+  .archive-topbar { height: var(--lounge-topbar-height-mobile); }
   .archive-topbar-inner { width: 100%; padding: 0 10px; display: flex; gap: 8px; overflow: hidden; }
-  .lounge-topbar-brand-cluster { height: 100%; flex: 0 0 auto; gap: 5px; }
-  .builders-lounge-brand-copy { width: 112px; height: 62px; }
-  .builders-lounge-logo-image { width: 122px; height: 66px; margin-left: -5px; }
-  .report-hub-clock { min-width: 48px; text-align: right; }
-  .report-hub-clock-time { font-size: 15px; }
-  .archive-topbar-actions { width: auto; min-width: 0; flex: 1; margin: 0; justify-content: flex-start; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; }
-  .archive-topbar-actions::-webkit-scrollbar { display: none; }
-  .archive-topbar-links { flex: 0 0 auto; gap: 6px; }
-  .archive-topbar-actions .archive-visitor-count { display: inline-flex; flex: 0 0 auto; min-height: 36px; }
-  .archive-community-board-card, .archive-blog-card { width: 36px; min-height: 36px; }
-  .archive-builders-card { width: 78px; min-height: 36px; }
-  .archive-builders-logo { width: 70px; height: 32px; }
-  .archive-kakao-openchat-card, .archive-kakao-openchat-banner { width: 36px; height: 36px; }
-  .archive-daangn-banner-card, .archive-daangn-banner { width: 60px; height: 36px; }
+  .lounge-topbar-brand-cluster { height: 100%; flex: 1 1 auto; min-width: 0; gap: 5px; }
+  .builders-lounge-brand-copy { width: 112px; height: 48px; }
+  .builders-lounge-logo-image { width: 112px; height: 48px; margin-left: 0; }
+  .report-hub-clock { display: none; }
+  .archive-topbar-actions { flex: 0 0 auto; width: auto; min-width: 0; margin: 0; justify-content: flex-end; overflow: visible; }
+  .archive-topbar-links { display: none; }
+  .archive-visitor-count, .archive-topbar-actions .archive-visitor-count { display: none; }
+  .platform-account { flex: 0 0 auto; }
+  .platform-login-button, .platform-balance-button, .platform-account-loading { min-height: 36px; padding: 0 8px; }
+  .platform-login-button strong { font-size: 11px; }
 }

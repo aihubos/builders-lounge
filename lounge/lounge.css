@@ -21,10 +21,17 @@
   --lounge-radius: 18px;
   --lounge-card-gap: 24px;
   --lounge-shadow: 0 8px 26px rgba(25, 31, 40, 0.05);
+  --lounge-font-sans: "Wanted Sans Variable", "Wanted Sans", "Apple SD Gothic Neo", Pretendard, "Noto Sans KR", sans-serif;
+  --lounge-font-weight-body: 400;
+  --lounge-letter-spacing: -0.025em;
+  --lounge-topbar-height: 64px;
+  --lounge-topbar-height-mobile: 56px;
+  --lounge-sidebar-width: 220px;
+  --lounge-content-max: 1400px;
 }
 
 html { overflow-x: hidden; scroll-padding-top: 88px; }
-body.lounge-page { min-width: 320px; background: var(--lounge-bg); color: var(--lounge-ink); font-family: "Pretendard", "Apple SD Gothic Neo", -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif; line-height: 1.5; letter-spacing: -0.03em; overflow-x: hidden; font-weight: 500; }
+body.lounge-page { min-width: 320px; background: var(--lounge-bg); color: var(--lounge-ink); font-family: var(--lounge-font-sans); line-height: 1.6; letter-spacing: var(--lounge-letter-spacing); overflow-x: hidden; font-weight: var(--lounge-font-weight-body); }
 body.lounge-menu-open { overflow: hidden; }
 button, a { font: inherit; }
 button { cursor: pointer; }
@@ -34,7 +41,7 @@ button:disabled { cursor: not-allowed; }
 .skip-link:focus { top: 12px; }
 
 .lounge-app { min-height: 100vh; }
-.lounge-layout { width: min(1400px, calc(100% - 40px)); margin: 0 auto; padding: 24px 0 52px; display: grid; grid-template-columns: 248px minmax(0, 1fr); gap: var(--lounge-card-gap); align-items: start; }
+.lounge-layout { width: min(var(--lounge-content-max), calc(100% - 40px)); margin: 0 auto; padding: 24px 0 52px; display: grid; grid-template-columns: var(--lounge-sidebar-width) minmax(0, 1fr); gap: var(--lounge-card-gap); align-items: start; }
 .lounge-sidebar { position: sticky; top: 88px; z-index: 20; min-height: calc(100vh - 112px); padding: 20px 14px 14px; display: flex; flex-direction: column; border: 1px solid var(--lounge-border); border-radius: var(--lounge-radius); background: var(--lounge-paper); box-shadow: var(--lounge-shadow); }
 .sidebar-heading { padding: 0 8px 18px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid #f0f2f4; }
 .sidebar-kicker { margin: 0 0 4px; color: var(--lounge-blue); font-size: 10px; font-weight: 800; letter-spacing: 0.12em; }

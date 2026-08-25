@@ -33,12 +33,14 @@ async function loadVisitorCount(output) {
 
   try {
     const visitorId = getVisitorId();
-    await fetch(`${VISITOR_API_BASE}/visits`, {
+    const counted = await fetch(`${VISITOR_API_BASE}/visits`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ siteId: SITE_ID, visitorId }),
     });
-    const response = await fetch(`${VISITOR_API_BASE}/visits?site=${encodeURIComponent(SITE_ID)}`, { cache: "no-store" });
+    const response = counted.ok
+      ? counted
+      : await fetch(`${VISITOR_API_BASE}/visits?site=${encodeURIComponent(SITE_ID)}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`visitor status ${response.status}`);
     output.textContent = formatVisitorCount(await response.json());
   } catch {

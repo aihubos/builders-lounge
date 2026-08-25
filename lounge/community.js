@@ -1,6 +1,6 @@
 import { COMMUNITY_CATEGORIES, publishedItems } from "./community-data.js";
 
-const BOARD_API_BASE = /^(127\.0\.0\.1|localhost)$/.test(window.location.hostname)
+const BOARD_API_BASE = window.location.port === "8787"
   ? "http://127.0.0.1:8787"
   : "https://reportmode-request-board.report-request-board.workers.dev";
 const BOARD_CATEGORIES = Object.freeze({ report_opinion: "리포트 의견", ai_question: "AI 질문", knowledge_share: "정보 공유", free_opinion: "자유 의견" });
@@ -110,7 +110,16 @@ function boardRequest(path, options = {}) {
   if (config.body) config.headers["Content-Type"] = "application/json";
   const token = window.BuildersPlatform?.getCredential?.();
   if (token) config.headers.Authorization = `Bearer ${token}`;
-  return fetch(BOARD_API_BASE + path, config).then(async (response) => { const body = await response.json().catch(() => ({})); if (!response.ok) { const error = new Error(BOARD_ERRORS[body?.error] || "처리하지 못했습니다. 잠시 후 다시 시도해 주세요."); error.code = body?.error; throw error; } return body; });
+  else if (config.headers.Authorization) delete config.headers.Authorization;
+  return fetch(BOARD_API_BASE + path, config).then(async (response) => {
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error(BOARD_ERRORS[body?.error] || "게시판을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      error.code = body?.error;
+      throw error;
+    }
+    return body;
+  });
 }
 
 function boardVisitorId() {
@@ -208,6 +217,13 @@ export function mountCommunity() {
   const memes = document.querySelector('[data-community-view="memes"]'); if (memes) renderMemePanel(memes);
   const games = document.querySelector('[data-community-view="games"]'); if (games) renderGamePanel(games);
   const board = document.querySelector('[data-community-view="board"]'); let boardController = null; if (board) renderBoard(board, (controller) => { boardController = controller; });
-  const preview = document.querySelector("[data-home-board-preview]"); void renderHomeBoardPreview(preview);
-  window.LoungeCommunity = Object.freeze({ openWrite: () => boardController?.openWrite?.(), refreshBoard: () => boardController?.renderRoute?.(), refreshHomePreview: () => renderHomeBoardPreview(document.querySelector("[data-home-board-preview]")), clearBoardQuery: () => boardController?.clearQuery?.() });
+  const bindHomePreview = () => {
+    const preview = document.querySelector("[data-home-board-preview]");
+    void renderHomeBoardPreview(preview);
+  };
+  bindHomePreview();
+  window.addEventListener("lounge:viewchange", (event) => {
+    if (event.detail?.view === "home") bindHomePreview();
+  });
+  window.LoungeCommunity = Object.freeze({ openWrite: () => boardController?.openWrite?.(), refreshBoard: () => boardController?.renderRoute?.(), refreshHomePreview: bindHomePreview, clearBoardQuery: () => boardController?.clearQuery?.() });
 }

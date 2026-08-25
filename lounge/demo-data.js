@@ -3,12 +3,12 @@ export const DEMO_MODE_STORAGE_KEY = "builders-lounge:demo-mode";
 export const DEMO_DATA = Object.freeze({
   jobs: Object.freeze([
     Object.freeze({
-      id: "demo-job-meeting-01",
-      module: "AI 회의록",
-      title: "AI 빌더스 랩 운영회의",
+      id: "demo-job-webtoon-01",
+      module: "웹툰 제작기",
+      title: "AI 빌더스 랩 공감툰",
       status: "completed",
       progress: 100,
-      detail: "결정 3개 · 할 일 5개",
+      detail: "장면 3개 · 대사 5개",
       updatedAt: "2026-08-22T14:30:00+09:00",
       sample: true,
     }),
@@ -23,9 +23,9 @@ export const DEMO_DATA = Object.freeze({
       sample: true,
     }),
     Object.freeze({
-      id: "demo-job-meeting-02",
-      module: "AI 회의록",
-      title: "커뮤니티 운영 정리",
+      id: "demo-job-masterpiece-01",
+      module: "세계명화 프롬프트",
+      title: "커뮤니티 운영 장면",
       status: "queued",
       progress: 0,
       detail: "대기열 1번째",
@@ -36,20 +36,20 @@ export const DEMO_DATA = Object.freeze({
   results: Object.freeze([
     Object.freeze({
       id: "demo-result-01",
-      jobId: "demo-job-meeting-01",
-      title: "운영회의 회의록 초안",
+      jobId: "demo-job-webtoon-01",
+      title: "공감툰 장면 초안",
       formats: Object.freeze(["Markdown", "DOCX"]),
-      summary: "결정사항 3개와 할 일 5개를 정리한 샘플 회의록입니다.",
+      summary: "장면 3개와 대사 5개를 정리한 샘플 웹툰 초안입니다.",
       createdAt: "2026-08-22T14:34:00+09:00",
       sample: true,
     }),
   ]),
   files: Object.freeze([
-    Object.freeze({ id: "demo-file-01", name: "builders-lab-meeting.m4a", kind: "오디오", size: "48MB", sample: true }),
+    Object.freeze({ id: "demo-file-01", name: "builders-lab-webtoon.txt", kind: "텍스트", size: "48MB", sample: true }),
     Object.freeze({ id: "demo-file-02", name: "hermes-class.mp4", kind: "영상", size: "820MB", sample: true }),
     Object.freeze({ id: "demo-file-03", name: "community-notes.txt", kind: "텍스트", size: "24KB", sample: true }),
   ]),
-  usage: Object.freeze({ used: 42, total: 100, meeting: 24, shorts: 18 }),
+  usage: Object.freeze({ used: 42, total: 100, webtoon: 24, shorts: 18 }),
 });
 
 export function getDemoSnapshot(demoMode = true) {

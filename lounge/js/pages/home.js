@@ -1,7 +1,6 @@
 import { getFeaturedPrompts, getLatestNewsletter, publishedItems } from "../../community-data.js";
 
 const MODULES = Object.freeze([
-  { id: "meeting", title: "AI 회의록", description: "회의 기록을 결정사항과 할 일로 정리합니다.", icon: "✦", action: "meeting", accent: "blue" },
   { id: "shorts", title: "AI 쇼츠 스튜디오", description: "주제와 대본을 쇼츠 제작안으로 바꿉니다.", icon: "▶", action: "shorts", accent: "navy" },
   { id: "webtoon", title: "웹툰 제작기", description: "대화와 아이디어를 공감 카드로 바꿉니다.", icon: "▣", action: "webtoon", accent: "green" },
   { id: "masterpiece", title: "세계명화 프롬프트", description: "명화와 캐릭터를 새로운 장면으로 조합합니다.", icon: "♜", action: "masterpiece", accent: "orange" },
@@ -105,20 +104,21 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
   const session = window.BuildersPlatform?.snapshot?.() || null;
   root.__homeCallbacks = { onNavigate, onModuleOpen, onWrite };
 
+  const existingPreview = root.querySelector("[data-home-board-preview]");
   root.innerHTML = `<section class="lounge-home portal-home" aria-labelledby="home-dashboard-title">
     <div class="portal-home-layout">
       <div class="portal-home-main">
         <h3 id="home-dashboard-title" class="visually-hidden">라운지 모아보기</h3>
 
+        <section class="portal-panel portal-board-panel" aria-labelledby="home-board-title">
+          <div class="portal-panel-head"><div><p class="section-label">COMMUNITY</p><h4 id="home-board-title">자유게시판 새 글</h4></div><div class="portal-panel-actions"><button class="text-button" type="button" data-home-write>글쓰기</button><button class="text-button" type="button" data-home-nav="board">전체 보기 <span aria-hidden="true">→</span></button></div></div>
+          <div data-home-board-preview class="home-board-preview"><div class="community-loading">게시판을 불러오는 중입니다.</div></div>
+        </section>
+
         <section class="portal-panel portal-feed-panel" aria-labelledby="home-feed-title">
           <div class="portal-panel-head"><div><p class="section-label">LOUNGE NOW</p><h4 id="home-feed-title">라운지 모아보기</h4></div></div>
           <div class="portal-feed-tabs" role="group" aria-label="모아보기 분류"><button type="button" aria-pressed="true" data-home-feed-filter="all">추천</button><button type="button" aria-pressed="false" data-home-feed-filter="prompt">프롬프트</button><button type="button" aria-pressed="false" data-home-feed-filter="newsletter">뉴스레터</button><button type="button" aria-pressed="false" data-home-feed-filter="video">영상</button><button type="button" aria-pressed="false" data-home-feed-filter="play">놀이터</button></div>
           <div class="portal-feed-list">${feed.map(renderFeedRow).join("")}</div>
-        </section>
-
-        <section class="portal-panel portal-board-panel" aria-labelledby="home-board-title">
-          <div class="portal-panel-head"><div><p class="section-label">COMMUNITY</p><h4 id="home-board-title">자유게시판 새 글</h4></div><div class="portal-panel-actions"><button class="text-button" type="button" data-home-write>글쓰기</button><button class="text-button" type="button" data-home-nav="board">전체 보기 <span aria-hidden="true">→</span></button></div></div>
-          <div data-home-board-preview class="home-board-preview"><div class="community-loading">게시판을 불러오는 중입니다.</div></div>
         </section>
 
         <section class="portal-panel portal-tools-panel" aria-labelledby="home-tools-title">
@@ -133,7 +133,7 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
       </div>
 
       <aside class="portal-home-rail" aria-label="Builders Lounge 추천 정보">
-        <section class="portal-rail-card portal-start-card"><span class="portal-rail-eyebrow">처음 오셨나요?</span><h4>글 하나가<br>1빌드가 돼요.</h4><ol><li><b>1</b><span><strong>Google 계정으로 로그인</strong><small>계정과 빌드 잔액을 안전하게 연결</small></span></li><li><b>2</b><span><strong>게시판에 경험 나누기</strong><small>글 또는 댓글 1건당 1빌드 적립</small></span></li><li><b>3</b><span><strong>AI 제작 도구 사용</strong><small>회의록·쇼츠·웹툰·이미지 생성</small></span></li></ol><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></section>
+        <section class="portal-rail-card portal-start-card"><span class="portal-rail-eyebrow">처음 오셨나요?</span><h4>글 하나가<br>1빌드가 돼요.</h4><ol><li><b>1</b><span><strong>Google 계정으로 로그인</strong><small>계정과 빌드 잔액을 안전하게 연결</small></span></li><li><b>2</b><span><strong>게시판에 경험 나누기</strong><small>글 또는 댓글 1건당 1빌드 적립</small></span></li><li><b>3</b><span><strong>AI 제작 도구 사용</strong><small>쇼츠·웹툰·이미지 생성</small></span></li></ol><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></section>
 
         ${renderBuildCard(session)}
 
@@ -151,6 +151,10 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
       </aside>
     </div>
   </section>`;
+  const nextPreview = root.querySelector("[data-home-board-preview]");
+  if (existingPreview && nextPreview && existingPreview !== nextPreview) {
+    nextPreview.replaceWith(existingPreview);
+  }
 
   if (!root.dataset.homeBound) {
     root.addEventListener("click", (event) => {

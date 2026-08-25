@@ -63,8 +63,8 @@ await cp(resolve(projectRoot, "assets"), resolve(clientRoot, "assets"), {
 });
 
 const html = await readFile(resolve(clientRoot, "index.html"), "utf8");
-if (!html.includes("data-lounge-shell") || !html.includes("AI 회의록") || !html.includes("AI 쇼츠 스튜디오")) {
-  throw new Error("루트 Builders Lounge 화면 또는 연결 자리 이름이 없습니다.");
+if (!html.includes("data-lounge-shell") || html.includes("AI 회의록") || !html.includes("AI 쇼츠 스튜디오")) {
+  throw new Error("루트 Builders Lounge 화면이 없거나 AI 회의록이 남아 있습니다.");
 }
 if (!html.includes('data-community-view="newsletter"') || !html.includes('data-community-view="board"')) {
   throw new Error("Builders Lounge 커뮤니티 화면이 없습니다.");

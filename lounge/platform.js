@@ -1,4 +1,4 @@
-const API_BASE = /^(127\.0\.0\.1|localhost)$/.test(window.location.hostname)
+const API_BASE = window.location.port === "8787"
   ? "http://127.0.0.1:8787"
   : "https://reportmode-request-board.report-request-board.workers.dev";
 
