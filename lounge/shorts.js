@@ -520,6 +520,24 @@ export function mountShorts(root) {
     return { detailedPrompt, scenes, narrationUrl: "" };
   };
 
+  const revealRestoredPlan = (message) => {
+    planPanel.querySelector("[data-shorts-render-notice]")?.remove();
+    const notice = document.createElement("div");
+    notice.className = "shorts-render-notice";
+    notice.dataset.shortsRenderNotice = "";
+    notice.setAttribute("role", "status");
+    const title = document.createElement("strong");
+    title.textContent = "제작 내용은 안전하게 복원됐어요.";
+    const copy = document.createElement("p");
+    copy.textContent = message;
+    notice.append(title, copy);
+    planPanel.prepend(notice);
+    window.requestAnimationFrame(() => {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      planPanel.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    });
+  };
+
   const boardPostUrl = (postId) => {
     const target = new URL(window.location.href);
     target.search = "";
@@ -709,7 +727,8 @@ export function mountShorts(root) {
         }
         state.renderBlocked = false;
         renderPlan(state.plan, { restored: true });
-        statusText(root, "제작 내용과 Build 예약을 복원했습니다. 수정 내용을 확인한 뒤 다시 영상 제작을 눌러 주세요.");
+        revealRestoredPlan(`${originalError.message} 아래 제작안을 확인한 뒤 같은 버튼으로 이어서 제작할 수 있습니다.`);
+        statusText(root, "제작안 편집 화면으로 이동했습니다. Build 예약은 새로 만들지 않았습니다.");
         return;
       }
       throw new Error("서버가 알 수 없는 쇼츠 상태를 반환했습니다.");
@@ -754,7 +773,8 @@ export function mountShorts(root) {
             setStep("video");
             await pollRenderer(server, { restored: true });
           } else {
-            statusText(root, "예약된 기존 제작 내용을 복원했습니다. 새 Build 예약은 만들지 않았습니다.");
+            revealRestoredPlan("아래 제작안을 확인하고 ‘수정 내용 저장하고 영상 만들기’를 누르면 기존 Build 예약으로 이어서 제작합니다.");
+            statusText(root, "예약된 제작안 편집 화면으로 이동했습니다. 새 Build 예약은 만들지 않았습니다.");
           }
         } else {
           showRecovery("제작 내용을 준비하고 있어요.", "같은 작업을 서버에서 다시 확인하면 새 Build 예약 없이 이어집니다.");

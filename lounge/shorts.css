@@ -73,6 +73,9 @@
 .shorts-edit-guide { display: grid; gap: 5px; margin: 0 0 18px; padding: 14px 16px; border-left: 3px solid #3182f6; border-radius: 0 12px 12px 0; background: #f4f8ff; }
 .shorts-edit-guide strong { color: #0f172a; }
 .shorts-edit-guide span { color: #64748b; font-size: 13px; line-height: 1.55; }
+.shorts-render-notice { display: grid; gap: 5px; margin: 0 0 18px; padding: 15px 16px; border: 1px solid #fed7aa; border-radius: 14px; background: #fffaf3; }
+.shorts-render-notice strong { color: #9a3412; }
+.shorts-render-notice p { margin: 0; color: #7c2d12; font-size: 13px; line-height: 1.55; }
 [data-shorts-plan-form] { display: grid; gap: 18px; }
 .shorts-scenes { display: grid; gap: 10px; margin: 18px 0; }
 .shorts-scenes > strong { margin-bottom: 4px; }
