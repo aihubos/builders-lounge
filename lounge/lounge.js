@@ -1,12 +1,13 @@
-import "./platform.js?v=20260825-damoang-layout-v1";
-import { renderHome } from "./js/pages/home.js?v=20260825-damoang-layout-v1";
+import "./platform.js?v=20260826-unified-cards-v2";
+import { renderHome } from "./js/pages/home.js?v=20260826-unified-cards-v2";
 import { mountJobs } from "./jobs.js";
 import { mountAdmin } from "./admin.js?v=20260825-masterpiece-provider-v1";
 import "./settings.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";
 import { mountReportHubTopbar } from "./topbar.js";
-import { mountCommunity } from "./community.js?v=20260825-damoang-layout-v1";
+import { mountCommunity } from "./community.js?v=20260826-unified-cards-v2";
 import { mountShorts } from "./shorts.js?v=20260825-editable-progress-v2";
+import { catalogItems } from "./catalog.js";
 import { publishedItems } from "./community-data.js";
 
 const ROUTE_STORAGE_KEY = "ai-builders-lounge-route";
@@ -33,14 +34,14 @@ const searchResults = document.querySelector("[data-global-search-results]");
 const searchForm = document.querySelector("[data-global-search-form]");
 
 const viewMeta = Object.freeze({
-  home: { kicker: "BUILDERS LOUNGE · COMMUNITY", title: "만들고, 나누고, 함께 성장해요", description: "AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 만나보세요.", status: "커뮤니티 운영 중" },
+  home: { kicker: "모아보기", title: "지금 라운지에서 볼 글", description: "자유게시판, 프롬프트 모음, 뉴스레터, 이미지 게시판을 한 화면에서 바로 봅니다.", status: "커뮤니티 운영 중" },
   shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "한 문장을 실제 세로형 MP4 또는 WebM 영상으로 만들고, 완성 뒤 선택해 게시합니다.", status: "영상 완성 시 Build 5" },
   webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 제작기가 Google 로그인과 빌드 잔액을 공유합니다.", status: "빌드 포인트" },
   masterpiece: { kicker: "만들기", title: "세계명화 프롬프트", description: "프롬프트는 무료로 만들고 이미지 생성에 빌드를 사용합니다.", status: "빌드 포인트" },
-  prompts: { kicker: "AI 도구", title: "프롬프트 모음", description: "상황별 공개 프롬프트를 찾아 복사하고 직접 고쳐 씁니다.", status: "공개 콘텐츠" },
-  newsletter: { kicker: "콘텐츠", title: "AI 빌더스 랩 뉴스레터", description: "AI 도구와 빌더의 실전 경험을 짧고 꾸준하게 읽습니다.", status: "읽기용 아카이브" },
+  prompts: { kicker: "커뮤니티", title: "프롬프트 모음", description: "상황별 공개 프롬프트를 카드로 보고 바로 복사합니다.", status: "공개 콘텐츠" },
+  newsletter: { kicker: "커뮤니티", title: "뉴스레터", description: "한 장의 카드로 먼저 보고, 눌러서 본문을 읽습니다.", status: "공개 콘텐츠" },
   videos: { kicker: "콘텐츠", title: "영상 모음", description: "요약을 먼저 보고 원하는 영상만 눌러 재생합니다.", status: "선택 재생" },
-  memes: { kicker: "콘텐츠", title: "짤방", description: "AI·개발 공감 밈과 빌더 결과물을 함께 봅니다.", status: "공개 콘텐츠" },
+  memes: { kicker: "콘텐츠", title: "이미지 게시판", description: "프롬프트·뉴스레터와 같은 카드로 이미지를 봅니다.", status: "공개 콘텐츠" },
   board: { kicker: "커뮤니티", title: "자유게시판", description: "Report Hub와 같은 글·댓글을 Google 계정으로 나눕니다.", status: "실시간 게시판" },
   games: { kicker: "커뮤니티", title: "게임방", description: "한 번에 하나의 게임만 불러와 가볍게 즐깁니다.", status: "선택 실행" },
   jobs: { kicker: "내 작업", title: "진행 중 작업", description: "샘플 작업의 상태와 진행률을 확인합니다.", status: "샘플 데이터" },
@@ -102,10 +103,11 @@ function searchCatalog() {
     prompts: { route: "prompts", typeLabel: "프롬프트", icon: "⌘" },
     newsletters: { route: "newsletter", typeLabel: "뉴스레터", icon: "N" },
     videos: { route: "videos", typeLabel: "추천 영상", icon: "▶" },
-    memes: { route: "memes", typeLabel: "빌더 결과물", icon: "▣" },
+    memes: { route: "memes", typeLabel: "이미지 게시판", icon: "▣" },
     games: { route: "games", typeLabel: "게임방", icon: "✦" },
   };
-  const content = Object.entries(typeMeta).flatMap(([type, meta]) => publishedItems(type).map((item) => ({
+  const liveTypes = { prompts: catalogItems("prompts"), newsletters: catalogItems("newsletters"), memes: catalogItems("memes"), videos: publishedItems("videos"), games: publishedItems("games") };
+  const content = Object.entries(typeMeta).flatMap(([type, meta]) => (liveTypes[type] || []).map((item) => ({
     id: item.id,
     title: item.title,
     summary: item.summary || item.useCase || "Builders Lounge 공개 콘텐츠",
@@ -175,7 +177,7 @@ function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "h
   if (view === "prompts") return "공개용으로 정리한 프롬프트만 제공합니다. 개인 정보·로컬 경로·비밀값은 포함하지 않습니다.";
   if (view === "newsletter") return "AI 빌더스 랩 뉴스레터는 직접 작성한 요약과 원문 출처를 제공하는 읽기용 아카이브입니다.";
   if (view === "videos") return "영상은 재생 버튼을 눌렀을 때만 youtube-nocookie.com 플레이어를 한 개 불러옵니다.";
-  if (view === "memes") return "자체 제작 밈과 공개 프로젝트 결과물을 함께 소개합니다. 원본 프로젝트 링크를 확인해 주세요.";
+  if (view === "memes") return "이미지 게시판은 프롬프트·뉴스레터와 같은 카드로 보여 줍니다.";
   if (view === "board") return "게시글과 댓글은 Report Hub와 공유됩니다. Google 로그인 후 새 글을 등록하면 1빌드가 적립됩니다.";
   if (view === "admin") return "관리자만 API 키·모델·빌드 가격·멤버 잔액·삭제 권한을 설정할 수 있습니다. API 키는 다시 표시되지 않습니다.";
   if (view === "games") return "게임은 선택한 한 개만 본문에 표시합니다. 화면이 열리지 않으면 새 탭으로 이용할 수 있습니다.";
@@ -363,4 +365,4 @@ bindNavigation();
 syncMenuForViewport();
 
 window.LoungeShell = Object.freeze({ showView, setMenuOpen, setDemoMode, viewMeta });
-showView(window.location.hash.slice(1) || readLocalValue(ROUTE_STORAGE_KEY) || "home", { announce: false });
+showView(window.location.hash.slice(1) || "home", { announce: false });

@@ -1,10 +1,11 @@
 import { COMMUNITY_CATEGORIES, publishedItems } from "./community-data.js";
+import { addCatalogItem, catalogCardCover, catalogItems, isCatalogAdmin, removeCatalogItem } from "./catalog.js";
 
 const BOARD_API_BASE = window.location.port === "8787"
   ? "http://127.0.0.1:8787"
   : "https://reportmode-request-board.report-request-board.workers.dev";
 const BOARD_CATEGORIES = Object.freeze({ report_opinion: "리포트 의견", ai_question: "AI 질문", knowledge_share: "정보 공유", free_opinion: "자유 의견" });
-const BOARD_ERRORS = Object.freeze({ author_required: "작성자 이름을 입력해 주세요.", password_too_short: "비밀번호를 4글자 이상 입력해 주세요.", title_too_short: "제목을 4글자 이상 입력해 주세요.", content_too_short: "내용을 10글자 이상 입력해 주세요.", comment_too_short: "댓글을 2글자 이상 입력해 주세요.", invalid_category: "분류를 선택해 주세요.", reserved_admin_name: "Jeremy와 제레미 이름은 관리자만 사용할 수 있습니다.", wrong_password: "비밀번호가 맞지 않습니다.", login_required: "Google 로그인이 필요합니다.", invalid_google_token: "로그인 시간이 만료되었습니다. 다시 로그인해 주세요.", not_owner: "본인이 작성한 글이나 댓글만 변경할 수 있습니다.", admin_required: "관리자 권한이 필요합니다.", not_found: "글을 찾지 못했습니다. 목록을 새로 불러와 주세요.", invalid_visitor: "방문자 정보를 확인할 수 없습니다." });
+const BOARD_ERRORS = Object.freeze({ author_required: "작성자 이름을 입력해 주세요.", password_too_short: "비밀번호가 짧습니다.", title_too_short: "제목을 4글자 이상 입력해 주세요.", content_too_short: "내용을 10글자 이상 입력해 주세요.", comment_too_short: "댓글을 2글자 이상 입력해 주세요.", invalid_category: "분류를 선택해 주세요.", reserved_admin_name: "Jeremy와 제레미 이름은 관리자만 사용할 수 있습니다.", wrong_password: "비밀번호가 맞지 않습니다.", login_required: "Google 로그인이 필요합니다.", invalid_google_token: "로그인 시간이 만료되었습니다. 다시 로그인해 주세요.", not_owner: "본인이 작성한 글이나 댓글만 변경할 수 있습니다.", admin_required: "관리자 권한이 필요합니다.", not_found: "글을 찾지 못했습니다. 목록을 새로 불러와 주세요.", invalid_visitor: "방문자 정보를 확인할 수 없습니다." });
 
 function escapeHtml(value) {
   return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -27,82 +28,192 @@ function copyToClipboard(text, button, successText = "복사됨") {
   else button.textContent = "원문을 선택해 복사해 주세요";
 }
 
-function renderPromptPanel(root) {
-  const items = publishedItems("prompts");
-  root.innerHTML = `<section class="community-view prompts-view" aria-labelledby="prompts-title"><div class="community-view-head"><div><p class="section-label">AI TOOLS · PROMPT LIBRARY</p><h3 id="prompts-title">프롬프트 모음</h3><p>직접 써보고 다시 고친 공개용 템플릿을 상황별로 찾아보세요.</p></div><span class="community-count-badge">${items.length}개 공개</span></div><div class="community-toolbar"><div class="community-chip-row" role="group" aria-label="프롬프트 카테고리">${COMMUNITY_CATEGORIES.prompts.map((category) => chip(category, category === "전체", "data-prompt-category", category)).join("")}</div><label class="community-search"><span class="visually-hidden">프롬프트 검색</span><input type="search" placeholder="제목·상황·태그 검색" data-prompt-search></label></div><div class="prompt-grid" data-prompt-grid></div><dialog class="community-dialog prompt-dialog" data-prompt-dialog><div class="community-dialog-head"><div><span class="section-label">PROMPT DETAIL</span><h4 data-prompt-dialog-title>프롬프트 상세</h4></div><button class="icon-button" type="button" aria-label="프롬프트 상세 닫기" data-prompt-dialog-close>×</button></div><p class="prompt-dialog-summary" data-prompt-dialog-summary></p><div class="prompt-dialog-meta" data-prompt-dialog-meta></div><details class="prompt-source-details"><summary>긴 프롬프트 원문 열기</summary><pre data-prompt-dialog-copy tabindex="0"></pre></details><div class="community-dialog-actions"><button class="secondary-button" type="button" data-prompt-copy>프롬프트 복사</button><a class="primary-button" href="#" target="_blank" rel="noopener" data-prompt-source>출처 열기 <span aria-hidden="true">↗</span></a></div></dialog></section>`;
+function cardCover(item, fallback) {
+  const src = catalogCardCover(item);
+  return `<img src="${escapeHtml(src)}" alt="${escapeHtml(item.title || fallback)}" loading="lazy">`;
+}
 
+function adminForm(type, fields) {
+  if (!isCatalogAdmin()) return "";
+  return `<form class="catalog-admin-form" data-catalog-form="${type}"><strong>관리자 등록</strong><div class="catalog-admin-grid">${fields}</div><p class="community-form-status" data-catalog-status="${type}" role="status"></p><button class="primary-button" type="submit">카드 올리기</button></form>`;
+}
+
+function renderCatalogCard(item, type, kicker) {
+  const admin = isCatalogAdmin() ? `<button class="text-button danger-text" type="button" data-catalog-delete="${escapeHtml(item.id)}">삭제</button>` : "";
+  return `<article class="catalog-card" data-catalog-id="${escapeHtml(item.id)}"><button class="catalog-card-open" type="button" data-catalog-open="${escapeHtml(item.id)}"><span class="catalog-card-cover">${cardCover(item, kicker)}</span><span class="catalog-card-copy"><span class="community-chip">${escapeHtml(item.kicker || item.category || item.issue || kicker)}</span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.summary || "")}</small></span></button>${admin}</article>`;
+}
+
+function renderPromptPanel(root) {
+  const paint = () => {
+    const items = catalogItems("prompts");
+    root.__catalogItems = items;
+    root.innerHTML = `<section class="community-view prompts-view" aria-labelledby="prompts-title"><div class="community-view-head"><div><h3 id="prompts-title">프롬프트 모음</h3><p>상황별 공개 프롬프트를 카드로 보고 바로 복사합니다.</p></div><span class="community-count-badge">${items.length}개 공개</span></div>${adminForm("prompts", `<label>제목<input name="title" maxlength="80" required></label><label>분류<input name="category" maxlength="20" placeholder="업무, 이미지"></label><label>한 줄 요약<input name="summary" maxlength="160" required></label><label>표지 이미지 주소<input name="cover" type="url" placeholder="https://"></label><label class="catalog-admin-wide">프롬프트 원문<textarea name="body" required></textarea></label>`)}<div class="community-toolbar"><div class="community-chip-row" role="group" aria-label="프롬프트 카테고리">${COMMUNITY_CATEGORIES.prompts.map((category) => chip(category, category === "전체", "data-prompt-category", category)).join("")}</div><label class="community-search"><span class="visually-hidden">프롬프트 검색</span><input type="search" placeholder="제목·상황 검색" data-prompt-search></label></div><div class="catalog-grid" data-prompt-grid></div><dialog class="community-dialog prompt-dialog" data-prompt-dialog><div class="community-dialog-head"><div><h4 data-prompt-dialog-title>프롬프트 상세</h4></div><button class="icon-button" type="button" aria-label="프롬프트 상세 닫기" data-prompt-dialog-close>×</button></div><p class="prompt-dialog-summary" data-prompt-dialog-summary></p><div class="prompt-dialog-meta" data-prompt-dialog-meta></div><details class="prompt-source-details"><summary>긴 프롬프트 원문 열기</summary><pre data-prompt-dialog-copy tabindex="0"></pre></details><div class="community-dialog-actions"><button class="secondary-button" type="button" data-prompt-copy>프롬프트 복사</button><a class="primary-button" href="#" target="_blank" rel="noopener" data-prompt-source>출처 열기 <span aria-hidden="true">↗</span></a></div></dialog></section>`;
+    fillPromptGrid(root);
+    bindCatalogForm(root, "prompts");
+  };
+  if (!root.dataset.catalogBound) {
+    root.addEventListener("click", (event) => {
+      const items = root.__catalogItems || [];
+      const category = event.target.closest("[data-prompt-category]");
+      if (category) { root.querySelectorAll("[data-prompt-category]").forEach((node) => node.setAttribute("aria-pressed", String(node === category))); fillPromptGrid(root); return; }
+      const open = event.target.closest("[data-catalog-open]");
+      if (open) {
+        const item = items.find((candidate) => candidate.id === open.dataset.catalogOpen);
+        if (!item) return;
+        const dialog = root.querySelector("[data-prompt-dialog]");
+        root.querySelector("[data-prompt-dialog-title]").textContent = item.title;
+        root.querySelector("[data-prompt-dialog-summary]").textContent = `${item.useCase || item.summary} · ${item.expected || ""}`;
+        root.querySelector("[data-prompt-dialog-meta]").innerHTML = `${(item.tags || []).map((tag) => `<span class="community-chip">#${escapeHtml(tag)}</span>`).join("")}<span>${escapeHtml(item.author || "")}</span>`;
+        root.querySelector("[data-prompt-dialog-copy]").textContent = item.copyText || "";
+        root.querySelector("[data-prompt-copy]").dataset.promptCopyId = item.id;
+        const source = root.querySelector("[data-prompt-source]"); source.href = item.sourceUrl || "#"; source.textContent = `${item.sourceLabel || "출처"} 열기 ↗`;
+        if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+        return;
+      }
+      const copyButton = event.target.closest("[data-prompt-copy]");
+      if (copyButton) { const item = items.find((candidate) => candidate.id === copyButton.dataset.promptCopyId); if (item) copyToClipboard(item.copyText, copyButton, "복사됨"); }
+      if (event.target.closest("[data-prompt-dialog-close]")) { const dialog = root.querySelector("[data-prompt-dialog]"); dialog.close?.(); dialog.removeAttribute("open"); }
+      handleCatalogDelete(event, "prompts");
+    });
+    root.addEventListener("input", (event) => { if (event.target.closest("[data-prompt-search]")) fillPromptGrid(root); });
+    root.dataset.catalogBound = "true";
+  }
+  paint();
+}
+
+function fillPromptGrid(root) {
+  const items = root.__catalogItems || [];
   const grid = root.querySelector("[data-prompt-grid]");
-  const render = () => {
-    const active = root.querySelector('[data-prompt-category][aria-pressed="true"]')?.dataset.promptCategory || "전체";
-    const query = (root.querySelector("[data-prompt-search]")?.value || "").trim().toLowerCase();
-    const filtered = items.filter((item) => (active === "전체" || item.category === active) && (!query || [item.title, item.summary, item.useCase, ...item.tags].join(" ").toLowerCase().includes(query)));
-    grid.innerHTML = filtered.length ? filtered.map((item) => `<article class="prompt-card" data-prompt-id="${escapeHtml(item.id)}"><div class="prompt-card-topline"><span class="community-chip">${escapeHtml(item.category)}</span>${item.featured ? '<span class="sample-label">관리자 추천</span>' : ""}</div><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.summary)}</p><div class="prompt-tags">${item.tags.map((tag) => `<span>#${escapeHtml(tag)}</span>`).join("")}</div><div class="prompt-card-actions"><button class="secondary-button" type="button" data-prompt-copy-card="${escapeHtml(item.id)}">프롬프트 복사</button><button class="text-button" type="button" data-prompt-detail="${escapeHtml(item.id)}">자세히 보기 <span aria-hidden="true">→</span></button></div><small>출처 · ${escapeHtml(item.author)}</small></article>`).join("") : '<div class="community-empty-state"><strong>조건에 맞는 프롬프트가 없습니다.</strong><p>검색어를 지우거나 다른 카테고리를 선택해 보세요.</p></div>';
-  };
-  const dialog = root.querySelector("[data-prompt-dialog]");
-  let lastFocus = null;
-  const openDetail = (id) => {
-    const item = items.find((candidate) => candidate.id === id);
-    if (!item) return;
-    lastFocus = document.activeElement;
-    root.querySelector("[data-prompt-dialog-title]").textContent = item.title;
-    root.querySelector("[data-prompt-dialog-summary]").textContent = `${item.useCase} · ${item.expected}`;
-    root.querySelector("[data-prompt-dialog-meta]").innerHTML = `${item.tags.map((tag) => `<span class="community-chip">#${escapeHtml(tag)}</span>`).join("")}<span>제작자 · ${escapeHtml(item.author)}</span>`;
-    root.querySelector("[data-prompt-dialog-copy]").textContent = item.copyText;
-    root.querySelector("[data-prompt-copy]").dataset.promptCopyId = item.id;
-    const source = root.querySelector("[data-prompt-source]"); source.href = item.sourceUrl; source.textContent = `${item.sourceLabel} 열기 ↗`;
-    if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
-    root.querySelector("[data-prompt-dialog-close]").focus();
-  };
-  root.addEventListener("click", (event) => {
-    const category = event.target.closest("[data-prompt-category]");
-    if (category) { root.querySelectorAll("[data-prompt-category]").forEach((node) => node.setAttribute("aria-pressed", String(node === category))); render(); return; }
-    const detail = event.target.closest("[data-prompt-detail]"); if (detail) { openDetail(detail.dataset.promptDetail); return; }
-    const copyButton = event.target.closest("[data-prompt-copy-card]"); if (copyButton) { const item = items.find((candidate) => candidate.id === copyButton.dataset.promptCopyCard); if (item) copyToClipboard(item.copyText, copyButton, "복사됨"); return; }
-    const dialogCopy = event.target.closest("[data-prompt-copy]"); if (dialogCopy) { const item = items.find((candidate) => candidate.id === dialogCopy.dataset.promptCopyId); if (item) copyToClipboard(item.copyText, dialogCopy, "복사됨"); return; }
-    if (event.target.closest("[data-prompt-dialog-close]")) { dialog.close?.(); dialog.removeAttribute("open"); lastFocus?.focus?.(); }
-  });
-  root.querySelector("[data-prompt-search]").addEventListener("input", render);
-  dialog.addEventListener("close", () => lastFocus?.focus?.());
-  render();
+  if (!grid) return;
+  const active = root.querySelector('[data-prompt-category][aria-pressed="true"]')?.dataset.promptCategory || "전체";
+  const query = (root.querySelector("[data-prompt-search]")?.value || "").trim().toLowerCase();
+  const filtered = items.filter((item) => (active === "전체" || item.category === active) && (!query || [item.title, item.summary, item.useCase, ...(item.tags || [])].join(" ").toLowerCase().includes(query)));
+  grid.innerHTML = filtered.length ? filtered.map((item) => renderCatalogCard(item, "prompts", "프롬프트")).join("") : '<div class="community-empty-state"><strong>조건에 맞는 프롬프트가 없습니다.</strong><p>검색어를 지우거나 다른 분류를 선택해 보세요.</p></div>';
 }
 
 function renderNewsletterPanel(root) {
-  const items = publishedItems("newsletters").slice().sort((a, b) => String(b.publishedAt).localeCompare(String(a.publishedAt)));
-  root.innerHTML = `<section class="community-view newsletter-view" aria-labelledby="newsletter-title"><div class="community-view-head"><div><p class="section-label">CONTENT · EDITORIAL</p><h3 id="newsletter-title">AI 빌더스 랩 뉴스레터</h3><p>AI 도구와 빌더의 실전 경험을 짧고 꾸준하게 읽습니다.</p></div><span class="community-count-badge">읽기용 아카이브</span></div><div class="newsletter-layout"><div class="newsletter-list" data-newsletter-list></div><article class="newsletter-reader" data-newsletter-reader aria-live="polite"></article></div><p class="community-footnote">뉴스레터 전문을 재배포하지 않고, 직접 작성한 요약과 원문 출처만 제공합니다.</p></section>`;
-  const list = root.querySelector("[data-newsletter-list]"); const reader = root.querySelector("[data-newsletter-reader]");
-  const show = (item) => { reader.innerHTML = `<div class="newsletter-reader-head"><span class="community-chip">${escapeHtml(item.issue)}</span><time datetime="${escapeHtml(item.publishedAt)}">${escapeHtml(item.publishedAt)}</time><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.summary)}</p></div><div class="newsletter-sections">${item.sections.map((section) => `<section><h5>${escapeHtml(section.heading)}</h5><p>${escapeHtml(section.body)}</p></section>`).join("")}</div><a class="text-button newsletter-source" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(item.sourceLabel)} 원문 열기 <span aria-hidden="true">↗</span></a>`; list.querySelectorAll("[data-newsletter-id]").forEach((node) => node.setAttribute("aria-current", node.dataset.newsletterId === item.id ? "true" : "false")); };
-  list.innerHTML = items.map((item, index) => `<button class="newsletter-list-item" type="button" data-newsletter-id="${escapeHtml(item.id)}" aria-current="${index === 0 ? "true" : "false"}"><span>${escapeHtml(item.issue)}</span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.publishedAt)}</small></button>`).join("");
-  list.addEventListener("click", (event) => { const button = event.target.closest("[data-newsletter-id]"); if (button) show(items.find((item) => item.id === button.dataset.newsletterId) || items[0]); });
-  if (items[0]) show(items[0]);
-}
-
-function renderVideoPanel(root) {
-  const items = publishedItems("videos");
-  root.innerHTML = `<section class="community-view videos-view" aria-labelledby="videos-title"><div class="community-view-head"><div><p class="section-label">CONTENT · WATCH</p><h3 id="videos-title">영상 모음</h3><p>먼저 요약을 보고, 재생을 눌렀을 때만 원본 영상을 불러옵니다.</p></div><span class="community-count-badge">${items.length}개 승인</span></div><div class="community-chip-row" role="group" aria-label="영상 카테고리">${COMMUNITY_CATEGORIES.videos.map((category) => chip(category, category === "전체", "data-video-category", category)).join("")}</div><div class="video-layout"><div class="video-list" data-video-list></div><div class="video-player-shell" data-video-player><div class="video-player-placeholder"><span class="video-card-icon" aria-hidden="true">▶</span><strong>재생할 영상을 선택해 주세요.</strong><p>자동 재생하지 않으며, 선택한 영상 하나만 표시합니다.</p></div></div></div></section>`;
-  const list = root.querySelector("[data-video-list]"); const player = root.querySelector("[data-video-player]");
-  const render = () => { const active = root.querySelector('[data-video-category][aria-pressed="true"]')?.dataset.videoCategory || "전체"; const filtered = items.filter((item) => active === "전체" || item.category === active); list.innerHTML = filtered.map((item) => `<article class="video-card"><div class="video-card-copy"><div class="prompt-card-topline"><span class="community-chip">${escapeHtml(item.category)}</span><span class="video-meta">${escapeHtml(item.duration)} · ${escapeHtml(item.difficulty)}</span></div><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.summary)}</p><div class="prompt-tags">${item.tags.map((tag) => `<span>#${escapeHtml(tag)}</span>`).join("")}</div></div><div class="video-card-actions"><button class="primary-button" type="button" data-video-play="${escapeHtml(item.id)}">재생 <span aria-hidden="true">▶</span></button><a class="text-button" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener">YouTube 원문 <span aria-hidden="true">↗</span></a></div></article>`).join("") || '<div class="community-empty-state"><strong>등록된 영상이 없습니다.</strong><p>다른 카테고리를 선택해 보세요.</p></div>'; };
-  root.addEventListener("click", (event) => { const category = event.target.closest("[data-video-category]"); if (category) { root.querySelectorAll("[data-video-category]").forEach((node) => node.setAttribute("aria-pressed", String(node === category))); render(); return; } const play = event.target.closest("[data-video-play]"); if (!play) return; const item = items.find((candidate) => candidate.id === play.dataset.videoPlay); if (!item) return; player.innerHTML = `<div class="video-player-head"><strong>${escapeHtml(item.title)}</strong><button class="text-button" type="button" data-video-stop>플레이어 닫기</button></div><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(item.videoId)}?rel=0" title="${escapeHtml(item.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`; player.querySelector("[data-video-stop]").focus(); });
-  render();
+  const paint = () => {
+    const items = catalogItems("newsletters");
+    root.__catalogItems = items;
+    root.innerHTML = `<section class="community-view newsletter-view" aria-labelledby="newsletter-title"><div class="community-view-head"><div><h3 id="newsletter-title">뉴스레터</h3><p>한 장의 카드로 먼저 보고, 눌러서 본문을 읽습니다.</p></div><span class="community-count-badge">${items.length}개 공개</span></div>${adminForm("newsletters", `<label>제목<input name="title" maxlength="80" required></label><label>호수<input name="category" maxlength="20" placeholder="2호"></label><label>한 줄 요약<input name="summary" maxlength="160" required></label><label>표지 이미지 주소<input name="cover" type="url" placeholder="https://"></label><label class="catalog-admin-wide">본문<textarea name="body" required></textarea></label>`)}<div class="catalog-grid" data-newsletter-grid></div><dialog class="community-dialog newsletter-dialog" data-newsletter-dialog><div class="community-dialog-head"><div><h4 data-newsletter-dialog-title>뉴스레터</h4></div><button class="icon-button" type="button" aria-label="뉴스레터 닫기" data-newsletter-dialog-close>×</button></div><div class="newsletter-dialog-body" data-newsletter-dialog-body></div></dialog></section>`;
+    const grid = root.querySelector("[data-newsletter-grid]");
+    grid.innerHTML = items.length ? items.map((item) => renderCatalogCard(item, "newsletters", "뉴스레터")).join("") : '<div class="community-empty-state"><strong>등록된 뉴스레터가 없습니다.</strong></div>';
+    bindCatalogForm(root, "newsletters");
+  };
+  if (!root.dataset.catalogBound) {
+    root.addEventListener("click", (event) => {
+      const items = root.__catalogItems || [];
+      const open = event.target.closest("[data-catalog-open]");
+      if (open) {
+        const item = items.find((candidate) => candidate.id === open.dataset.catalogOpen);
+        if (!item) return;
+        const dialog = root.querySelector("[data-newsletter-dialog]");
+        root.querySelector("[data-newsletter-dialog-title]").textContent = item.title;
+        root.querySelector("[data-newsletter-dialog-body]").innerHTML = `<p>${escapeHtml(item.summary)}</p>${(item.sections || []).map((section) => `<section><h5>${escapeHtml(section.heading)}</h5><p>${escapeHtml(section.body)}</p></section>`).join("")}${item.sourceUrl ? `<a class="text-button" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(item.sourceLabel || "원문")} 열기 ↗</a>` : ""}`;
+        if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+        return;
+      }
+      if (event.target.closest("[data-newsletter-dialog-close]")) { const dialog = root.querySelector("[data-newsletter-dialog]"); dialog.close?.(); dialog.removeAttribute("open"); }
+      handleCatalogDelete(event, "newsletters");
+    });
+    root.dataset.catalogBound = "true";
+  }
+  paint();
 }
 
 function renderMemePanel(root) {
-  const items = publishedItems("memes");
-  root.innerHTML = `<section class="community-view memes-view" aria-labelledby="memes-title"><div class="community-view-head"><div><p class="section-label">CONTENT · BUILDER MEMES</p><h3 id="memes-title">짤방</h3><p>AI·개발 공감 밈과 빌더가 만든 결과물 이미지를 함께 봅니다.</p></div><span class="community-count-badge">${items.length}개 공개</span></div><div class="community-chip-row" role="group" aria-label="짤방 카테고리">${COMMUNITY_CATEGORIES.memes.map((category) => chip(category, category === "전체", "data-meme-category", category)).join("")}</div><div class="meme-grid" data-meme-grid></div><dialog class="community-dialog meme-dialog" data-meme-dialog><div class="community-dialog-head"><div><span class="section-label">MEME DETAIL</span><h4 data-meme-title>짤방</h4></div><button class="icon-button" type="button" aria-label="짤방 상세 닫기" data-meme-close>×</button></div><div class="meme-dialog-art" data-meme-art></div><p data-meme-summary></p><div class="community-dialog-actions"><button class="secondary-button" type="button" data-meme-copy>문구 복사</button><a class="primary-button" href="#" target="_blank" rel="noopener" data-meme-source>원본 프로젝트 열기 <span aria-hidden="true">↗</span></a></div></dialog></section>`;
-  const grid = root.querySelector("[data-meme-grid]"); const dialog = root.querySelector("[data-meme-dialog]"); let lastFocus = null;
-  const art = (item, large = false) => item.cover ? `<img src="${escapeHtml(item.cover)}" alt="${escapeHtml(item.title)} 결과물" loading="lazy">` : `<div class="meme-art meme-art-${escapeHtml(item.tone || "blue")} ${large ? "meme-art-large" : ""}"><span>${escapeHtml(item.caption).replaceAll("\n", "<br>")}</span></div>`;
-  const render = () => { const active = root.querySelector('[data-meme-category][aria-pressed="true"]')?.dataset.memeCategory || "전체"; const filtered = items.filter((item) => active === "전체" || item.category === active); grid.innerHTML = filtered.map((item) => `<button class="meme-card" type="button" data-meme-id="${escapeHtml(item.id)}"><span class="meme-card-cover">${art(item)}</span><span class="meme-card-copy"><span class="community-chip">${escapeHtml(item.category)}</span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.summary)}</small></span></button>`).join(""); };
-  const open = (id) => { const item = items.find((candidate) => candidate.id === id); if (!item) return; lastFocus = document.activeElement; root.querySelector("[data-meme-title]").textContent = item.title; root.querySelector("[data-meme-art]").innerHTML = art(item, true); root.querySelector("[data-meme-summary]").textContent = `${item.summary} · ${item.credit}`; root.querySelector("[data-meme-copy]").dataset.memeCopyId = item.id; const source = root.querySelector("[data-meme-source]"); source.href = item.sourceUrl; source.textContent = `${item.sourceLabel} 열기 ↗`; if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", ""); root.querySelector("[data-meme-close]").focus(); };
-  root.addEventListener("click", (event) => { const category = event.target.closest("[data-meme-category]"); if (category) { root.querySelectorAll("[data-meme-category]").forEach((node) => node.setAttribute("aria-pressed", String(node === category))); render(); return; } const card = event.target.closest("[data-meme-id]"); if (card) { open(card.dataset.memeId); return; } const copy = event.target.closest("[data-meme-copy]"); if (copy) { const item = items.find((candidate) => candidate.id === copy.dataset.memeCopyId); if (item) copyToClipboard(item.caption, copy, "복사됨"); return; } if (event.target.closest("[data-meme-close]")) { dialog.close?.(); dialog.removeAttribute("open"); lastFocus?.focus?.(); } });
-  dialog.addEventListener("close", () => lastFocus?.focus?.());
+  const paint = () => {
+    const items = catalogItems("memes");
+    root.__catalogItems = items;
+    root.innerHTML = `<section class="community-view memes-view" aria-labelledby="memes-title"><div class="community-view-head"><div><h3 id="memes-title">이미지 게시판</h3><p>프롬프트·뉴스레터와 같은 카드로 이미지를 봅니다.</p></div><span class="community-count-badge">${items.length}개 공개</span></div>${adminForm("memes", `<label>제목<input name="title" maxlength="80" required></label><label>분류<input name="category" maxlength="20" placeholder="AI 공감"></label><label>한 줄 요약<input name="summary" maxlength="160" required></label><label>이미지 주소<input name="cover" type="url" placeholder="https://"></label><label class="catalog-admin-wide">설명<textarea name="body" required></textarea></label>`)}<div class="community-chip-row" role="group" aria-label="이미지 분류">${COMMUNITY_CATEGORIES.memes.map((category) => chip(category, category === "전체", "data-meme-category", category)).join("")}</div><div class="catalog-grid" data-meme-grid></div><dialog class="community-dialog meme-dialog" data-meme-dialog><div class="community-dialog-head"><div><h4 data-meme-title>이미지 게시판</h4></div><button class="icon-button" type="button" aria-label="이미지 상세 닫기" data-meme-close>×</button></div><div class="meme-dialog-art" data-meme-art></div><p data-meme-summary></p></dialog></section>`;
+    fillMemeGrid(root);
+    bindCatalogForm(root, "memes");
+  };
+  if (!root.dataset.catalogBound) {
+    root.addEventListener("click", (event) => {
+      const items = root.__catalogItems || [];
+      const category = event.target.closest("[data-meme-category]");
+      if (category) { root.querySelectorAll("[data-meme-category]").forEach((node) => node.setAttribute("aria-pressed", String(node === category))); fillMemeGrid(root); return; }
+      const open = event.target.closest("[data-catalog-open]");
+      if (open) {
+        const item = items.find((candidate) => candidate.id === open.dataset.catalogOpen);
+        if (!item) return;
+        const dialog = root.querySelector("[data-meme-dialog]");
+        root.querySelector("[data-meme-title]").textContent = item.title;
+        root.querySelector("[data-meme-art]").innerHTML = cardCover(item, "이미지");
+        root.querySelector("[data-meme-summary]").textContent = `${item.summary || ""} ${item.credit ? "· " + item.credit : ""}`;
+        if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+        return;
+      }
+      if (event.target.closest("[data-meme-close]")) { const dialog = root.querySelector("[data-meme-dialog]"); dialog.close?.(); dialog.removeAttribute("open"); }
+      handleCatalogDelete(event, "memes");
+    });
+    root.dataset.catalogBound = "true";
+  }
+  paint();
+}
+
+function fillMemeGrid(root) {
+  const items = root.__catalogItems || [];
+  const grid = root.querySelector("[data-meme-grid]");
+  if (!grid) return;
+  const active = root.querySelector('[data-meme-category][aria-pressed="true"]')?.dataset.memeCategory || "전체";
+  const filtered = items.filter((item) => active === "전체" || item.category === active);
+  grid.innerHTML = filtered.length ? filtered.map((item) => renderCatalogCard(item, "memes", "이미지")).join("") : '<div class="community-empty-state"><strong>등록된 이미지가 없습니다.</strong></div>';
+}
+
+function handleCatalogDelete(event, type) {
+  const remove = event.target.closest("[data-catalog-delete]");
+  if (!remove) return;
+  event.preventDefault();
+  if (!window.confirm("이 카드를 삭제할까요?")) return;
+  try {
+    removeCatalogItem(type, remove.closest("[data-catalog-id]")?.dataset.catalogId || remove.dataset.catalogDelete);
+    window.dispatchEvent(new CustomEvent("lounge:catalogchange"));
+  } catch (error) {
+    window.alert(error.message);
+  }
+}
+
+function bindCatalogForm(root, type) {
+  const form = root.querySelector(`[data-catalog-form="${type}"]`);
+  if (!form || form.dataset.bound) return;
+  form.dataset.bound = "true";
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const status = root.querySelector(`[data-catalog-status="${type}"]`);
+    try {
+      addCatalogItem(type, form);
+      if (status) { status.textContent = "올렸습니다. 이 브라우저에서는 새로고침 후에도 유지됩니다."; status.dataset.error = "false"; }
+      form.reset();
+      window.dispatchEvent(new CustomEvent("lounge:catalogchange"));
+    } catch (error) {
+      if (status) { status.textContent = error.message; status.dataset.error = "true"; }
+    }
+  });
+}
+
+function renderVideoPanel(root) {
+  const listItems = publishedItems("videos");
+  root.innerHTML = `<section class="community-view videos-view" aria-labelledby="videos-title"><div class="community-view-head"><div><h3 id="videos-title">영상 모음</h3><p>요약을 먼저 보고, 재생을 눌렀을 때만 원본 영상을 불러옵니다.</p></div><span class="community-count-badge">${listItems.length}개</span></div><div class="community-chip-row" role="group" aria-label="영상 카테고리">${COMMUNITY_CATEGORIES.videos.map((category) => chip(category, category === "전체", "data-video-category", category)).join("")}</div><div class="video-layout"><div class="video-list" data-video-list></div><div class="video-player-shell" data-video-player><div class="video-player-placeholder"><strong>재생할 영상을 선택해 주세요.</strong><p>자동 재생하지 않으며, 선택한 영상 하나만 표시합니다.</p></div></div></div></section>`;
+  const list = root.querySelector("[data-video-list]"); const player = root.querySelector("[data-video-player]");
+  const render = () => { const active = root.querySelector('[data-video-category][aria-pressed="true"]')?.dataset.videoCategory || "전체"; const filtered = listItems.filter((item) => active === "전체" || item.category === active); list.innerHTML = filtered.map((item) => `<article class="video-card"><div class="video-card-copy"><div class="prompt-card-topline"><span class="community-chip">${escapeHtml(item.category)}</span><span class="video-meta">${escapeHtml(item.duration)} · ${escapeHtml(item.difficulty)}</span></div><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.summary)}</p></div><div class="video-card-actions"><button class="primary-button" type="button" data-video-play="${escapeHtml(item.id)}">재생</button><a class="text-button" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener">YouTube 원문 ↗</a></div></article>`).join("") || '<div class="community-empty-state"><strong>등록된 영상이 없습니다.</strong></div>'; };
+  root.addEventListener("click", (event) => { const category = event.target.closest("[data-video-category]"); if (category) { root.querySelectorAll("[data-video-category]").forEach((node) => node.setAttribute("aria-pressed", String(node === category))); render(); return; } const play = event.target.closest("[data-video-play]"); if (!play) return; const item = listItems.find((candidate) => candidate.id === play.dataset.videoPlay); if (!item) return; player.innerHTML = `<div class="video-player-head"><strong>${escapeHtml(item.title)}</strong><button class="text-button" type="button" data-video-stop>플레이어 닫기</button></div><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(item.videoId)}?rel=0" title="${escapeHtml(item.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`; });
   render();
 }
 
 function renderGamePanel(root) {
   const items = publishedItems("games");
-  root.innerHTML = `<section class="community-view games-view" aria-labelledby="games-title"><div class="community-view-head"><div><p class="section-label">COMMUNITY · PLAY</p><h3 id="games-title">게임방</h3><p>한 번에 하나만 불러와 집중해서 플레이합니다. 새 탭 열기는 항상 제공됩니다.</p></div><span class="community-count-badge">${items.length}개 공개</span></div><div class="game-list" data-game-list></div><div class="game-player-shell" data-game-player><div class="game-player-placeholder"><span class="game-card-icon" aria-hidden="true">✦</span><strong>플레이할 게임을 선택해 주세요.</strong><p>게임 카드의 ‘바로 플레이’를 누르면 오른쪽에 표시됩니다.</p></div></div></section>`;
-  const list = root.querySelector("[data-game-list]"); const player = root.querySelector("[data-game-player]");
-  list.innerHTML = items.map((item) => `<article class="game-card"><div class="game-card-copy"><div class="prompt-card-topline"><span class="community-chip">${escapeHtml(item.tags[0])}</span><span class="video-meta">${item.mobileReady ? "모바일 지원" : "데스크톱 권장"}</span></div><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.summary)}</p><small>조작 · ${escapeHtml(item.controls)}</small></div><div class="game-card-actions"><button class="primary-button" type="button" data-game-play="${escapeHtml(item.id)}">바로 플레이 <span aria-hidden="true">▶</span></button><a class="text-button" href="${escapeHtml(item.launchUrl)}" target="_blank" rel="noopener">새 탭으로 열기 <span aria-hidden="true">↗</span></a></div></article>`).join("");
-  root.addEventListener("click", (event) => { const play = event.target.closest("[data-game-play]"); if (!play) return; const item = items.find((candidate) => candidate.id === play.dataset.gamePlay); if (!item) return; player.innerHTML = `<div class="game-player-head"><div><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.controls)}</span></div><button class="text-button" type="button" data-game-stop>플레이어 닫기</button></div><iframe src="${escapeHtml(item.launchUrl)}" title="${escapeHtml(item.title)}" loading="lazy" allowfullscreen></iframe><p class="game-player-fallback">화면이 열리지 않으면 <a href="${escapeHtml(item.launchUrl)}" target="_blank" rel="noopener">새 탭으로 열어주세요 ↗</a></p>`; player.querySelector("[data-game-stop]").focus(); });
+  root.innerHTML = `<section class="community-view games-view" aria-labelledby="games-title"><div class="community-view-head"><div><h3 id="games-title">게임방</h3><p>한 번에 하나의 게임만 불러와 가볍게 즐깁니다.</p></div></div><div class="game-list" data-game-list></div><div class="game-player-shell" data-game-player hidden></div></section>`;
+  const list = root.querySelector("[data-game-list]");
+  list.innerHTML = items.map((item) => `<article class="game-card"><div class="game-card-copy"><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.summary)}</p><small>조작 · ${escapeHtml(item.controls)}</small></div><div class="game-card-actions"><button class="primary-button" type="button" data-game-play="${escapeHtml(item.id)}">바로 플레이</button><a class="text-button" href="${escapeHtml(item.launchUrl)}" target="_blank" rel="noopener">새 탭으로 열기 ↗</a></div></article>`).join("");
+  root.addEventListener("click", (event) => {
+    const play = event.target.closest("[data-game-play]"); if (!play) return;
+    const item = items.find((candidate) => candidate.id === play.dataset.gamePlay); if (!item) return;
+    const player = root.querySelector("[data-game-player]");
+    player.hidden = false;
+    player.innerHTML = `<div class="game-player-head"><strong>${escapeHtml(item.title)}</strong><button class="text-button" type="button" data-game-stop>닫기</button></div><iframe src="${escapeHtml(item.launchUrl)}" title="${escapeHtml(item.title)}" loading="lazy"></iframe>`;
+  });
 }
 
 function boardRequest(path, options = {}) {
@@ -151,7 +262,7 @@ function dialogOpen(dialog, focusTarget) { if (typeof dialog.showModal === "func
 function dialogClose(dialog) { dialog.close?.(); dialog.removeAttribute("open"); }
 
 function renderBoard(root, onReady) {
-  root.innerHTML = `<section class="community-view board-view" aria-labelledby="board-title"><div class="community-view-head board-view-head"><div><p class="section-label">COMMUNITY · REPORT HUB</p><h3 id="board-title">자유게시판</h3><p>Report Hub와 같은 글·댓글을 공유합니다. Google 로그인 후 글이나 댓글을 등록하면 각각 1빌드가 적립됩니다.</p></div><button class="primary-button" type="button" data-board-open-write>새 글 작성 · +1빌드 <span aria-hidden="true">＋</span></button></div><div class="board-layout" data-board-list-layout><div class="board-category-row" role="group" aria-label="게시판 분류"><button class="community-filter-chip" type="button" data-board-category="all" aria-pressed="true">전체</button>${Object.entries(BOARD_CATEGORIES).map(([id, label]) => chip(label, false, "data-board-category", id)).join("")}</div><div class="board-toolbar"><form class="board-search-form" data-board-search-form><label><span class="visually-hidden">게시판 검색</span><input type="search" data-board-search placeholder="제목·본문 검색"></label><button class="secondary-button" type="submit">검색</button></form><label class="board-sort-label"><span>정렬</span><select data-board-sort><option value="latest">최신순</option><option value="comments">댓글순</option><option value="views">조회순</option></select></label></div><div class="board-result-line"><span data-board-result-count>게시판을 불러오는 중입니다.</span><button class="text-button" type="button" data-board-refresh>새로고침</button></div><div class="board-list-wrap" data-board-list-wrap aria-live="polite"><div class="community-loading">게시판을 불러오는 중입니다.</div></div><nav class="board-pagination" aria-label="게시판 페이지 이동" data-board-pagination></nav></div><article class="board-detail" data-board-detail hidden></article><dialog class="community-dialog board-dialog" data-board-post-dialog><form method="dialog" class="board-form" data-board-post-form><div class="community-dialog-head"><div><span class="section-label">COMMUNITY BOARD · +1 BUILD</span><h4 data-board-form-title>새 글 작성</h4></div><button class="icon-button" type="button" aria-label="게시글 작성 닫기" data-board-dialog-close>×</button></div><input type="hidden" name="postId"><label>분류<select name="category"><option value="report_opinion">리포트 의견</option><option value="ai_question">AI 질문</option><option value="knowledge_share">정보 공유</option><option value="free_opinion">자유 의견</option></select></label><label>제목<input name="title" maxlength="100" required placeholder="제목을 입력해 주세요"></label><label>내용<textarea name="content" maxlength="5000" required placeholder="일반 텍스트로 작성해 주세요"></textarea></label><p class="board-form-note">로그인한 Google 계정 이름으로 등록되며, 새 댓글은 1빌드가 적립됩니다. 글과 댓글은 각각 1빌드가 적립되고, 삭제하면 그 1빌드도 취소됩니다.</p><p class="community-form-status" data-board-post-status role="status"></p><div class="community-dialog-actions"><button class="secondary-button" type="button" data-board-dialog-close>취소</button><button class="primary-button" type="submit" data-board-save>게시하고 1빌드 받기</button></div></form></dialog><dialog class="community-dialog board-dialog" data-board-action-dialog><form method="dialog" class="board-form" data-board-action-form><div class="community-dialog-head"><div><span class="section-label">CONFIRM</span><h4 data-board-action-title>게시글 삭제</h4></div><button class="icon-button" type="button" aria-label="확인 창 닫기" data-board-action-close>×</button></div><p data-board-action-copy>삭제하면 되돌릴 수 없습니다.</p><p class="community-form-status" data-board-action-status role="status"></p><div class="community-dialog-actions"><button class="secondary-button" type="button" data-board-action-close>취소</button><button class="danger-button" type="submit">삭제</button></div></form></dialog><dialog class="community-dialog board-dialog" data-board-comment-dialog><form method="dialog" class="board-form" data-board-comment-form><div class="community-dialog-head"><div><span class="section-label">COMMENT</span><h4 data-board-comment-title>댓글 남기기</h4></div><button class="icon-button" type="button" aria-label="댓글 창 닫기" data-board-comment-close>×</button></div><input type="hidden" name="commentId"><label>댓글<textarea name="content" maxlength="2000" required></textarea></label><p class="board-form-note">로그인한 Google 계정 이름으로 등록되며, 새 댓글은 1빌드가 적립됩니다.</p><p class="community-form-status" data-board-comment-dialog-status role="status"></p><div class="community-dialog-actions"><button class="secondary-button" type="button" data-board-comment-close>취소</button><button class="primary-button" type="submit" data-board-comment-save>댓글 등록 · +1빌드</button></div></form></dialog></section>`;
+  root.innerHTML = `<section class="community-view board-view" aria-labelledby="board-title"><div class="community-view-head board-view-head"><div><h3 id="board-title">자유게시판</h3><p>글 목록에서 분류, 제목, 작성자, 댓글, 날짜를 바로 확인합니다.</p></div><button class="primary-button" type="button" data-board-open-write>새 글 작성 · +1빌드</button></div><div class="board-layout" data-board-list-layout><div class="board-category-row" role="group" aria-label="게시판 분류"><button class="community-filter-chip" type="button" data-board-category="all" aria-pressed="true">전체</button>${Object.entries(BOARD_CATEGORIES).map(([id, label]) => chip(label, false, "data-board-category", id)).join("")}</div><div class="board-toolbar"><form class="board-search-form" data-board-search-form><label><span class="visually-hidden">게시판 검색</span><input type="search" data-board-search placeholder="제목·본문 검색"></label><button class="secondary-button" type="submit">검색</button></form><label class="board-sort-label"><span>정렬</span><select data-board-sort><option value="latest">최신순</option><option value="comments">댓글순</option><option value="views">조회순</option></select></label></div><div class="board-result-line"><span data-board-result-count>게시판을 불러오는 중입니다.</span><button class="text-button" type="button" data-board-refresh>새로고침</button></div><div class="board-list-wrap" data-board-list-wrap aria-live="polite"><div class="community-loading">게시판을 불러오는 중입니다.</div></div><nav class="board-pagination" aria-label="게시판 페이지 이동" data-board-pagination></nav></div><article class="board-detail" data-board-detail hidden></article><dialog class="community-dialog board-dialog" data-board-post-dialog><form method="dialog" class="board-form" data-board-post-form><div class="community-dialog-head"><div><h4 data-board-form-title>새 글 작성</h4></div><button class="icon-button" type="button" aria-label="게시글 작성 닫기" data-board-dialog-close>×</button></div><input type="hidden" name="postId"><label>분류<select name="category"><option value="report_opinion">리포트 의견</option><option value="ai_question">AI 질문</option><option value="knowledge_share">정보 공유</option><option value="free_opinion">자유 의견</option></select></label><label>제목<input name="title" maxlength="100" required placeholder="제목을 입력해 주세요"></label><label>내용<textarea name="content" maxlength="5000" required placeholder="일반 텍스트로 작성해 주세요"></textarea></label><p class="board-form-note">로그인한 Google 계정 이름으로 등록되며, 글과 댓글은 각각 1빌드가 적립됩니다.</p><p class="community-form-status" data-board-post-status role="status"></p><div class="community-dialog-actions"><button class="secondary-button" type="button" data-board-dialog-close>취소</button><button class="primary-button" type="submit" data-board-save>게시하고 1빌드 받기</button></div></form></dialog><dialog class="community-dialog board-dialog" data-board-action-dialog><form method="dialog" class="board-form" data-board-action-form><div class="community-dialog-head"><div><h4 data-board-action-title>게시글 삭제</h4></div><button class="icon-button" type="button" aria-label="확인 창 닫기" data-board-action-close>×</button></div><p data-board-action-copy>삭제하면 되돌릴 수 없습니다.</p><p class="community-form-status" data-board-action-status role="status"></p><div class="community-dialog-actions"><button class="secondary-button" type="button" data-board-action-close>취소</button><button class="danger-button" type="submit">삭제</button></div></form></dialog><dialog class="community-dialog board-dialog" data-board-comment-dialog><form method="dialog" class="board-form" data-board-comment-form><div class="community-dialog-head"><div><h4 data-board-comment-title>댓글 남기기</h4></div><button class="icon-button" type="button" aria-label="댓글 창 닫기" data-board-comment-close>×</button></div><input type="hidden" name="commentId"><label>댓글<textarea name="content" maxlength="2000" required></textarea></label><p class="community-form-status" data-board-comment-dialog-status role="status"></p><div class="community-dialog-actions"><button class="secondary-button" type="button" data-board-comment-close>취소</button><button class="primary-button" type="submit" data-board-comment-save>댓글 등록 · +1빌드</button></div></form></dialog></section>`;
 
   const state = { root, page: 1, pageSize: 20, category: "all", sort: "latest", query: "", postId: "", post: null, posts: [], comments: [], total: 0, totalPages: 1, busy: false, dialogMode: "create", action: "", lastFocus: null };
   const list = root.querySelector("[data-board-list-wrap]"); const detail = root.querySelector("[data-board-detail]"); const listLayout = root.querySelector("[data-board-list-layout]"); const pagination = root.querySelector("[data-board-pagination]");
@@ -159,11 +270,11 @@ function renderBoard(root, onReady) {
   const setStatus = (selector, text, error = false) => { const node = root.querySelector(selector); if (node) { node.textContent = text || ""; node.dataset.error = String(error); } };
   const setRoute = (next, replace = false) => { Object.assign(state, next); boardUrl(state, replace); renderRoute(); };
   const renderPagination = () => { pagination.innerHTML = ""; if (state.totalPages <= 1) return; const add = (label, disabled, current, callback) => { const button = document.createElement("button"); button.type = "button"; button.className = "board-page-button"; button.textContent = label; button.disabled = disabled; if (current) button.setAttribute("aria-current", "page"); button.addEventListener("click", callback); pagination.appendChild(button); }; add("이전", state.page <= 1, false, () => { if (state.page > 1) setRoute({ postId: "", page: state.page - 1 }); }); const start = Math.max(1, state.page - 2); const end = Math.min(state.totalPages, start + 4); for (let pageNumber = start; pageNumber <= end; pageNumber += 1) add(String(pageNumber), false, pageNumber === state.page, () => setRoute({ postId: "", page: pageNumber })); add("다음", state.page >= state.totalPages, false, () => { if (state.page < state.totalPages) setRoute({ postId: "", page: state.page + 1 }); }); };
-  const renderList = (data) => { state.posts = Array.isArray(data.posts) ? data.posts : []; state.total = Number(data.pagination?.total || 0); state.totalPages = Math.max(1, Number(data.pagination?.totalPages || 1)); root.querySelector("[data-board-result-count]").textContent = state.total ? `총 ${state.total.toLocaleString("ko-KR")}개의 글` : "아직 등록된 글 없음"; if (!state.posts.length) { list.innerHTML = `<div class="community-empty-state"><strong>${state.query ? "검색 조건에 맞는 글이 없습니다." : "아직 작성된 글이 없습니다. 첫 의견을 남겨 주세요."}</strong><p>새 글 작성 버튼으로 첫 이야기를 남겨 보세요.</p></div>`; } else { list.innerHTML = state.posts.map((post, index) => `<a class="board-post-row" href="?post=${encodeURIComponent(post.id)}#board" data-board-post-id="${escapeHtml(post.id)}"><span class="board-post-number">${String(Math.max(1, state.total - ((state.page - 1) * state.pageSize) - index)).padStart(3, "0")}</span><span class="community-chip">${escapeHtml(BOARD_CATEGORIES[post.category] || "기타")}</span><span class="board-post-copy"><strong>${escapeHtml(post.title)}${post.origin === "shorts" ? ' <em class="board-media-badge">쇼츠</em>' : ""}</strong><small>${escapeHtml(post.content || "")}</small></span><span class="board-post-author">${escapeHtml(post.author || "방문자")}${Number(post.is_admin) === 1 ? '<em>관리자</em>' : ""}</span><time>${formatDate(post.updated_at || post.created_at)}</time><span class="board-post-stat">댓글 ${Number(post.comment_count || 0).toLocaleString("ko-KR")}</span></a>`).join(""); } renderPagination(); };
+  const renderList = (data) => { state.posts = Array.isArray(data.posts) ? data.posts : []; state.total = Number(data.pagination?.total || 0); state.totalPages = Math.max(1, Number(data.pagination?.totalPages || 1)); root.querySelector("[data-board-result-count]").textContent = state.total ? `총 ${state.total.toLocaleString("ko-KR")}개의 글` : "아직 등록된 글 없음"; if (!state.posts.length) { list.innerHTML = `<div class="community-empty-state"><strong>${state.query ? "검색 조건에 맞는 글이 없습니다." : "아직 작성된 글이 없습니다. 첫 의견을 남겨 주세요."}</strong></div>`; } else { list.innerHTML = state.posts.map((post) => `<a class="board-post-row" href="?post=${encodeURIComponent(post.id)}#board" data-board-post-id="${escapeHtml(post.id)}"><span class="community-chip">${escapeHtml(BOARD_CATEGORIES[post.category] || "기타")}</span><span class="board-post-copy"><strong>${escapeHtml(post.title)}${post.origin === "shorts" ? ' <em class="board-media-badge">쇼츠</em>' : ""}</strong></span><span class="board-post-author">${escapeHtml(post.author || "방문자")}${Number(post.is_admin) === 1 ? "<em>관리자</em>" : ""}</span><span class="board-post-stat">댓글 ${Number(post.comment_count || 0).toLocaleString("ko-KR")}</span><time>${formatDate(post.updated_at || post.created_at)}</time></a>`).join(""); } renderPagination(); };
   const loadPosts = async () => { list.setAttribute("aria-busy", "true"); list.innerHTML = `<div class="community-loading">게시판을 불러오는 중입니다.</div>`; const params = new URLSearchParams({ page: String(state.page), pageSize: String(state.pageSize), category: state.category, sort: state.sort, q: state.query }); try { renderList(await boardRequest(`/board/posts?${params}`)); } catch (error) { root.querySelector("[data-board-result-count]").textContent = "불러오기 실패"; list.innerHTML = `<div class="community-error-state"><strong>게시판을 불러오지 못했습니다.</strong><p>${escapeHtml(error.message)}</p><button class="secondary-button" type="button" data-board-refresh>다시 시도</button></div>`; } finally { list.setAttribute("aria-busy", "false"); } };
-  const renderComments = (comments) => comments.length ? comments.map((comment) => `<article class="board-comment" data-comment-id="${escapeHtml(comment.id)}"><div class="board-comment-head"><strong>${escapeHtml(comment.author || "방문자")}</strong>${Number(comment.is_admin) === 1 ? '<span class="community-chip">관리자</span>' : ""}<time>${formatDate(comment.updated_at || comment.created_at, true)}</time></div><p>${escapeHtml(comment.content || "")}</p>${comment.can_edit ? `<div class="board-comment-actions"><button class="text-button" type="button" data-board-comment-edit="${escapeHtml(comment.id)}">수정</button><button class="text-button" type="button" data-board-comment-delete="${escapeHtml(comment.id)}">삭제</button></div>` : ""}</article>`).join("") : '<div class="community-empty-state"><strong>아직 댓글이 없습니다.</strong><p>첫 의견을 남겨 주세요.</p></div>';
+  const renderComments = (comments) => comments.length ? comments.map((comment) => `<article class="board-comment" data-comment-id="${escapeHtml(comment.id)}"><div class="board-comment-head"><strong>${escapeHtml(comment.author || "방문자")}</strong>${Number(comment.is_admin) === 1 ? '<span class="community-chip">관리자</span>' : ""}<time>${formatDate(comment.updated_at || comment.created_at, true)}</time></div><p>${escapeHtml(comment.content || "")}</p>${comment.can_edit ? `<div class="board-comment-actions"><button class="text-button" type="button" data-board-comment-edit="${escapeHtml(comment.id)}">수정</button><button class="text-button" type="button" data-board-comment-delete="${escapeHtml(comment.id)}">삭제</button></div>` : ""}</article>`).join("") : '<div class="community-empty-state"><strong>아직 댓글이 없습니다.</strong></div>';
   const loadComments = async (postId) => { const target = root.querySelector("[data-board-comments]"); target.innerHTML = `<div class="community-loading">댓글을 불러오는 중입니다.</div>`; try { const data = await boardRequest(`/board/posts/${encodeURIComponent(postId)}/comments`); state.comments = Array.isArray(data.comments) ? data.comments : []; target.innerHTML = renderComments(state.comments); root.querySelector("[data-board-comment-count]").textContent = `${state.comments.length}개`; } catch (error) { target.innerHTML = `<div class="community-error-state">${escapeHtml(error.message)}</div>`; } };
-  const renderDetail = (post) => { const mediaUrl = /^https:\/\//.test(post.mediaUrl || "") && post.mediaType === "video/webm" ? post.mediaUrl : ""; state.post = post; detail.innerHTML = `<div class="board-detail-top"><button class="text-button" type="button" data-board-back>← 목록으로</button><span class="community-chip">${escapeHtml(BOARD_CATEGORIES[post.category] || "기타")}</span>${post.origin === "shorts" ? '<span class="board-media-badge">쇼츠 영상</span>' : ""}</div><article class="board-detail-card"><h4>${escapeHtml(post.title)}</h4><div class="board-detail-meta"><strong>${escapeHtml(post.author || "방문자")}</strong>${Number(post.is_admin) === 1 ? '<span class="community-chip">관리자</span>' : ""}<time>${formatDate(post.created_at, true)}</time><span>조회 ${Number(post.view_count || 0).toLocaleString("ko-KR")}</span></div>${mediaUrl ? `<video class="board-detail-media" controls playsinline preload="metadata" src="${escapeHtml(mediaUrl)}" aria-label="${escapeHtml(post.title)} 쇼츠 영상"></video>` : ""}<p class="board-detail-content">${escapeHtml(post.content || "")}</p><div class="board-detail-actions"><button class="secondary-button" type="button" data-board-copy>링크 복사</button>${post.can_edit ? '<button class="text-button" type="button" data-board-edit>수정</button><button class="text-button danger-text" type="button" data-board-delete>삭제</button>' : ""}</div></article><section class="board-comments" aria-labelledby="board-comments-title"><div class="board-comments-head"><h5 id="board-comments-title">댓글 <span data-board-comment-count>0개</span></h5><button class="primary-button" type="button" data-board-open-comment>댓글 쓰기 <span aria-hidden="true">＋</span></button></div><div data-board-comments></div><p class="community-form-status" data-board-comment-status role="status"></p></section>`; listLayout.hidden = true; detail.hidden = false; loadComments(post.id); };
+  const renderDetail = (post) => { const mediaUrl = /^https:\/\//.test(post.mediaUrl || "") && post.mediaType === "video/webm" ? post.mediaUrl : ""; state.post = post; detail.innerHTML = `<div class="board-detail-top"><button class="text-button" type="button" data-board-back>목록으로</button><span class="community-chip">${escapeHtml(BOARD_CATEGORIES[post.category] || "기타")}</span>${post.origin === "shorts" ? '<span class="board-media-badge">쇼츠 영상</span>' : ""}</div><article class="board-detail-card"><h4>${escapeHtml(post.title)}</h4><div class="board-detail-meta"><strong>${escapeHtml(post.author || "방문자")}</strong>${Number(post.is_admin) === 1 ? '<span class="community-chip">관리자</span>' : ""}<time>${formatDate(post.created_at, true)}</time><span>조회 ${Number(post.view_count || 0).toLocaleString("ko-KR")}</span></div>${mediaUrl ? `<video class="board-detail-media" controls playsinline preload="metadata" src="${escapeHtml(mediaUrl)}" aria-label="${escapeHtml(post.title)} 쇼츠 영상"></video>` : ""}<p class="board-detail-content">${escapeHtml(post.content || "")}</p><div class="board-detail-actions"><button class="secondary-button" type="button" data-board-copy>링크 복사</button>${post.can_edit ? '<button class="text-button" type="button" data-board-edit>수정</button><button class="text-button danger-text" type="button" data-board-delete>삭제</button>' : ""}</div></article><section class="board-comments" aria-labelledby="board-comments-title"><div class="board-comments-head"><h5 id="board-comments-title">댓글 <span data-board-comment-count>0개</span></h5><button class="primary-button" type="button" data-board-open-comment>댓글 쓰기</button></div><div data-board-comments></div></section>`; listLayout.hidden = true; detail.hidden = false; loadComments(post.id); };
   const loadPost = async (postId) => { try { const data = await boardRequest(`/board/posts/${encodeURIComponent(postId)}`); renderDetail(data.post); void boardRequest(`/board/posts/${encodeURIComponent(postId)}/views`, { method: "POST", body: JSON.stringify({ visitorId: boardVisitorId() }) }); } catch (error) { state.postId = ""; boardUrl(state, true); listLayout.hidden = false; detail.hidden = true; list.innerHTML = `<div class="community-error-state"><strong>${escapeHtml(error.message)}</strong><button class="secondary-button" type="button" data-board-refresh>목록 다시 불러오기</button></div>`; } };
   const renderRoute = () => { readBoardUrl(state); if (state.postId) loadPost(state.postId); else { listLayout.hidden = false; detail.hidden = true; loadPosts(); } };
   const ensureLogin = () => { if (window.BuildersPlatform?.snapshot?.().user) return true; window.BuildersPlatform?.openLogin?.(); return false; };
@@ -190,9 +301,9 @@ function renderBoard(root, onReady) {
   });
   root.querySelector("[data-board-sort]").addEventListener("change", (event) => setRoute({ postId: "", sort: event.target.value, page: 1 }));
   root.querySelector("[data-board-search-form]").addEventListener("submit", (event) => { event.preventDefault(); setRoute({ postId: "", query: root.querySelector("[data-board-search]").value.trim().slice(0, 120), page: 1 }); });
-  postForm.addEventListener("submit", async (event) => { event.preventDefault(); if (state.busy || !ensureLogin()) return; const payload = { category: postForm.elements.category.value, title: postForm.elements.title.value.trim(), content: postForm.elements.content.value }; const postId = postForm.elements.postId.value; state.busy = true; setStatus("[data-board-post-status]", postId ? "수정 중입니다." : "등록하고 1빌드를 적립하는 중입니다."); try { const response = await boardRequest(postId ? `/board/posts/${encodeURIComponent(postId)}` : "/board/posts", { method: postId ? "PATCH" : "POST", body: JSON.stringify(payload) }); if (!postId && Number(response.reward || 0) > 0) { window.BuildersPlatform?.applyBalance?.(response.balance); const live = document.querySelector("[data-lounge-live]"); if (live) live.textContent = `게시글이 등록되어 1빌드가 적립되었습니다. 현재 ${Number(response.balance || 0)}빌드입니다.`; } dialogClose(postDialog); state.postId = response.post.id; boardUrl(state); renderRoute(); } catch (error) { setStatus("[data-board-post-status]", error.message, true); } finally { state.busy = false; } });
+  postForm.addEventListener("submit", async (event) => { event.preventDefault(); if (state.busy || !ensureLogin()) return; const payload = { category: postForm.elements.category.value, title: postForm.elements.title.value.trim(), content: postForm.elements.content.value }; const postId = postForm.elements.postId.value; state.busy = true; setStatus("[data-board-post-status]", postId ? "수정 중입니다." : "등록하고 1빌드를 적립하는 중입니다."); try { const response = await boardRequest(postId ? `/board/posts/${encodeURIComponent(postId)}` : "/board/posts", { method: postId ? "PATCH" : "POST", body: JSON.stringify(payload) }); if (!postId && Number(response.reward || 0) > 0) { window.BuildersPlatform?.applyBalance?.(response.balance); } dialogClose(postDialog); state.postId = response.post.id; boardUrl(state); renderRoute(); } catch (error) { setStatus("[data-board-post-status]", error.message, true); } finally { state.busy = false; } });
   actionForm.addEventListener("submit", async (event) => { event.preventDefault(); if (state.busy || !ensureLogin()) return; state.busy = true; setStatus("[data-board-action-status]", "처리 중입니다."); try { const endpoint = state.action === "post-delete" ? `/board/posts/${encodeURIComponent(actionDialog.dataset.itemId)}` : `/board/comments/${encodeURIComponent(actionDialog.dataset.itemId)}`; await boardRequest(endpoint, { method: "DELETE", body: "{}" }); await window.BuildersPlatform?.refreshMe?.(); dialogClose(actionDialog); if (state.action === "post-delete") { state.postId = ""; boardUrl(state); renderRoute(); } else if (state.post) loadComments(state.post.id); } catch (error) { setStatus("[data-board-action-status]", error.message, true); } finally { state.busy = false; } });
-  commentForm.addEventListener("submit", async (event) => { event.preventDefault(); if (!state.post || !ensureLogin()) return; state.busy = true; const payload = { content: commentForm.elements.content.value }; const commentId = commentForm.elements.commentId.value; try { const response = await boardRequest(commentId ? `/board/comments/${encodeURIComponent(commentId)}` : `/board/posts/${encodeURIComponent(state.post.id)}/comments`, { method: commentId ? "PATCH" : "POST", body: JSON.stringify(payload) }); if (!commentId && Number(response.reward || 0) > 0) { window.BuildersPlatform?.applyBalance?.(response.balance); const live = document.querySelector("[data-lounge-live]"); if (live) live.textContent = `댓글이 등록되어 1빌드가 적립되었습니다. 현재 ${Number(response.balance || 0)}빌드입니다.`; } dialogClose(commentDialog); await loadComments(state.post.id); } catch (error) { setStatus("[data-board-comment-dialog-status]", error.message, true); } finally { state.busy = false; } });
+  commentForm.addEventListener("submit", async (event) => { event.preventDefault(); if (!state.post || !ensureLogin()) return; state.busy = true; const payload = { content: commentForm.elements.content.value }; const commentId = commentForm.elements.commentId.value; try { await boardRequest(commentId ? `/board/comments/${encodeURIComponent(commentId)}` : `/board/posts/${encodeURIComponent(state.post.id)}/comments`, { method: commentId ? "PATCH" : "POST", body: JSON.stringify(payload) }); dialogClose(commentDialog); await loadComments(state.post.id); } catch (error) { setStatus("[data-board-comment-dialog-status]", error.message, true); } finally { state.busy = false; } });
   [postDialog, actionDialog, commentDialog].forEach((dialog) => dialog.addEventListener("close", () => state.lastFocus?.focus?.()));
   window.addEventListener("popstate", () => { if (document.documentElement.dataset.loungeRoute === "board") renderRoute(); });
   window.addEventListener("lounge:boardwrite", () => { if (document.documentElement.dataset.loungeRoute === "board") openWrite(); });
@@ -203,7 +314,7 @@ function renderBoard(root, onReady) {
 async function renderHomeBoardPreview(root) {
   if (!root) return;
   try {
-    const data = await boardRequest("/board/posts?page=1&pageSize=7&category=all&sort=latest&q=");
+    const data = await boardRequest("/board/posts?page=1&pageSize=8&category=all&sort=latest&q=");
     const posts = Array.isArray(data.posts) ? data.posts : [];
     root.innerHTML = posts.length ? `<ul class="home-board-list">${posts.map((post) => `<li><a href="?post=${encodeURIComponent(post.id)}#board" data-home-board-post="${escapeHtml(post.id)}"><span class="community-chip">${escapeHtml(BOARD_CATEGORIES[post.category] || "기타")}</span><strong>${escapeHtml(post.title)}</strong><small>${escapeHtml(post.author || "방문자")} · 댓글 ${Number(post.comment_count || 0).toLocaleString("ko-KR")} · ${formatDate(post.updated_at || post.created_at)}</small></a></li>`).join("")}</ul>` : '<div class="community-empty-inline">아직 게시글이 없습니다. 첫 글을 남겨보세요.</div>';
     root.querySelectorAll("[data-home-board-post]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); window.history.pushState({}, "", link.getAttribute("href")); window.dispatchEvent(new PopStateEvent("popstate")); window.dispatchEvent(new CustomEvent("lounge:navigate", { detail: { view: "board" } })); }));
@@ -211,19 +322,22 @@ async function renderHomeBoardPreview(root) {
 }
 
 export function mountCommunity() {
-  const prompts = document.querySelector('[data-community-view="prompts"]'); if (prompts) renderPromptPanel(prompts);
-  const newsletter = document.querySelector('[data-community-view="newsletter"]'); if (newsletter) renderNewsletterPanel(newsletter);
-  const videos = document.querySelector('[data-community-view="videos"]'); if (videos) renderVideoPanel(videos);
-  const memes = document.querySelector('[data-community-view="memes"]'); if (memes) renderMemePanel(memes);
-  const games = document.querySelector('[data-community-view="games"]'); if (games) renderGamePanel(games);
-  const board = document.querySelector('[data-community-view="board"]'); let boardController = null; if (board) renderBoard(board, (controller) => { boardController = controller; });
-  const bindHomePreview = () => {
-    const preview = document.querySelector("[data-home-board-preview]");
-    void renderHomeBoardPreview(preview);
+  const paintCommunity = () => {
+    const prompts = document.querySelector('[data-community-view="prompts"]'); if (prompts) renderPromptPanel(prompts);
+    const newsletter = document.querySelector('[data-community-view="newsletter"]'); if (newsletter) renderNewsletterPanel(newsletter);
+    const videos = document.querySelector('[data-community-view="videos"]'); if (videos && !videos.dataset.ready) { renderVideoPanel(videos); videos.dataset.ready = "true"; }
+    const memes = document.querySelector('[data-community-view="memes"]'); if (memes) renderMemePanel(memes);
+    const games = document.querySelector('[data-community-view="games"]'); if (games && !games.dataset.ready) { renderGamePanel(games); games.dataset.ready = "true"; }
   };
+  paintCommunity();
+  const board = document.querySelector('[data-community-view="board"]'); let boardController = null; if (board) renderBoard(board, (controller) => { boardController = controller; });
+  const bindHomePreview = () => { void renderHomeBoardPreview(document.querySelector("[data-home-board-preview]")); };
   bindHomePreview();
-  window.addEventListener("lounge:viewchange", (event) => {
-    if (event.detail?.view === "home") bindHomePreview();
+  window.addEventListener("lounge:viewchange", (event) => { if (event.detail?.view === "home") bindHomePreview(); });
+  window.addEventListener("lounge:catalogchange", () => {
+    paintCommunity();
+    if (document.documentElement.dataset.loungeRoute === "home") window.dispatchEvent(new CustomEvent("lounge:authchange"));
   });
+  window.addEventListener("lounge:authchange", paintCommunity);
   window.LoungeCommunity = Object.freeze({ openWrite: () => boardController?.openWrite?.(), refreshBoard: () => boardController?.renderRoute?.(), refreshHomePreview: bindHomePreview, clearBoardQuery: () => boardController?.clearQuery?.() });
 }

@@ -22,6 +22,7 @@ const sourceSupport = [
   "lounge/topbar.js",
   "lounge/demo-data.js",
   "lounge/community-data.js",
+  "lounge/catalog.js",
   "lounge/community.js",
   "lounge/jobs.css",
   "lounge/jobs.js",
@@ -38,6 +39,7 @@ const loungeScripts = [
   "lounge/admin.js",
   "lounge/demo-data.js",
   "lounge/community-data.js",
+  "lounge/catalog.js",
   "lounge/community.js",
   "lounge/topbar.js",
   "lounge/jobs.js",
@@ -77,9 +79,9 @@ const robots = await readFile(resolve(root, "robots.txt"), "utf8");
 const sitemap = await readFile(resolve(root, "sitemap.xml"), "utf8");
 
 expect(indexHtml.includes("data-lounge-shell"), "루트 Builders Lounge 셸이 없습니다.");
-expect(indexHtml.includes('href="lounge/lounge.css"') && indexHtml.includes('href="lounge/portal.css"') && indexHtml.includes('href="lounge/shorts.css') && indexHtml.includes('src="lounge/lounge.js'), "루트 Lounge 경로가 없습니다.");
+expect(indexHtml.includes('href="lounge/lounge.css') && indexHtml.includes('href="lounge/portal.css') && indexHtml.includes('href="lounge/shorts.css') && indexHtml.includes('src="lounge/lounge.js'), "루트 Lounge 경로가 없습니다.");
 expect(indexHtml.includes('href="assets/favicon.png"') && indexHtml.includes('src="assets/builders-lounge-logo.png"'), "루트 Builders Lounge 자산 경로가 없습니다.");
-expect(indexHtml.includes("data-home-mount") && indexHtml.includes("portal-mobile-nav") && loungeScript.includes("portal-index-list"), "홈 마운트, 모바일 메뉴 또는 빠른 콘텐츠 목록이 없습니다.");
+expect(indexHtml.includes("data-home-mount") && indexHtml.includes("portal-mobile-nav") && (loungeScript.includes("home-quad-grid") || loungeScript.includes("renderHome")), "홈 마운트, 모바일 메뉴 또는 모아보기 4칸이 없습니다.");
 expect(!indexHtml.includes("portal-brand-mark") && !indexHtml.includes("portal-brand-copy"), "이전 임시 Builders Lounge 로고가 남아 있습니다.");
 expect(!indexHtml.includes('src="assets/report-hub-logo.png"') && !indexHtml.includes("lounge-portal-header"), "이전 Report Hub 로고 또는 이중 상단 헤더가 남아 있습니다.");
 expect(indexHtml.includes('<link rel="canonical" href="https://aihubos.github.io/builders-lounge/" />'), "canonical 루트 주소가 없습니다.");
@@ -154,6 +156,7 @@ for (const file of [
   "lounge/topbar.js",
   "lounge/demo-data.js",
   "lounge/community-data.js",
+  "lounge/catalog.js",
   "lounge/community.js",
   "lounge/jobs.css",
   "lounge/jobs.js",

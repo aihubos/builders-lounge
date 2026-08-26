@@ -215,7 +215,14 @@ CSS에서는 작은 글 크기를 `--font-small: 0.875rem` 토큰으로 사용�
 - `--radius-pill: 999px`: 상태 배지와 원형 메뉴 조작
 - `--lounge-menu-item-height: 48px`: 메뉴 조작 최소 높이
 - `--lounge-content-padding: 40px`, 모바일 `--lounge-content-padding-mobile: 24px`: 작업영역 내부 여백
-- `--lounge-label-size: 0.75rem`, `--lounge-body-size: 0.9375rem`, `--lounge-title-size: clamp(1.75rem, 3vw, 2.75rem)`: 앱 전용 글자 크기
+- `--lounge-label-size: 0.8125rem`, `--lounge-body-size: 1.0625rem`, `--lounge-title-size: clamp(1.75rem, 3vw, 2.75rem)`: 앱 전용 글자 크기
+- `--lounge-font-nav: 1.0625rem`: 왼쪽 게시판 메뉴
+- `--lounge-font-board-title: 1.125rem`: 글 목록 제목
+- `--lounge-font-meta: 0.875rem`: 작성자, 댓글, 날짜
+- `--lounge-font-chip: 0.8125rem`: 분류 칩
+- `--lounge-home-quad-min: 280px`: 모아보기 4칸의 최소 높이
+- `--lounge-card-cover-ratio: 16 / 10`: 프롬프트, 뉴스레터, 이미지 게시판 카드 비율
+- `--lounge-card-radius: 12px`: 카드뉴스 모서리
 - `--lounge-shadow: 0 4px 16px rgba(7, 19, 49, 0.08)`: 모바일 메뉴와 상단바에만 허용하는 낮은 그림자
 
 앱 본문은 흰색 배경과 1px 구분선을 기본으로 하며, 동일 크기 기능 카드를 반복하지 않는다. AI 회의록 메뉴와 제작 화면은 공개 라운지에서 제거한다. 쇼츠 스튜디오는 만들기 메뉴에 유지한다.

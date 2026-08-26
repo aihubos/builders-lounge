@@ -3,6 +3,8 @@ const PUBLISHED = "published";
 const prompts = [
   {
     id: "prompt-stic",
+    cover: "assets/og.png",
+    kicker: "업무",
     type: "prompt",
     title: "STIC 요청 템플릿",
     summary: "상황·과업·의도·제약을 빠르게 정리해 원하는 답의 방향을 맞춥니다.",
@@ -19,6 +21,8 @@ const prompts = [
   },
   {
     id: "prompt-meeting",
+    cover: "assets/hero-builders-wave-poster.jpg",
+    kicker: "업무",
     type: "prompt",
     title: "회의록 자동 작성",
     summary: "긴 회의 기록을 결정사항·담당자·기한 중심의 실행 문서로 바꿉니다.",
@@ -35,6 +39,8 @@ const prompts = [
   },
   {
     id: "prompt-report-mode",
+    cover: "assets/report-hub-banner.png",
+    kicker: "글쓰기",
     type: "prompt",
     title: "Report Mode 리서치 정리",
     summary: "자료를 사실·해석·전망·리스크로 나누어 읽기 쉬운 보고서로 구성합니다.",
@@ -51,6 +57,8 @@ const prompts = [
   },
   {
     id: "prompt-image",
+    cover: "assets/hero-builders-character-poster.jpg",
+    kicker: "이미지",
     type: "prompt",
     title: "이미지 생성 기본 프레임",
     summary: "주제·구도·조명·재질·금지사항을 한 번에 지정하는 이미지 프롬프트입니다.",
@@ -66,6 +74,8 @@ const prompts = [
   },
   {
     id: "prompt-handdrawn",
+    cover: "assets/hero-builders-character-poster.jpg",
+    kicker: "이미지",
     type: "prompt",
     title: "손그림 변환",
     summary: "디지털 이미지를 따뜻한 손그림 느낌으로 바꾸되 핵심 형태는 보존합니다.",
@@ -189,8 +199,10 @@ const prompts = [
 const newsletters = [
   {
     id: "newsletter-001",
+    cover: "assets/hero-builders-wave-poster.jpg",
+    kicker: "뉴스레터",
     type: "newsletter",
-    title: "AI 빌더스 랩 뉴스레터 1호 — AI 에이전트, 실전 업무와 보안",
+    title: "AI 빌더스 랩 뉴스레터 1호, AI 에이전트 실전 업무와 보안",
     summary: "AI 에이전트가 데모를 넘어 실제 업무에 들어오는 순간, 성능보다 운영과 보안이 먼저입니다.",
     tags: ["AI 에이전트", "자동화", "보안"],
     issue: "1호",
@@ -210,8 +222,10 @@ const newsletters = [
   },
   {
     id: "newsletter-special-agents",
+    cover: "assets/og.png",
+    kicker: "뉴스레터",
     type: "newsletter",
-    title: "AI 빌더스 랩 뉴스레터 스페셜 — AI 에이전트 삼국지",
+    title: "AI 빌더스 랩 뉴스레터 스페셜, AI 에이전트 삼국지",
     summary: "모델·도구·사람의 역할을 나누어 보면 에이전트 생태계의 변화가 더 선명해집니다.",
     tags: ["AI 에이전트", "빌더 이야기"],
     issue: "스페셜",
@@ -231,27 +245,27 @@ const newsletters = [
 ];
 
 const videos = [
-  { id: "video-openclaw", type: "video", title: "오픈클로 설치법 — 자는 동안 일하는 AI 비서", summary: "처음 시작하는 사람을 위한 OpenClaw 설치와 기본 흐름을 살펴봅니다.", tags: ["AI 에이전트", "입문"], category: "AI 에이전트", videoId: "609DF4SFwQs", duration: "18분", difficulty: "입문", author: "배움의 달인", sourceLabel: "YouTube", sourceUrl: "https://www.youtube.com/watch?v=609DF4SFwQs", status: PUBLISHED },
+  { id: "video-openclaw", type: "video", title: "오픈클로 설치법, 자는 동안 일하는 AI 비서", summary: "처음 시작하는 사람을 위한 OpenClaw 설치와 기본 흐름을 살펴봅니다.", tags: ["AI 에이전트", "입문"], category: "AI 에이전트", videoId: "609DF4SFwQs", duration: "18분", difficulty: "입문", author: "배움의 달인", sourceLabel: "YouTube", sourceUrl: "https://www.youtube.com/watch?v=609DF4SFwQs", status: PUBLISHED },
   { id: "video-chatgpt-agent", type: "video", title: "ChatGPT 에이전트로 나만의 AI 만들기", summary: "코딩을 몰라도 작업 흐름을 설계하는 방법을 보여주는 입문 영상입니다.", tags: ["AI 입문", "에이전트"], category: "AI 입문", videoId: "-jYKUwldgek", duration: "21분", difficulty: "입문", author: "배움의 달인", sourceLabel: "YouTube", sourceUrl: "https://www.youtube.com/watch?v=-jYKUwldgek", status: PUBLISHED },
   { id: "video-veo-capcut", type: "video", title: "Veo와 CapCut으로 짧은 영상 만들기", summary: "아이디어를 세로 영상으로 옮기는 기본 제작 루틴을 정리합니다.", tags: ["영상 제작", "자동화"], category: "이미지·영상 제작", videoId: "1xVON92uhtI", duration: "15분", difficulty: "입문", author: "AI인사이트", sourceLabel: "YouTube", sourceUrl: "https://www.youtube.com/watch?v=1xVON92uhtI", status: PUBLISHED },
-  { id: "video-ai-concert", type: "video", title: "인공지능 콘서트 — 꿈과 희망의 세계", summary: "AI를 활용한 창작과 이야기의 가능성을 가볍게 만나보는 콘텐츠입니다.", tags: ["빌더 프로젝트", "창작"], category: "빌더 프로젝트", videoId: "k44cjt5y6qc", duration: "32분", difficulty: "모두", author: "배움의 달인", sourceLabel: "YouTube", sourceUrl: "https://www.youtube.com/watch?v=k44cjt5y6qc", status: PUBLISHED },
+  { id: "video-ai-concert", type: "video", title: "인공지능 콘서트, 꿈과 희망의 세계", summary: "AI를 활용한 창작과 이야기의 가능성을 가볍게 만나보는 콘텐츠입니다.", tags: ["빌더 프로젝트", "창작"], category: "빌더 프로젝트", videoId: "k44cjt5y6qc", duration: "32분", difficulty: "모두", author: "배움의 달인", sourceLabel: "YouTube", sourceUrl: "https://www.youtube.com/watch?v=k44cjt5y6qc", status: PUBLISHED },
   { id: "video-ai-membership", type: "video", title: "10명의 AI 직원이 일하는 시스템", summary: "AI 도구를 조직의 반복 업무와 연결할 때 생각할 점을 살펴봅니다.", tags: ["자동화", "조직"], category: "자동화", videoId: "G8MZ9TuFtYU", duration: "24분", difficulty: "중급", author: "배움의 달인", sourceLabel: "YouTube", sourceUrl: "https://www.youtube.com/watch?v=G8MZ9TuFtYU", status: PUBLISHED },
   { id: "video-ai-news-fatigue", type: "video", title: "매일 쏟아지는 AI 뉴스에 흔들리지 않는 법", summary: "정보를 모두 따라가기보다 내 프로젝트에 필요한 것을 고르는 기준을 제안합니다.", tags: ["학습", "빌더 이야기"], category: "AI 입문", videoId: "my9CAJTOrow", duration: "17분", difficulty: "모두", author: "배움의 달인", sourceLabel: "YouTube", sourceUrl: "https://www.youtube.com/watch?v=my9CAJTOrow", status: PUBLISHED },
 ];
 
 const memes = [
-  { id: "meme-ai-01", type: "meme", title: "프롬프트는 완벽했는데", summary: "결과를 보고 다시 STIC부터 쓰는 빌더의 하루", tags: ["AI 공감"], category: "AI 공감", caption: "프롬프트: 완벽함\n결과: 다시 질문해 주세요", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "blue", status: PUBLISHED },
-  { id: "meme-ai-02", type: "meme", title: "AI가 알아서 해주겠지", summary: "그리고 마지막 승인 버튼 앞에서 멈추는 이유", tags: ["AI 공감"], category: "AI 공감", caption: "자동화의 마지막 단계\n사람: 이거 진짜 보내도 돼?", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "navy", status: PUBLISHED },
-  { id: "meme-ai-03", type: "meme", title: "모델 업데이트 알림", summary: "방금 익힌 기능을 다시 배워야 하는 순간", tags: ["AI 공감"], category: "AI 공감", caption: "오늘의 계획\n새 모델 비교하기", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "orange", status: PUBLISHED },
-  { id: "meme-dev-01", type: "meme", title: "한 줄만 고치면 돼", summary: "그 한 줄이 파일 열두 개로 번지는 과정", tags: ["개발 공감"], category: "개발 공감", caption: "변경 범위: 한 줄\n영향 범위: 우주", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "green", status: PUBLISHED },
-  { id: "meme-dev-02", type: "meme", title: "콘솔에 오류가 없어요", summary: "그래서 화면을 직접 눌러보기로 했다", tags: ["개발 공감"], category: "개발 공감", caption: "npm run check 통과\n사용자: 버튼이 안 눌려요", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "purple", status: PUBLISHED },
-  { id: "meme-dev-03", type: "meme", title: "배포 완료의 기준", summary: "코드가 올라간 것과 실제 페이지가 보이는 것은 다릅니다.", tags: ["개발 공감"], category: "개발 공감", caption: "배포 성공\n공개 화면: 아직 예전 버전", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "red", status: PUBLISHED },
-  { id: "meme-result-gonggamtoon", type: "meme", title: "공감툰 제작기", summary: "대화 한 줄에서 공감 카드까지 이어지는 원본 앱입니다.", tags: ["빌더 결과물", "웹툰"], category: "빌더 결과물", caption: "오늘의 감정\n한 컷으로 남겨보기", credit: "공감툰", sourceLabel: "공감툰 원본 앱", sourceUrl: "https://aihubos.github.io/gonggamtoon/", cover: "assets/og.png", tone: "blue", status: PUBLISHED },
-  { id: "meme-result-shorthub", type: "meme", title: "ShortHub", summary: "긴 영상을 짧은 콘텐츠로 바꾸는 빌더 프로젝트", tags: ["빌더 결과물", "영상"], category: "빌더 결과물", caption: "한 편의 영상\n여러 개의 장면", credit: "ShortHub", sourceLabel: "ShortHub 원본 앱", sourceUrl: "https://aihubos.github.io/shorthub/", cover: "assets/hero-builders-wave-poster.jpg", tone: "navy", status: PUBLISHED },
-  { id: "meme-result-masterpiece", type: "meme", title: "세계명화 프롬프트", summary: "명화와 캐릭터를 조합해 새로운 장면을 만드는 도구", tags: ["빌더 결과물", "이미지"], category: "빌더 결과물", caption: "원본은 명화\n결과는 나만의 장면", credit: "World Masterpiece Bot", sourceLabel: "세계명화 프롬프트", sourceUrl: "https://aihubos.github.io/world-masterpiece-bot/", cover: "assets/report-hub-banner.png", tone: "orange", status: PUBLISHED },
-  { id: "meme-result-token", type: "meme", title: "토큰 비용 계산기", summary: "모델과 사용량을 바꿔 예상 비용을 비교하는 작은 도구", tags: ["빌더 결과물", "AI 도구"], category: "빌더 결과물", caption: "좋은 아이디어\n비용까지 알아야 오래 갑니다", credit: "Token Calculator", sourceLabel: "토큰 비용 계산기", sourceUrl: "https://aihubos.github.io/token-calculator/", cover: "assets/og.png", tone: "green", status: PUBLISHED },
-  { id: "meme-result-pokopia", type: "meme", title: "포코피아 블록 가든", summary: "가볍게 즐기며 만든 블록 퍼즐 게임", tags: ["빌더 결과물", "게임"], category: "빌더 결과물", caption: "잠깐만 하려고 했는데\n블록이 한 줄 더 남았어요", credit: "Pokopia Block Garden", sourceLabel: "게임방", sourceUrl: "https://aihubos.github.io/pokopia-tetris/", cover: "assets/hero-wave-background.png", tone: "green", status: PUBLISHED },
-  { id: "meme-result-mallang", type: "meme", title: "말랑바다 모험단", summary: "작은 캐릭터와 함께 떠나는 브라우저 모험", tags: ["빌더 결과물", "게임"], category: "빌더 결과물", caption: "오늘의 퀘스트\n일단 한 번 눌러보기", credit: "말랑바다 모험단", sourceLabel: "게임방", sourceUrl: "https://aihubos.github.io/mallang-sea-adventure/", cover: "assets/hero-builders-character-poster.jpg", tone: "blue", status: PUBLISHED },
+  { id: "meme-ai-01", type: "meme", title: "프롬프트는 완벽했는데", summary: "결과를 보고 다시 STIC부터 쓰는 빌더의 하루", tags: ["AI 공감"], category: "AI 공감", kicker: "AI 공감", cover: "assets/og.png", caption: "프롬프트: 완벽함\n결과: 다시 질문해 주세요", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "blue", status: PUBLISHED },
+  { id: "meme-ai-02", type: "meme", title: "AI가 알아서 해주겠지", summary: "그리고 마지막 승인 버튼 앞에서 멈추는 이유", tags: ["AI 공감"], category: "AI 공감", kicker: "AI 공감", cover: "assets/hero-builders-wave-poster.jpg", caption: "자동화의 마지막 단계\n사람: 이거 진짜 보내도 돼?", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "navy", status: PUBLISHED },
+  { id: "meme-ai-03", type: "meme", title: "모델 업데이트 알림", summary: "방금 익힌 기능을 다시 배워야 하는 순간", tags: ["AI 공감"], category: "AI 공감", kicker: "AI 공감", cover: "assets/hero-builders-character-poster.jpg", caption: "오늘의 계획\n새 모델 비교하기", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "orange", status: PUBLISHED },
+  { id: "meme-dev-01", type: "meme", title: "한 줄만 고치면 돼", summary: "그 한 줄이 파일 열두 개로 번지는 과정", tags: ["개발 공감"], category: "개발 공감", kicker: "개발 공감", cover: "assets/report-hub-banner.png", caption: "변경 범위: 한 줄\n영향 범위: 우주", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "green", status: PUBLISHED },
+  { id: "meme-dev-02", type: "meme", title: "콘솔에 오류가 없어요", summary: "그래서 화면을 직접 눌러보기로 했다", tags: ["개발 공감"], category: "개발 공감", kicker: "개발 공감", cover: "assets/hero-wave-background.png", caption: "npm run check 통과\n사용자: 버튼이 안 눌려요", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "purple", status: PUBLISHED },
+  { id: "meme-dev-03", type: "meme", title: "배포 완료의 기준", summary: "코드가 올라간 것과 실제 페이지가 보이는 것은 다릅니다.", tags: ["개발 공감"], category: "개발 공감", kicker: "개발 공감", cover: "assets/og.png", caption: "배포 성공\n공개 화면: 아직 예전 버전", credit: "AI Builders Lab 자체 제작", sourceLabel: "Builders Lounge", sourceUrl: "https://aihubos.github.io/builders-lounge/", tone: "red", status: PUBLISHED },
+  { id: "meme-result-gonggamtoon", type: "meme", title: "공감툰 제작기", summary: "대화 한 줄에서 공감 카드까지 이어지는 원본 앱입니다.", tags: ["빌더 결과물", "웹툰"], category: "빌더 결과물", kicker: "빌더 결과물", caption: "오늘의 감정\n한 컷으로 남겨보기", credit: "공감툰", sourceLabel: "공감툰 원본 앱", sourceUrl: "https://aihubos.github.io/gonggamtoon/", cover: "assets/og.png", tone: "blue", status: PUBLISHED },
+  { id: "meme-result-shorthub", type: "meme", title: "ShortHub", summary: "긴 영상을 짧은 콘텐츠로 바꾸는 빌더 프로젝트", tags: ["빌더 결과물", "영상"], category: "빌더 결과물", kicker: "빌더 결과물", caption: "한 편의 영상\n여러 개의 장면", credit: "ShortHub", sourceLabel: "ShortHub 원본 앱", sourceUrl: "https://aihubos.github.io/shorthub/", cover: "assets/hero-builders-wave-poster.jpg", tone: "navy", status: PUBLISHED },
+  { id: "meme-result-masterpiece", type: "meme", title: "세계명화 프롬프트", summary: "명화와 캐릭터를 조합해 새로운 장면을 만드는 도구", tags: ["빌더 결과물", "이미지"], category: "빌더 결과물", kicker: "빌더 결과물", caption: "원본은 명화\n결과는 나만의 장면", credit: "World Masterpiece Bot", sourceLabel: "세계명화 프롬프트", sourceUrl: "https://aihubos.github.io/world-masterpiece-bot/", cover: "assets/report-hub-banner.png", tone: "orange", status: PUBLISHED },
+  { id: "meme-result-token", type: "meme", title: "토큰 비용 계산기", summary: "모델과 사용량을 바꿔 예상 비용을 비교하는 작은 도구", tags: ["빌더 결과물", "AI 도구"], category: "빌더 결과물", kicker: "빌더 결과물", caption: "좋은 아이디어\n비용까지 알아야 오래 갑니다", credit: "Token Calculator", sourceLabel: "토큰 비용 계산기", sourceUrl: "https://aihubos.github.io/token-calculator/", cover: "assets/og.png", tone: "green", status: PUBLISHED },
+  { id: "meme-result-pokopia", type: "meme", title: "포코피아 블록 가든", summary: "가볍게 즐기며 만든 블록 퍼즐 게임", tags: ["빌더 결과물", "게임"], category: "빌더 결과물", kicker: "빌더 결과물", caption: "잠깐만 하려고 했는데\n블록이 한 줄 더 남았어요", credit: "Pokopia Block Garden", sourceLabel: "게임방", sourceUrl: "https://aihubos.github.io/pokopia-tetris/", cover: "assets/hero-wave-background.png", tone: "green", status: PUBLISHED },
+  { id: "meme-result-mallang", type: "meme", title: "말랑바다 모험단", summary: "작은 캐릭터와 함께 떠나는 브라우저 모험", tags: ["빌더 결과물", "게임"], category: "빌더 결과물", kicker: "빌더 결과물", caption: "오늘의 퀘스트\n일단 한 번 눌러보기", credit: "말랑바다 모험단", sourceLabel: "게임방", sourceUrl: "https://aihubos.github.io/mallang-sea-adventure/", cover: "assets/hero-builders-character-poster.jpg", tone: "blue", status: PUBLISHED },
 ];
 
 const games = [
