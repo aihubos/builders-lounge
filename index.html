@@ -44,33 +44,14 @@
                 <img class="builders-lounge-logo-image" src="assets/builders-lounge-logo.png" width="218" height="64" alt="Builders Lounge" />
               </span>
             </a>
-            <time class="report-hub-clock" data-report-hub-clock="true" aria-label="서울 현재 날짜와 시각">
-              <span class="report-hub-clock-date"></span>
-              <span class="report-hub-clock-time"></span>
-            </time>
+            <button class="mobile-search-opener" type="button" data-global-search-open aria-label="라운지 전체 검색 열기"><span aria-hidden="true">⌕</span></button>
           </div>
 
           <div class="archive-topbar-actions">
             <nav class="archive-topbar-links" aria-label="외부 메뉴">
-              <a class="archive-community-board-card" href="https://aihubos.github.io/reportmode/board/" aria-label="통합 의견 게시판 열기">
-                <span class="archive-community-board-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v6a2.5 2.5 0 0 1-2.5 2.5H12l-4.5 4v-4h0A2.5 2.5 0 0 1 5 12.5v-6Z"></path></svg></span>
-                <span>의견 게시판</span>
-              </a>
-              <a class="archive-builders-card" href="https://builderslab.ai-hub-os.com" target="_blank" rel="noopener" aria-label="AI Builders Lab 웹사이트 열기">
-                <img class="archive-builders-logo" src="assets/ai-builders-lab-logo.png" width="122" height="38" alt="AI Builders Lab 로고" />
-              </a>
-              <a class="archive-kakao-openchat-card" href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener" aria-label="AI Builders Lab 카카오 오픈채팅방 열기">
-                <img class="archive-kakao-openchat-banner" src="assets/kakao-openchat-banner.png" width="48" height="48" alt="카카오 오픈채팅" />
-              </a>
-              <a class="archive-daangn-banner-card" href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener" aria-label="당근 모임 열기">
-                <img class="archive-daangn-banner" src="assets/daangn-community-banner.png" width="118" height="48" alt="당근 모임" />
-              </a>
-              <a class="archive-blog-card" href="https://blog.naver.com/jeremylee0213" target="_blank" rel="noopener" aria-label="Jeremy의 네이버 블로그 열기">
-                <span class="archive-blog-mark" aria-hidden="true">N</span>
-                <span class="archive-blog-card-copy"><b>Jeremy's Blog</b><small>네이버 블로그</small></span>
-              </a>
+              <button class="topbar-search-opener" type="button" data-global-search-open aria-label="라운지 전체 검색 열기"><span aria-hidden="true">⌕</span><span>검색</span><kbd>/</kbd></button>
+              <button class="topbar-write-opener" type="button" data-portal-write>새 글 쓰기</button>
             </nav>
-            <span class="archive-visitor-count" id="loungeVisitorCount" aria-live="polite">방문 집계 중</span>
             <div class="platform-account" data-platform-account><span class="platform-account-loading">계정 확인 중</span></div>
           </div>
         </div>
@@ -92,9 +73,9 @@
           </div>
 
           <nav class="sidebar-nav" aria-label="라운지 메뉴">
-            <a class="nav-item is-active" href="#home" data-view-link="home"><span class="nav-label">모아보기</span></a>
+            <a class="nav-item is-active" href="#home" data-view-link="home"><span class="nav-label">홈</span></a>
             <div class="nav-group">
-              <p class="nav-group-label">커뮤</p>
+              <p class="nav-group-label">커뮤니티</p>
               <div class="nav-stack">
                 <a class="nav-item" href="#board" data-view-link="board"><span class="nav-label">자유게시판</span></a>
                 <a class="nav-item" href="#prompts" data-view-link="prompts"><span class="nav-label">프롬프트 모음</span></a>
@@ -105,7 +86,7 @@
               </div>
             </div>
             <div class="nav-group">
-              <p class="nav-group-label">만들기</p>
+              <p class="nav-group-label">AI 만들기</p>
               <div class="nav-stack">
                 <a class="nav-item" href="#shorts" data-view-link="shorts"><span class="nav-label">AI 쇼츠 스튜디오</span></a>
                 <a class="nav-item" href="#webtoon" data-view-link="webtoon"><span class="nav-label">웹툰 제작기</span></a>
@@ -113,11 +94,26 @@
               </div>
             </div>
             <div class="nav-group">
-              <p class="nav-group-label">내 정보</p>
+              <p class="nav-group-label">내 작업</p>
+              <div class="nav-stack">
+                <a class="nav-item" href="#jobs" data-view-link="jobs"><span class="nav-label">진행 중 작업</span><span class="nav-count" data-nav-jobs-count>0</span></a>
+                <a class="nav-item" href="#results" data-view-link="results"><span class="nav-label">결과물</span><span class="nav-count" data-nav-results-count>0</span></a>
+                <a class="nav-item" href="#files" data-view-link="files"><span class="nav-label">파일</span><span class="nav-count" data-nav-files-count>0</span></a>
+              </div>
+            </div>
+            <div class="nav-group">
+              <p class="nav-group-label">계정</p>
               <div class="nav-stack">
                 <a class="nav-item" href="#usage" data-view-link="usage"><span class="nav-label">빌드 내역</span><span class="nav-note" data-build-balance>로그인 전</span></a>
-                <a class="nav-item" href="#admin" data-view-link="admin" data-admin-only hidden><span class="nav-label">관리자 설정</span></a>
+                <a class="nav-item" href="#membership" data-view-link="membership"><span class="nav-label">내 계정</span></a>
+                <a class="nav-item" href="#settings" data-view-link="settings"><span class="nav-label">설정</span></a>
                 <a class="nav-item" href="#help" data-view-link="help"><span class="nav-label">도움말</span></a>
+              </div>
+            </div>
+            <div class="nav-group" data-admin-nav-group data-admin-only hidden>
+              <p class="nav-group-label">관리</p>
+              <div class="nav-stack">
+                <a class="nav-item" href="#admin" data-view-link="admin" data-admin-only><span class="nav-label">관리자 설정</span></a>
               </div>
             </div>
           </nav>
@@ -128,6 +124,13 @@
               <div><strong>커뮤니티 운영 중</strong><small>게시판·공개 콘텐츠는 실제로 이용할 수 있습니다.</small></div>
             </div>
             <a class="sidebar-contact" href="mailto:hello@ai-hub-os.com">문의·오류 신고 <span aria-hidden="true">↗</span></a>
+            <nav class="sidebar-external-links" aria-label="외부 링크">
+              <a href="https://aihubos.github.io/reportmode/board/" target="_blank" rel="noopener">통합 게시판</a>
+              <a href="https://builderslab.ai-hub-os.com" target="_blank" rel="noopener">AI Builders Lab</a>
+              <a href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener">카카오 오픈채팅</a>
+              <a href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener">당근 모임</a>
+              <a href="https://blog.naver.com/jeremylee0213" target="_blank" rel="noopener">Jeremy's Blog</a>
+            </nav>
           </div>
         </aside>
 
@@ -135,17 +138,7 @@
 
         <main class="lounge-main" id="lounge-main" tabindex="-1">
           <div class="page-wrap">
-            <header class="page-header">
-              <div>
-                <p class="page-kicker" data-page-kicker>BUILDERS LOUNGE</p>
-                <h2 data-page-title>만들고, 나누고, 함께 성장해요</h2>
-                <p class="page-description" data-page-description>AI 도구와 프롬프트를 사용하고, 빌더들의 결과물과 경험을 만나보세요.</p>
-              </div>
-              <span class="page-status" data-page-status>커뮤니티 운영 중</span>
-            </header>
-
             <div class="lounge-notice" role="status" aria-live="polite" data-lounge-notice>
-              아래 작업과 사용량은 화면 확인용 샘플입니다. 실제 파일은 업로드되거나 처리되지 않습니다.
             </div>
 
             <section class="view-panel is-visible" id="view-home" data-view-panel="home"><div data-home-mount></div></section>
@@ -214,6 +207,17 @@
       <a href="#board" data-view-link="board"><span aria-hidden="true">☷</span><small>게시판</small></a>
       <button type="button" data-mobile-menu-open aria-label="전체 메뉴 열기"><span aria-hidden="true">☰</span><small>전체</small></button>
     </nav>
+
+    <dialog class="portal-search-dialog" data-global-search-dialog aria-labelledby="global-search-title">
+      <div class="portal-search-head"><div><p class="portal-search-eyebrow">BUILDERS LOUNGE</p><h2 id="global-search-title">전체 검색</h2></div><button class="portal-search-close" type="button" data-global-search-close aria-label="검색 닫기">×</button></div>
+      <form class="portal-search-form" data-global-search-form>
+        <span aria-hidden="true">⌕</span>
+        <input type="search" data-global-search-input placeholder="콘텐츠나 도구를 검색하세요" autocomplete="off" />
+        <button class="primary-button" type="submit">검색</button>
+      </form>
+      <div class="portal-search-results" data-global-search-results></div>
+      <p class="portal-search-note">공개 콘텐츠와 도구 안내를 검색합니다. 게시판 글은 검색 결과 아래 버튼으로 이동합니다.</p>
+    </dialog>
 
     <dialog class="platform-login-dialog" data-platform-login-dialog aria-labelledby="platform-login-title">
       <section class="platform-login-card">

@@ -4,7 +4,6 @@ import { mountJobs } from "./jobs.js";
 import { mountAdmin } from "./admin.js?v=20260825-masterpiece-provider-v1";
 import "./settings.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";
-import { mountReportHubTopbar } from "./topbar.js";
 import { mountCommunity } from "./community.js?v=20260826-unified-cards-v2";
 import { mountShorts } from "./shorts.js?v=20260825-editable-progress-v2";
 import { catalogItems } from "./catalog.js";
@@ -22,10 +21,6 @@ const menuCloseButtons = [...document.querySelectorAll("[data-lounge-menu-close]
 const drawerScrim = document.querySelector(".drawer-scrim");
 const liveRegion = document.querySelector("[data-lounge-live]");
 const notice = document.querySelector("[data-lounge-notice]");
-const pageTitle = document.querySelector("[data-page-title]");
-const pageKicker = document.querySelector("[data-page-kicker]");
-const pageDescription = document.querySelector("[data-page-description]");
-const pageStatus = document.querySelector("[data-page-status]");
 const mobilePageTitle = document.querySelector("[data-mobile-page-title]");
 const mobileMenu = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
 const searchDialog = document.querySelector("[data-global-search-dialog]");
@@ -34,24 +29,24 @@ const searchResults = document.querySelector("[data-global-search-results]");
 const searchForm = document.querySelector("[data-global-search-form]");
 
 const viewMeta = Object.freeze({
-  home: { kicker: "모아보기", title: "지금 라운지에서 볼 글", description: "자유게시판, 프롬프트 모음, 뉴스레터, 이미지 게시판을 한 화면에서 바로 봅니다.", status: "커뮤니티 운영 중" },
-  shorts: { kicker: "만들기", title: "AI 쇼츠 스튜디오", description: "한 문장을 실제 세로형 MP4 또는 WebM 영상으로 만들고, 완성 뒤 선택해 게시합니다.", status: "영상 완성 시 Build 5" },
-  webtoon: { kicker: "만들기", title: "웹툰 제작기", description: "공감툰 제작기가 Google 로그인과 빌드 잔액을 공유합니다.", status: "빌드 포인트" },
-  masterpiece: { kicker: "만들기", title: "세계명화 프롬프트", description: "프롬프트는 무료로 만들고 이미지 생성에 빌드를 사용합니다.", status: "빌드 포인트" },
-  prompts: { kicker: "커뮤니티", title: "프롬프트 모음", description: "상황별 공개 프롬프트를 카드로 보고 바로 복사합니다.", status: "공개 콘텐츠" },
-  newsletter: { kicker: "커뮤니티", title: "뉴스레터", description: "한 장의 카드로 먼저 보고, 눌러서 본문을 읽습니다.", status: "공개 콘텐츠" },
-  videos: { kicker: "콘텐츠", title: "영상 모음", description: "요약을 먼저 보고 원하는 영상만 눌러 재생합니다.", status: "선택 재생" },
-  memes: { kicker: "콘텐츠", title: "이미지 게시판", description: "프롬프트·뉴스레터와 같은 카드로 이미지를 봅니다.", status: "공개 콘텐츠" },
-  board: { kicker: "커뮤니티", title: "자유게시판", description: "Report Hub와 같은 글·댓글을 Google 계정으로 나눕니다.", status: "실시간 게시판" },
-  games: { kicker: "커뮤니티", title: "게임방", description: "한 번에 하나의 게임만 불러와 가볍게 즐깁니다.", status: "선택 실행" },
-  jobs: { kicker: "내 작업", title: "진행 중 작업", description: "샘플 작업의 상태와 진행률을 확인합니다.", status: "샘플 데이터" },
-  results: { kicker: "내 작업", title: "결과물", description: "완료된 샘플 결과를 미리 확인합니다.", status: "샘플 데이터" },
-  files: { kicker: "내 작업", title: "파일", description: "작업에 사용된 샘플 파일 목록을 확인합니다.", status: "샘플 데이터" },
-  usage: { kicker: "계정", title: "빌드 내역", description: "적립·사용·환불·관리자 조정 내역을 확인합니다.", status: "실시간 잔액" },
-  membership: { kicker: "계정", title: "내 계정", description: "Google 계정과 현재 빌드 잔액을 확인합니다.", status: "Google 로그인" },
-  admin: { kicker: "관리", title: "관리자 설정", description: "AI API·모델·빌드 가격·멤버 권한을 설정합니다.", status: "Jeremy 관리자" },
-  settings: { kicker: "지원", title: "설정", description: "보기 밀도와 샘플 표시 여부를 바꿉니다.", status: "브라우저 저장" },
-  help: { kicker: "지원", title: "이용 안내", description: "실제 운영 기능과 샘플 범위, 커뮤니티 이용 원칙을 확인합니다.", status: "운영 안내" },
+  home: { title: "홈", layout: "wide" },
+  shorts: { title: "AI 쇼츠 스튜디오", layout: "studio" },
+  webtoon: { title: "웹툰 제작기", layout: "embed" },
+  masterpiece: { title: "세계명화 프롬프트", layout: "embed" },
+  prompts: { title: "프롬프트 모음", layout: "wide" },
+  newsletter: { title: "뉴스레터", layout: "wide" },
+  videos: { title: "영상 모음", layout: "wide" },
+  memes: { title: "이미지 게시판", layout: "wide" },
+  board: { title: "자유게시판", layout: "wide" },
+  games: { title: "게임방", layout: "wide" },
+  jobs: { title: "진행 중 작업", layout: "content" },
+  results: { title: "결과물", layout: "content" },
+  files: { title: "파일", layout: "content" },
+  usage: { title: "빌드 내역", layout: "form" },
+  membership: { title: "내 계정", layout: "form" },
+  admin: { title: "관리자 설정", layout: "wide" },
+  settings: { title: "설정", layout: "form" },
+  help: { title: "이용 안내", layout: "reading" },
 });
 
 let demoMode = readDemoMode();
@@ -82,8 +77,10 @@ function setDemoMode(nextValue) {
   demoMode = Boolean(nextValue);
   writeLocalValue(DEMO_MODE_STORAGE_KEY, demoMode ? "on" : "off");
   shell?.setAttribute("data-demo-mode", demoMode ? "on" : "off");
-  if (notice) notice.textContent = getNoticeCopy();
-  if (pageStatus && document.documentElement.dataset.loungeRoute === "home") pageStatus.textContent = "커뮤니티 운영 중";
+  if (notice) {
+    notice.textContent = getNoticeCopy();
+    notice.hidden = !notice.textContent;
+  }
   renderHomeModule();
   renderDataModules();
   window.dispatchEvent(new CustomEvent("lounge:demochange", { detail: { demoMode } }));
@@ -159,7 +156,7 @@ function openBoardSearch(query = "") {
   url.hash = "board";
   window.history.pushState({}, "", url);
   closeGlobalSearch({ restoreFocus: false });
-  showView("board", { announce: true });
+  showView("board", { announce: true, userInitiated: true });
   window.LoungeCommunity?.refreshBoard?.();
 }
 
@@ -170,18 +167,11 @@ function formatDate(value) {
 }
 
 function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "home") {
-  if (view === "home") return "Google 로그인 후 게시글 한 건당 1빌드가 적립됩니다. API 키와 도구별 가격은 관리자만 설정합니다.";
   if (view === "shorts") return "한 문장을 제작안으로 확장해 실제 세로형 영상을 만들고, 완성 뒤 게시 여부를 직접 선택합니다.";
   if (view === "webtoon") return "웹툰 제작기는 Lounge 로그인과 빌드 잔액을 공유합니다. API 키는 서버에서만 사용합니다.";
   if (view === "masterpiece") return "프롬프트 조합은 무료이며 실제 이미지 생성에만 설정된 빌드가 사용됩니다.";
-  if (view === "prompts") return "공개용으로 정리한 프롬프트만 제공합니다. 개인 정보·로컬 경로·비밀값은 포함하지 않습니다.";
-  if (view === "newsletter") return "AI 빌더스 랩 뉴스레터는 직접 작성한 요약과 원문 출처를 제공하는 읽기용 아카이브입니다.";
-  if (view === "videos") return "영상은 재생 버튼을 눌렀을 때만 youtube-nocookie.com 플레이어를 한 개 불러옵니다.";
-  if (view === "memes") return "이미지 게시판은 프롬프트·뉴스레터와 같은 카드로 보여 줍니다.";
-  if (view === "board") return "게시글과 댓글은 Report Hub와 공유됩니다. Google 로그인 후 새 글을 등록하면 1빌드가 적립됩니다.";
   if (view === "admin") return "관리자만 API 키·모델·빌드 가격·멤버 잔액·삭제 권한을 설정할 수 있습니다. API 키는 다시 표시되지 않습니다.";
-  if (view === "games") return "게임은 선택한 한 개만 본문에 표시합니다. 화면이 열리지 않으면 새 탭으로 이용할 수 있습니다.";
-  return demoMode ? "아래 작업과 사용량은 화면 확인용 샘플입니다. 실제 파일은 업로드되거나 처리되지 않습니다." : "샘플 데이터가 숨겨져 있습니다. 실제 파일·AI 처리는 아직 연결되지 않았습니다.";
+  return "";
 }
 
 function renderResults(root, data) {
@@ -247,9 +237,9 @@ function renderHomeModule() {
   if (!home) return;
   renderHome(home, {
     data: getDemoSnapshot(demoMode),
-    onNavigate: (view) => showView(view, { updateHash: true }),
-    onModuleOpen: (module) => showView(module.action || "shorts", { updateHash: true }),
-    onWrite: () => { showView("board", { updateHash: true }); window.dispatchEvent(new CustomEvent("lounge:boardwrite")); },
+    onNavigate: (view) => showView(view, { updateHash: true, userInitiated: true }),
+    onModuleOpen: (module) => showView(module.action || "shorts", { updateHash: true, userInitiated: true }),
+    onWrite: () => { showView("board", { updateHash: true, userInitiated: true }); window.dispatchEvent(new CustomEvent("lounge:boardwrite")); },
   });
   window.LoungeCommunity?.refreshHomePreview?.();
 }
@@ -279,10 +269,11 @@ function syncMenuForViewport() {
   syncSidebarAccessibility(mobileMenu.matches && Boolean(shell?.hasAttribute("data-menu-open")));
 }
 
-function showView(requestedView, { updateHash = false, announce = true } = {}) {
+function showView(requestedView, { updateHash = false, announce = true, userInitiated = false } = {}) {
   const view = viewMeta[requestedView] ? requestedView : "home";
   const meta = viewMeta[view];
   document.documentElement.dataset.loungeRoute = view;
+  document.documentElement.dataset.pageLayout = meta.layout;
   document.querySelectorAll("[data-view-panel]").forEach((panel) => {
     const active = panel.dataset.viewPanel === view;
     panel.hidden = !active;
@@ -293,18 +284,25 @@ function showView(requestedView, { updateHash = false, announce = true } = {}) {
     link.classList.toggle("is-active", active);
     if (active) link.setAttribute("aria-current", "page"); else link.removeAttribute("aria-current");
   });
-  if (pageKicker) pageKicker.textContent = meta.kicker;
-  if (pageTitle) pageTitle.textContent = meta.title;
-  if (pageDescription) pageDescription.textContent = meta.description;
-  if (pageStatus) pageStatus.textContent = view === "home" ? "커뮤니티 운영 중" : meta.status;
   if (mobilePageTitle) mobilePageTitle.textContent = meta.title;
   document.title = `${meta.title} | Builders Lounge`;
-  if (notice) notice.textContent = getNoticeCopy(view);
+  if (notice) {
+    notice.textContent = getNoticeCopy(view);
+    notice.hidden = !notice.textContent;
+  }
   if (updateHash && window.location.hash !== `#${view}`) history.pushState(null, "", `#${view}`);
   if (view !== "board") window.LoungeCommunity?.clearBoardQuery?.();
   writeLocalValue(ROUTE_STORAGE_KEY, view);
   if (announce && liveRegion) liveRegion.textContent = `${meta.title} 화면으로 이동했습니다.`;
   if (mobileMenu.matches) setMenuOpen(false);
+  if (userInitiated) {
+    const heading = document.querySelector(`[data-view-panel="${view}"] h1, [data-view-panel="${view}"] h2, [data-view-panel="${view}"] h3`);
+    const focusTarget = heading || document.querySelector("#lounge-main");
+    if (heading && !heading.hasAttribute("tabindex")) heading.setAttribute("tabindex", "-1");
+    focusTarget?.focus?.({ preventScroll: true });
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+  }
   window.dispatchEvent(new CustomEvent("lounge:viewchange", { detail: { view } }));
 }
 
@@ -325,11 +323,11 @@ function bindNavigation() {
     const view = link.dataset.viewLink;
     if (!view) return;
     event.preventDefault();
-    showView(view, { updateHash: true });
+    showView(view, { updateHash: true, userInitiated: true });
   }));
   menuToggle?.addEventListener("click", () => setMenuOpen(!shell?.hasAttribute("data-menu-open")));
   document.querySelectorAll("[data-mobile-menu-open]").forEach((button) => button.addEventListener("click", () => setMenuOpen(true)));
-  document.querySelectorAll("[data-portal-write]").forEach((button) => button.addEventListener("click", () => { showView("board", { updateHash: true }); window.dispatchEvent(new CustomEvent("lounge:boardwrite")); }));
+  document.querySelectorAll("[data-portal-write]").forEach((button) => button.addEventListener("click", () => { showView("board", { updateHash: true, userInitiated: true }); window.dispatchEvent(new CustomEvent("lounge:boardwrite")); }));
   menuCloseButtons.forEach((button) => button.addEventListener("click", () => setMenuOpen(false, { restoreFocus: true })));
   document.querySelectorAll("[data-global-search-open]").forEach((button) => button.addEventListener("click", openGlobalSearch));
   document.querySelectorAll("[data-global-search-close]").forEach((button) => button.addEventListener("click", () => closeGlobalSearch()));
@@ -337,7 +335,7 @@ function bindNavigation() {
   searchInput?.addEventListener("input", () => renderGlobalSearch(searchInput.value));
   searchDialog?.addEventListener("click", (event) => {
     const route = event.target.closest("[data-global-search-route]");
-    if (route) { closeGlobalSearch({ restoreFocus: false }); showView(route.dataset.globalSearchRoute, { updateHash: true }); return; }
+    if (route) { closeGlobalSearch({ restoreFocus: false }); showView(route.dataset.globalSearchRoute, { updateHash: true, userInitiated: true }); return; }
     const boardSearch = event.target.closest("[data-global-board-search]");
     if (boardSearch) openBoardSearch(boardSearch.dataset.globalBoardSearch || "");
   });
@@ -349,7 +347,7 @@ function bindNavigation() {
   mobileMenu.addEventListener("change", syncMenuForViewport);
   window.addEventListener("hashchange", () => showView(window.location.hash.slice(1), { announce: false }));
   window.addEventListener("popstate", () => showView(window.location.hash.slice(1), { announce: false }));
-  window.addEventListener("lounge:navigate", (event) => showView(event.detail?.view, { updateHash: true }));
+  window.addEventListener("lounge:navigate", (event) => showView(event.detail?.view, { updateHash: true, userInitiated: true }));
   window.addEventListener("lounge:searchopen", openGlobalSearch);
   window.addEventListener("lounge:authchange", () => {
     renderDataModules();
@@ -359,7 +357,6 @@ function bindNavigation() {
 
 applySavedDensity();
 shell?.setAttribute("data-demo-mode", demoMode ? "on" : "off");
-mountReportHubTopbar();
 initializeModules();
 bindNavigation();
 syncMenuForViewport();
