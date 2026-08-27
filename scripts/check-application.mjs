@@ -9,6 +9,8 @@ const sourceSupport = [
   "sitemap.xml",
   "THIRD_PARTY_NOTICES.md",
   "assets/builders-lounge-logo.png",
+  "lounge/tokens.css",
+  "lounge/base.css",
   "lounge/lounge.css",
   "lounge/community.css",
   "lounge/portal.css",
@@ -67,6 +69,28 @@ for (const file of sourceSupport) {
 }
 
 const indexHtml = await readFile(resolve(root, "index.html"), "utf8");
+const expectedLoungeStyles = [
+  "lounge/tokens.css?v=20260827-ui-v1",
+  "lounge/base.css?v=20260827-ui-v1",
+  "lounge/topbar.css?v=20260827-ui-v1",
+  "lounge/lounge.css?v=20260827-ui-v1",
+  "lounge/portal.css?v=20260827-ui-v1",
+  "lounge/js/pages/home.css?v=20260827-ui-v1",
+  "lounge/community.css?v=20260827-ui-v1",
+  "lounge/platform.css?v=20260827-ui-v1",
+  "lounge/jobs.css?v=20260827-ui-v1",
+  "lounge/settings.css?v=20260827-ui-v1",
+  "lounge/shorts.css?v=20260827-ui-v1",
+];
+let previousStyleIndex = -1;
+for (const href of expectedLoungeStyles) {
+  const styleIndex = indexHtml.indexOf(`href="${href}"`);
+  expect(styleIndex > previousStyleIndex, `Lounge CSS 로드 순서가 잘못되었거나 캐시 키가 다릅니다: ${href}`);
+  previousStyleIndex = styleIndex;
+}
+expect(!/href="(?:\.\/)?styles\.css(?:[?#"]|$)/.test(indexHtml), "Lounge 페이지에서 styles.css를 로드하면 안 됩니다.");
+const loungeCss = await readFile(resolve(root, "lounge/lounge.css"), "utf8");
+expect(!loungeCss.includes("@import"), "lounge/lounge.css에 @import가 남아 있습니다.");
 const settingsScript = await readFile(resolve(root, "lounge/settings.js"), "utf8");
 const loungeScript = (await Promise.all(
   loungeScripts.map((file) => readFile(resolve(root, file), "utf8")),
@@ -143,6 +167,8 @@ for (const file of [
   "sitemap.xml",
   ".nojekyll",
   "THIRD_PARTY_NOTICES.md",
+  "lounge/tokens.css",
+  "lounge/base.css",
   "lounge/lounge.css",
   "lounge/community.css",
   "lounge/portal.css",

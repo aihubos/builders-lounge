@@ -13,6 +13,8 @@ const requiredFiles = [
   ".nojekyll",
   "THIRD_PARTY_NOTICES.md",
   "assets/builders-lounge-logo.png",
+  "lounge/tokens.css",
+  "lounge/base.css",
   "lounge/lounge.css",
   "lounge/community.css",
   "lounge/portal.css",
@@ -64,6 +66,34 @@ await cp(resolve(projectRoot, "assets"), resolve(clientRoot, "assets"), {
 });
 
 const html = await readFile(resolve(clientRoot, "index.html"), "utf8");
+const expectedLoungeStyles = [
+  "lounge/tokens.css?v=20260827-ui-v1",
+  "lounge/base.css?v=20260827-ui-v1",
+  "lounge/topbar.css?v=20260827-ui-v1",
+  "lounge/lounge.css?v=20260827-ui-v1",
+  "lounge/portal.css?v=20260827-ui-v1",
+  "lounge/js/pages/home.css?v=20260827-ui-v1",
+  "lounge/community.css?v=20260827-ui-v1",
+  "lounge/platform.css?v=20260827-ui-v1",
+  "lounge/jobs.css?v=20260827-ui-v1",
+  "lounge/settings.css?v=20260827-ui-v1",
+  "lounge/shorts.css?v=20260827-ui-v1",
+];
+let previousStyleIndex = -1;
+for (const href of expectedLoungeStyles) {
+  const styleIndex = html.indexOf(`href="${href}"`);
+  if (styleIndex <= previousStyleIndex) {
+    throw new Error(`Lounge CSS 로드 순서가 잘못되었거나 캐시 키가 다릅니다: ${href}`);
+  }
+  previousStyleIndex = styleIndex;
+}
+if (/href="(?:\.\/)?styles\.css(?:[?#"]|$)/.test(html)) {
+  throw new Error("Lounge 페이지에서 styles.css를 로드하면 안 됩니다.");
+}
+const loungeCss = await readFile(resolve(clientRoot, "lounge/lounge.css"), "utf8");
+if (loungeCss.includes("@import")) {
+  throw new Error("lounge/lounge.css에 @import가 남아 있습니다.");
+}
 if (!html.includes("data-lounge-shell") || html.includes("AI 회의록") || !html.includes("AI 쇼츠 스튜디오")) {
   throw new Error("루트 Builders Lounge 화면이 없거나 AI 회의록이 남아 있습니다.");
 }

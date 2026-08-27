@@ -1,0 +1,190 @@
+:root {
+  /* Type scale */
+  --type-display: clamp(2rem, 3vw, 2.75rem);
+  --type-page-title: clamp(1.75rem, 2.4vw, 2.25rem);
+  --type-section-title: 1.375rem;
+  --type-card-title: 1rem;
+  --type-body: 1rem;
+  --type-body-sm: 0.875rem;
+  --type-meta: 0.8125rem;
+  --type-label: 0.75rem;
+  --leading-tight: 1.2;
+  --leading-title: 1.3;
+  --leading-body: 1.65;
+  --leading-reading: 1.8;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --font-family-sans: "Wanted Sans Variable", "Wanted Sans", "Apple SD Gothic Neo", Pretendard, "Noto Sans KR", sans-serif;
+
+  /* Plan color tokens */
+  --color-brand-navy: #000c3d;
+  --color-brand-blue: #3182f6;
+  --color-brand-blue-hover: #1b64da;
+  --color-brand-blue-soft: #e8f3ff;
+  --color-text-primary: #191f28;
+  --color-text-secondary: #4e5968;
+  --color-text-muted: #6b7684;
+  --color-text-decorative: #8b95a1;
+  --color-page: #f6f8fa;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f9fafb;
+  --color-surface-blue: #f2f7ff;
+  --color-border: #e5e8eb;
+  --color-border-strong: #d1d6db;
+  --color-focus: #3182f6;
+  --color-success: #047857;
+  --color-success-bg: #ecfdf5;
+  --color-warning: #9a3412;
+  --color-warning-bg: #fff7ed;
+  --color-danger: #be123c;
+  --color-danger-bg: #fff1f2;
+  --color-brand-navy-deep: #000637;
+  --color-brand-blue-light: #66bffe;
+  --color-brand-ice: #b2defd;
+  --color-brand-white: #ffffff;
+
+  /* 4px spacing scale */
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* Shape and depth */
+  --radius-control: .625rem;
+  --radius-card: 1rem;
+  --radius-panel: 1.125rem;
+  --radius-dialog: 1.25rem;
+  --radius-pill: 999px;
+  --shadow-card: 0 4px 18px rgba(25, 31, 40, .045);
+  --shadow-floating: 0 18px 60px rgba(0, 12, 61, .16);
+
+  /* Shell and page geometry */
+  --control-height: 2.75rem;
+  --control-height-lg: 3rem;
+  --topbar-height: 4rem;
+  --topbar-height-mobile: 3.5rem;
+  --sidebar-width: 14.5rem;
+  --shell-max: 92.5rem;
+  --shell-gap: 1.5rem;
+  --page-wide: 76.5rem;
+  --page-studio: 70rem;
+  --page-content: 65rem;
+  --page-form: 55rem;
+  --page-reading: 51.25rem;
+
+  /* Motion */
+  --duration-fast: 160ms;
+  --duration-normal: 220ms;
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Existing brand aliases */
+  --brand-navy: var(--color-brand-navy);
+  --brand-navy-deep: var(--color-brand-navy-deep);
+  --brand-blue: var(--color-brand-blue);
+  --brand-blue-strong: var(--color-brand-blue-hover);
+  --brand-blue-accessible: var(--color-brand-blue-hover);
+  --brand-blue-light: var(--color-brand-blue-light);
+  --brand-ice: var(--color-brand-ice);
+  --brand-white: var(--color-brand-white);
+  --surface-page: var(--color-page);
+  --surface-light: var(--color-surface-subtle);
+  --surface-blue: var(--color-surface-blue);
+  --surface-white: var(--color-surface);
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-tertiary: var(--color-text-muted);
+  --border-light: var(--color-border);
+  --border-dark: var(--color-border-strong);
+  --status-current: var(--color-success);
+  --status-current-bg: var(--color-success-bg);
+  --status-review: var(--color-warning);
+  --status-review-bg: var(--color-warning-bg);
+  --calendar-sunday: var(--color-danger);
+  --calendar-sunday-bg: var(--color-danger-bg);
+  --calendar-saturday: var(--color-brand-blue-hover);
+  --channel-kakao: #fee500;
+  --font-sans: var(--font-family-sans);
+  --font-body-size: var(--type-body);
+  --font-meta-size: var(--type-meta);
+  --font-label-size: var(--type-label);
+  --font-small: var(--type-body-sm);
+  --container-width: var(--page-wide);
+  --reading-width: var(--page-reading);
+  --header-height: var(--topbar-height);
+  --button-height: var(--control-height-lg);
+  --ease-out: var(--ease-standard);
+  --transition-fast: var(--duration-fast) var(--ease-standard);
+  --transition-reveal: 500ms var(--ease-standard);
+  --focus-ring: 0 0 0 3px var(--brand-ice);
+  --modal-backdrop: rgba(0, 12, 61, 0.42);
+
+  /* Existing Lounge aliases */
+  --lounge-bg: var(--color-page);
+  --lounge-paper: var(--color-surface);
+  --lounge-border: var(--color-border);
+  --lounge-ink: var(--color-text-primary);
+  --lounge-sub: var(--color-text-muted);
+  --lounge-muted: var(--color-text-decorative);
+  --lounge-blue: var(--color-brand-blue);
+  --lounge-blue-strong: var(--color-brand-blue-hover);
+  --lounge-blue-soft: var(--color-brand-blue-soft);
+  --lounge-navy: var(--color-brand-navy);
+  --lounge-green: var(--color-success);
+  --lounge-orange: var(--color-warning);
+  --lounge-font-sans: var(--font-family-sans);
+  --lounge-font-weight-body: var(--weight-regular);
+  --lounge-letter-spacing: -0.025em;
+  --lounge-topbar-height: var(--topbar-height);
+  --lounge-topbar-height-mobile: var(--topbar-height-mobile);
+  --lounge-sidebar-width: var(--sidebar-width);
+  --lounge-content-max: var(--shell-max);
+  --lounge-content-max-width: var(--shell-max);
+  --lounge-content-width: var(--page-reading);
+  --lounge-label-size: var(--type-label);
+  --lounge-body-size: var(--type-body);
+  --lounge-font-nav: var(--type-body);
+  --lounge-font-board-title: var(--type-card-title);
+  --lounge-font-meta: var(--type-meta);
+  --lounge-font-chip: var(--type-label);
+  --lounge-home-quad-min: 280px;
+  --lounge-card-cover-ratio: 16 / 10;
+  --lounge-card-radius: var(--radius-card);
+  --lounge-radius: var(--radius-panel);
+  --lounge-card-gap: var(--shell-gap);
+  --lounge-shadow: var(--shadow-card);
+  --lounge-surface-muted: var(--color-surface-subtle);
+  --lounge-surface-active: var(--color-surface-blue);
+  --lounge-border-width: 1px;
+  --lounge-control-height: var(--control-height-lg);
+  --lounge-focus-ring-width: 3px;
+  --lounge-panel-padding: var(--space-6);
+  --lounge-panel-radius: var(--radius-panel);
+  --lounge-motion-duration: var(--duration-normal);
+  --lounge-motion-ease: var(--ease-standard);
+  --lounge-overlay: var(--modal-backdrop);
+
+  /* Existing topbar aliases */
+  --rh-primary: var(--color-brand-blue);
+  --rh-primary-hover: var(--color-brand-blue-hover);
+  --rh-soft: var(--color-brand-blue-soft);
+  --rh-ink: var(--color-text-primary);
+  --rh-sub: var(--color-text-secondary);
+  --rh-muted: var(--color-text-decorative);
+  --rh-border: var(--color-border);
+  --rh-paper: var(--color-surface);
+  --rh-naver: #03c75a;
+  --rh-daangn: #ff6f0f;
+  --motion-lift-small: -2px;
+  --portal-muted: var(--color-text-muted);
+}
