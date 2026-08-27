@@ -99,11 +99,11 @@ async function loadAdmin(root) {
   const platform = window.BuildersPlatform;
   const session = platform?.snapshot?.();
   if (!session?.user) {
-    root.innerHTML = `<section class="admin-shell"><div class="community-empty-state"><strong>관리자 로그인이 필요합니다.</strong><p>Jeremy 관리자 Google 계정으로 로그인해 주세요.</p><button class="primary-button" type="button" data-platform-login-open>Google 로그인</button></div></section>`;
+    root.innerHTML = `<section class="admin-shell"><div class="community-empty-state"><h1>관리자 설정</h1><strong>관리자 로그인이 필요합니다.</strong><p>Jeremy 관리자 Google 계정으로 로그인해 주세요.</p><button class="primary-button" type="button" data-platform-login-open>Google 로그인</button></div></section>`;
     return;
   }
   if (!session.user.isAdmin) {
-    root.innerHTML = `<section class="admin-shell"><div class="community-error-state"><strong>관리자 전용 화면입니다.</strong><p>${escapeHtml(session.user.email)} 계정에는 관리자 권한이 없습니다.</p></div></section>`;
+    root.innerHTML = `<section class="admin-shell"><div class="community-error-state"><h1>관리자 설정</h1><strong>관리자 전용 화면입니다.</strong><p>${escapeHtml(session.user.email)} 계정에는 관리자 권한이 없습니다.</p></div></section>`;
     return;
   }
 
@@ -141,7 +141,7 @@ async function loadAdmin(root) {
       <p class="build-tool-guide">Google OAuth 클라이언트 ID와 서버 암호화 키는 로그인 이전에 필요한 기반 설정이므로 Cloudflare Worker 비밀값으로 1회 등록합니다. AI API 키는 위 화면에서 직접 교체·삭제할 수 있습니다.</p>
     </section>`;
   } catch (error) {
-    root.innerHTML = `<div class="community-error-state"><strong>관리자 설정을 불러오지 못했습니다.</strong><p>${escapeHtml(error.message)}</p><button class="secondary-button" type="button" data-admin-retry>다시 시도</button></div>`;
+    root.innerHTML = `<div class="community-error-state"><h1>관리자 설정</h1><strong>관리자 설정을 불러오지 못했습니다.</strong><p>${escapeHtml(error.message)}</p><button class="secondary-button" type="button" data-admin-retry>다시 시도</button></div>`;
   }
 }
 

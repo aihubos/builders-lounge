@@ -21,6 +21,7 @@ const sidebar = document.querySelector("[data-lounge-sidebar]");
 const menuToggle = document.querySelector("[data-lounge-menu-toggle]");
 const menuCloseButtons = [...document.querySelectorAll("[data-lounge-menu-close]")];
 const drawerScrim = document.querySelector(".drawer-scrim");
+const drawerBackground = [...document.querySelectorAll(".archive-topbar, .lounge-mobile-toolbar, #lounge-main, .portal-mobile-nav")];
 const liveRegion = document.querySelector("[data-lounge-live]");
 const notice = document.querySelector("[data-lounge-notice]");
 const mobilePageTitle = document.querySelector("[data-mobile-page-title]");
@@ -263,6 +264,14 @@ function syncSidebarAccessibility(isOpen = shell?.hasAttribute("data-menu-open")
   else sidebar.removeAttribute("aria-hidden");
 }
 
+function syncDrawerBackground(isOpen) {
+  drawerBackground.forEach((element) => {
+    element.toggleAttribute("inert", isOpen);
+    if (isOpen) element.setAttribute("aria-hidden", "true");
+    else element.removeAttribute("aria-hidden");
+  });
+}
+
 function setMenuOpen(isOpen, { restoreFocus = false } = {}) {
   const shouldOpen = Boolean(isOpen) && mobileMenu.matches;
   shell?.toggleAttribute("data-menu-open", shouldOpen);
@@ -271,6 +280,7 @@ function setMenuOpen(isOpen, { restoreFocus = false } = {}) {
   menuToggle?.setAttribute("aria-expanded", String(shouldOpen));
   menuToggle?.setAttribute("aria-label", shouldOpen ? "작업공간 메뉴 닫기" : "작업공간 메뉴 열기");
   syncSidebarAccessibility(shouldOpen);
+  syncDrawerBackground(shouldOpen);
   if (shouldOpen) window.requestAnimationFrame(() => sidebar?.querySelector("[data-lounge-menu-close]")?.focus({ preventScroll: true }));
   else if (restoreFocus) menuToggle?.focus({ preventScroll: true });
 }
@@ -334,10 +344,30 @@ function mountRouteModule(view) {
   }
 }
 
+function replaceHeadingTag(title, tagName) {
+  if (!title || title.tagName === tagName.toUpperCase()) return;
+  const heading = document.createElement(tagName);
+  [...title.attributes].forEach((attribute) => heading.setAttribute(attribute.name, attribute.value));
+  while (title.firstChild) heading.append(title.firstChild);
+  title.replaceWith(heading);
+}
+
+function promoteRouteTitle(view) {
+  const panel = document.querySelector(`[data-view-panel="${view}"]`);
+  const title = panel?.querySelector(".page-intro > div > h3, .shorts-heading h3, .panel-heading > h3, .admin-summary h3, .app-embed-head h3, .webtoon-embed-head h3");
+  replaceHeadingTag(title, "h1");
+  if (view === "settings") panel?.querySelectorAll(".settings-card h4").forEach((heading) => replaceHeadingTag(heading, "h2"));
+  if (view === "admin") {
+    panel?.querySelectorAll(".admin-section-head h4").forEach((heading) => replaceHeadingTag(heading, "h2"));
+    panel?.querySelectorAll(".admin-tool-title h5").forEach((heading) => replaceHeadingTag(heading, "h3"));
+  }
+}
+
 function showView(requestedView, { updateHash = false, announce = true, userInitiated = false } = {}) {
   const view = viewMeta[requestedView] ? requestedView : "home";
   const meta = viewMeta[view];
   mountRouteModule(view);
+  promoteRouteTitle(view);
   document.documentElement.dataset.loungeRoute = view;
   document.documentElement.dataset.pageLayout = meta.layout;
   document.querySelectorAll("[data-view-panel]").forEach((panel) => {
@@ -402,8 +432,10 @@ function bindNavigation() {
     const boardSearch = event.target.closest("[data-global-board-search]");
     if (boardSearch) openBoardSearch(boardSearch.dataset.globalBoardSearch || "");
   });
+  searchDialog?.addEventListener("cancel", (event) => { event.preventDefault(); closeGlobalSearch(); });
   searchDialog?.addEventListener("close", () => { searchReturnFocus?.focus?.({ preventScroll: true }); searchReturnFocus = null; });
   document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && searchDialog?.open) { event.preventDefault(); closeGlobalSearch(); return; }
     if (event.key === "Escape" && shell?.hasAttribute("data-menu-open")) setMenuOpen(false, { restoreFocus: true });
     if (event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey && !event.target.closest("input, textarea, select, [contenteditable='true']")) { event.preventDefault(); openGlobalSearch(); }
   });

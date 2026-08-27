@@ -20,12 +20,12 @@
 
   /* Plan color tokens */
   --color-brand-navy: #000c3d;
-  --color-brand-blue: #3182f6;
-  --color-brand-blue-hover: #1b64da;
+  --color-brand-blue: #2563eb;
+  --color-brand-blue-hover: #1d4ed8;
   --color-brand-blue-soft: #e8f3ff;
   --color-text-primary: #191f28;
   --color-text-secondary: #4e5968;
-  --color-text-muted: #6b7684;
+  --color-text-muted: #5a6573;
   --color-text-decorative: #5f6d82;
   --color-page: #f6f8fa;
   --color-surface: #ffffff;
@@ -33,7 +33,7 @@
   --color-surface-blue: #f2f7ff;
   --color-border: #e5e8eb;
   --color-border-strong: #d1d6db;
-  --color-focus: #3182f6;
+  --color-focus: #1d4ed8;
   --color-success: #047857;
   --color-success-bg: #ecfdf5;
   --color-warning: #9a3412;

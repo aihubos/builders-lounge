@@ -24,7 +24,11 @@ npm run dev
 npm run check
 npm run build
 npm run test
+npm run qa:ui
+npm run qa
 ```
+
+`npm run qa:ui`는 주요 라우트 직접 진입, 반응형 가로 넘침, 최소 글자·터치 영역, 검색·모바일 메뉴·다이얼로그 포커스, iframe 지연 로딩, 핵심 접근성 규칙을 실제 Chromium에서 확인합니다. 시각 기준 이미지를 의도적으로 갱신할 때만 `npm run qa:shots`를 실행합니다.
 
 빌드 결과는 루트 `index.html`, `styles.css`, `assets/`, `lounge/` 지원 파일, `robots.txt`, `sitemap.xml`, `.nojekyll`만 공개 경로에 포함합니다. sitemap에는 Builders Lounge 루트 주소만 등록합니다.
 

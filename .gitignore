@@ -3,6 +3,9 @@ dist/
 output/
 .superloopy/
 .playwright-cli/
+node_modules/
+playwright-report/
+test-results/
 *.tgz
 .secrets/
 supabase/functions/.env

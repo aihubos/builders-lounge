@@ -155,6 +155,12 @@
   flex: 0 0 auto;
 }
 
+.portal-panel-head > .text-button,
+.portal-panel-actions .text-button {
+  min-width: var(--control-height-lg);
+  justify-content: center;
+}
+
 .portal-panel-note {
   color: var(--color-text-muted);
   font-size: var(--type-meta);
@@ -468,7 +474,7 @@
   color: var(--color-brand-white);
 }
 
-.portal-start-card h4 {
+.portal-start-card h3 {
   margin: 0 0 var(--space-5);
   color: var(--color-brand-white);
   font-size: var(--type-display);

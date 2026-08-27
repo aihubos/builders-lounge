@@ -76,7 +76,7 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
 
   const existingPreview = root.querySelector("[data-home-board-preview]");
   root.innerHTML = `<section class="lounge-home portal-home" aria-labelledby="home-dashboard-title">
-    <section class="portal-home-intro" aria-labelledby="home-dashboard-title">
+    <section class="portal-home-intro">
       <div class="portal-home-intro-copy"><p class="portal-home-eyebrow">BUILDERS LOUNGE</p><h1 id="home-dashboard-title">만들고, 나누고, 함께 성장해요</h1><p>만든 결과와 경험을 읽고, 다음 작업을 바로 시작하세요.</p></div>
       <div class="portal-home-intro-actions"><span class="portal-home-intro-caption">AI 제작 도구</span><div class="portal-home-intro-buttons"><button class="primary-button" type="button" data-home-module="shorts">AI 쇼츠 만들기</button><button class="secondary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></div></div>
     </section>
@@ -107,7 +107,7 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
       </div>
 
       <aside class="portal-home-rail" aria-label="Builders Lounge 안내">
-        <section class="portal-rail-card portal-start-card"><h4>글 하나가<br>1빌드가 돼요.</h4><ol><li><b>1</b><span><strong>Google 계정으로 로그인</strong><small>계정과 빌드 잔액을 안전하게 연결</small></span></li><li><b>2</b><span><strong>게시판에 경험 나누기</strong><small>글 또는 댓글 1건당 1빌드 적립</small></span></li><li><b>3</b><span><strong>AI 제작 도구 사용</strong><small>쇼츠·웹툰·이미지 생성</small></span></li></ol><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></section>
+      <section class="portal-rail-card portal-start-card"><h3>글 하나가<br>1빌드가 돼요.</h3><ol><li><b>1</b><span><strong>Google 계정으로 로그인</strong><small>계정과 빌드 잔액을 안전하게 연결</small></span></li><li><b>2</b><span><strong>게시판에 경험 나누기</strong><small>글 또는 댓글 1건당 1빌드 적립</small></span></li><li><b>3</b><span><strong>AI 제작 도구 사용</strong><small>쇼츠·웹툰·이미지 생성</small></span></li></ol><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></section>
         ${renderBuildCard(session)}
         <p class="portal-home-disclosure">게시판·Google 계정·빌드 원장은 실제 운영 데이터입니다. 샘플 작업·파일은 별도 표시됩니다.</p>
       </aside>
