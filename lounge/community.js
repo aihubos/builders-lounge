@@ -314,7 +314,7 @@ function renderBoard(root, onReady) {
 async function renderHomeBoardPreview(root) {
   if (!root) return;
   try {
-    const data = await boardRequest("/board/posts?page=1&pageSize=8&category=all&sort=latest&q=");
+    const data = await boardRequest("/board/posts?page=1&pageSize=6&category=all&sort=latest&q=");
     const posts = Array.isArray(data.posts) ? data.posts : [];
     root.innerHTML = posts.length ? `<ul class="home-board-list">${posts.map((post) => `<li><a href="?post=${encodeURIComponent(post.id)}#board" data-home-board-post="${escapeHtml(post.id)}"><span class="community-chip">${escapeHtml(BOARD_CATEGORIES[post.category] || "기타")}</span><strong>${escapeHtml(post.title)}</strong><small>${escapeHtml(post.author || "방문자")} · 댓글 ${Number(post.comment_count || 0).toLocaleString("ko-KR")} · ${formatDate(post.updated_at || post.created_at)}</small></a></li>`).join("")}</ul>` : '<div class="community-empty-inline">아직 게시글이 없습니다. 첫 글을 남겨보세요.</div>';
     root.querySelectorAll("[data-home-board-post]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); window.history.pushState({}, "", link.getAttribute("href")); window.dispatchEvent(new PopStateEvent("popstate")); window.dispatchEvent(new CustomEvent("lounge:navigate", { detail: { view: "board" } })); }));

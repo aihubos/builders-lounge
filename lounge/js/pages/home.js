@@ -42,38 +42,40 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
   const { root, data = {}, onNavigate = () => {}, onModuleOpen = () => {}, onWrite = () => {} } = normalizeOptions(rootOrOptions, maybeOptions);
   if (!(root instanceof HTMLElement)) throw new TypeError("renderHome requires a DOM element as root");
 
-  const prompts = catalogItems("prompts").slice(0, 4);
-  const newsletters = catalogItems("newsletters").slice(0, 4);
-  const images = catalogItems("memes").slice(0, 4);
+  const prompts = catalogItems("prompts").slice(0, 3);
+  const newsletters = catalogItems("newsletters").slice(0, 3);
+  const images = catalogItems("memes").slice(0, 3);
   const session = window.BuildersPlatform?.snapshot?.() || null;
   root.__homeCallbacks = { onNavigate, onModuleOpen, onWrite };
 
   const existingPreview = root.querySelector("[data-home-board-preview]");
   root.innerHTML = `<section class="lounge-home portal-home" aria-labelledby="home-dashboard-title">
+    <section class="portal-home-intro" aria-labelledby="home-dashboard-title">
+      <div class="portal-home-intro-copy"><p class="portal-home-eyebrow">BUILDERS LOUNGE</p><h1 id="home-dashboard-title">만들고, 나누고, 함께 성장해요</h1><p>만든 결과와 경험을 읽고, 다음 작업을 바로 시작하세요.</p></div>
+      <div class="portal-home-intro-actions"><span class="portal-home-intro-caption">AI 제작 도구</span><div class="portal-home-intro-buttons"><button class="primary-button" type="button" data-home-module="shorts">AI 쇼츠 만들기</button><button class="secondary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></div></div>
+    </section>
     <div class="portal-home-layout">
       <div class="portal-home-main">
-        <h3 id="home-dashboard-title" class="visually-hidden">라운지 모아보기</h3>
-        <div class="home-quad-grid">
-          <section class="portal-panel home-quad-panel" aria-labelledby="home-board-title">
-            <div class="portal-panel-head"><div><h4 id="home-board-title">자유게시판</h4></div><div class="portal-panel-actions"><button class="text-button" type="button" data-home-write>글쓰기</button><button class="text-button" type="button" data-home-nav="board">더보기</button></div></div>
-            <div data-home-board-preview class="home-board-preview"><div class="community-loading">게시판을 불러오는 중입니다.</div></div>
+        <section class="portal-panel portal-board-panel" aria-labelledby="home-board-title">
+          <div class="portal-panel-head"><div><h2 id="home-board-title">자유게시판</h2></div><div class="portal-panel-actions"><button class="text-button" type="button" data-home-write>글쓰기</button><button class="text-button" type="button" data-home-nav="board">더보기</button></div></div>
+          <div data-home-board-preview class="home-board-preview"><div class="community-loading">게시판을 불러오는 중입니다.</div></div>
+        </section>
+        <div class="portal-home-community-grid">
+          <section class="portal-panel portal-home-prompts" aria-labelledby="home-prompt-title">
+            <div class="portal-panel-head"><div><h2 id="home-prompt-title">프롬프트 모음</h2></div><button class="text-button" type="button" data-home-nav="prompts">더보기</button></div>
+            <div class="home-compact-cards">${prompts.length ? prompts.map((item) => renderHomeCard(item, "prompts", "프롬프트")).join("") : '<div class="community-empty-inline">등록된 프롬프트가 없습니다.</div>'}</div>
           </section>
-          <section class="portal-panel home-quad-panel" aria-labelledby="home-prompt-title">
-            <div class="portal-panel-head"><div><h4 id="home-prompt-title">프롬프트 모음</h4></div><button class="text-button" type="button" data-home-nav="prompts">더보기</button></div>
-            <div class="home-quad-cards">${prompts.length ? prompts.map((item) => renderHomeCard(item, "prompts", "프롬프트")).join("") : '<div class="community-empty-inline">등록된 프롬프트가 없습니다.</div>'}</div>
-          </section>
-          <section class="portal-panel home-quad-panel" aria-labelledby="home-letter-title">
-            <div class="portal-panel-head"><div><h4 id="home-letter-title">뉴스레터</h4></div><button class="text-button" type="button" data-home-nav="newsletter">더보기</button></div>
-            <div class="home-quad-cards">${newsletters.length ? newsletters.map((item) => renderHomeCard(item, "newsletter", "뉴스레터")).join("") : '<div class="community-empty-inline">등록된 뉴스레터가 없습니다.</div>'}</div>
-          </section>
-          <section class="portal-panel home-quad-panel" aria-labelledby="home-image-title">
-            <div class="portal-panel-head"><div><h4 id="home-image-title">이미지 게시판</h4></div><button class="text-button" type="button" data-home-nav="memes">더보기</button></div>
-            <div class="home-quad-cards">${images.length ? images.map((item) => renderHomeCard(item, "memes", "이미지")).join("") : '<div class="community-empty-inline">등록된 이미지가 없습니다.</div>'}</div>
+          <section class="portal-panel portal-home-newsletter" aria-labelledby="home-letter-title">
+            <div class="portal-panel-head"><div><h2 id="home-letter-title">뉴스레터</h2></div><button class="text-button" type="button" data-home-nav="newsletter">더보기</button></div>
+            <div class="home-compact-cards">${newsletters.length ? newsletters.map((item) => renderHomeCard(item, "newsletter", "뉴스레터")).join("") : '<div class="community-empty-inline">등록된 뉴스레터가 없습니다.</div>'}</div>
           </section>
         </div>
-
+        <section class="portal-panel portal-home-images" aria-labelledby="home-image-title">
+          <div class="portal-panel-head"><div><h2 id="home-image-title">이미지 게시판</h2></div><button class="text-button" type="button" data-home-nav="memes">더보기</button></div>
+          <div class="home-compact-cards">${images.length ? images.map((item) => renderHomeCard(item, "memes", "이미지")).join("") : '<div class="community-empty-inline">등록된 이미지가 없습니다.</div>'}</div>
+        </section>
         <section class="portal-panel portal-tools-panel" aria-labelledby="home-tools-title">
-          <div class="portal-panel-head"><div><h4 id="home-tools-title">AI 제작 도구</h4></div><span class="portal-panel-note">가격·모델·API는 관리자 설정</span></div>
+          <div class="portal-panel-head"><div><h2 id="home-tools-title">AI 제작 도구</h2></div><span class="portal-panel-note">가격·모델·API는 관리자 설정</span></div>
           <div class="portal-tool-grid">${MODULES.map(renderTool).join("")}</div>
         </section>
       </div>
@@ -81,7 +83,6 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
       <aside class="portal-home-rail" aria-label="Builders Lounge 안내">
         <section class="portal-rail-card portal-start-card"><h4>글 하나가<br>1빌드가 돼요.</h4><ol><li><b>1</b><span><strong>Google 계정으로 로그인</strong><small>계정과 빌드 잔액을 안전하게 연결</small></span></li><li><b>2</b><span><strong>게시판에 경험 나누기</strong><small>글 또는 댓글 1건당 1빌드 적립</small></span></li><li><b>3</b><span><strong>AI 제작 도구 사용</strong><small>쇼츠·웹툰·이미지 생성</small></span></li></ol><button class="primary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></section>
         ${renderBuildCard(session)}
-        <section class="portal-rail-card portal-channel-card"><h4>라운지 밖에서도 만나요</h4><div><a href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener"><span class="channel-dot channel-kakao" aria-hidden="true">K</span>카카오 오픈채팅 <b aria-hidden="true">↗</b></a><a href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener"><span class="channel-dot channel-daangn" aria-hidden="true">당</span>당근 모임 <b aria-hidden="true">↗</b></a></div></section>
         <p class="portal-home-disclosure">게시판·Google 계정·빌드 원장은 실제 운영 데이터입니다. 샘플 작업·파일은 별도 표시됩니다.</p>
       </aside>
     </div>
