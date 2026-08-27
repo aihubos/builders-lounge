@@ -35,6 +35,27 @@ function status(root, selector, message, error = false) {
   node.dataset.error = String(error);
 }
 
+function toolCostSummary(tools) {
+  if (!Array.isArray(tools) || !tools.length) return "관리자 설정 응답 없음";
+  return tools.map((tool) => {
+    const name = String(tool?.name || tool?.id || "도구").trim();
+    const cost = Number(tool?.cost);
+    if (!tool?.enabled) return `${name} 사용 중지`;
+    if (!Number.isFinite(cost) || cost < 0) return `${name} 비용 확인 필요`;
+    return `${name} ${cost.toLocaleString("ko-KR")}빌드`;
+  }).join(" · ");
+}
+
+function configuredToolCount(tools) {
+  return Array.isArray(tools) ? tools.filter((tool) => tool?.enabled && tool?.apiKeyConfigured).length : 0;
+}
+
+function isRetiredTool(tool) {
+  const id = String(tool?.id || "").trim().toLocaleLowerCase("en-US");
+  const name = String(tool?.name || "").trim();
+  return id === "meeting" || id === "minutes" || name.includes("회의록");
+}
+
 function renderTool(tool) {
   return `<form class="admin-tool-form" data-admin-tool-form="${escapeHtml(tool.id)}">
     <div class="admin-tool-title">
@@ -93,13 +114,15 @@ async function loadAdmin(root) {
       platform.request("/lounge/admin/settings"),
       platform.request("/lounge/admin/users"),
     ]);
-    const tools = Array.isArray(settings.tools) ? settings.tools : [];
+    const tools = Array.isArray(settings.tools) ? settings.tools.filter((tool) => !isRetiredTool(tool)) : [];
     const users = Array.isArray(userData.users) ? userData.users : [];
     const admins = Array.isArray(settings.admins) ? settings.admins.filter((item) => Number(item.active || 0) === 1) : [];
+    const readyToolCount = configuredToolCount(tools);
+    const costSummary = toolCostSummary(tools);
     root.innerHTML = `<section class="admin-shell" aria-labelledby="admin-title">
       <div class="admin-summary">
-        <div><p class="section-label">BUILDERS LOUNGE · ADMIN</p><h3 id="admin-title">관리자 설정</h3><p>글·댓글은 기본 1빌드, 이미지는 5빌드, 영상은 10빌드입니다. OpenRouter와 Kimi도 여기서 연결합니다.</p></div>
-        <div class="admin-ready-list"><span data-ready="${settings.loginReady}">Google 로그인 ${settings.loginReady ? "완료" : "설정 필요"}</span><span data-ready="${settings.encryptionReady}">API 키 보관 ${settings.encryptionReady ? "완료" : "설정 필요"}</span><span>${users.length}명</span></div>
+        <div><p class="section-label">BUILDERS LOUNGE · ADMIN</p><h3 id="admin-title">관리자 설정</h3><p>게시판 글·댓글 적립은 +1빌드입니다. 도구별 사용 비용: ${escapeHtml(costSummary)}.</p></div>
+        <div class="admin-ready-list"><span data-ready="${settings.loginReady}">Google 로그인 ${settings.loginReady ? "완료" : "설정 필요"}</span><span data-ready="${settings.encryptionReady}">API 키 보관 ${settings.encryptionReady ? "완료" : "설정 필요"}</span><span>${readyToolCount}/${tools.length}개 도구 사용 가능</span><span>${users.length}명 회원</span></div>
       </div>
       <section class="admin-section">
         <div class="admin-section-head"><div><h4>AI 도구 설정</h4><p>연결 방식에서 OpenRouter 또는 Kimi Moonshot을 고르고, 키·모델·소모 빌드를 저장하세요. 키는 저장 후 다시 보이지 않습니다.</p></div></div>

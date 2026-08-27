@@ -38,7 +38,7 @@ function normaliseJob(job, index) {
     status,
     createdAt: job?.createdAt || "",
     updatedAt: job?.updatedAt || job?.createdAt || "",
-    detail: String(job?.detail || "상세 정보가 연결되면 이곳에 표시됩니다."),
+    detail: String(job?.detail || "작업 상태를 확인할 수 있습니다."),
     progress: Math.max(0, Math.min(100, Number(job?.progress) || 0)),
     sample: job?.sample !== false,
     canRetry: Boolean(job?.canRetry),
@@ -77,10 +77,10 @@ function renderTabs(filter) {
 
 function renderEmpty(filter) {
   const copy = {
-    all: ["표시할 샘플 작업이 없습니다.", "설정에서 샘플 데이터 표시를 다시 켜면 예시 작업을 확인할 수 있습니다."],
+    all: ["표시할 작업이 없습니다.", "도구에서 작업을 시작하면 상태와 진행률이 이곳에 표시됩니다."],
     active: ["진행 중인 작업이 없습니다.", "새 작업을 시작하면 처리 상태와 다음 안내가 이곳에 표시됩니다."],
-    completed: ["완료된 작업이 없습니다.", "완료된 결과물은 연결 후 이곳에서 다시 열 수 있습니다."],
-    failed: ["실패한 작업이 없습니다.", "실패한 작업이 생기면 원인과 다시 시도할 수 있는지 표시합니다."],
+    completed: ["완료된 작업이 없습니다.", "완료된 결과물은 이곳에서 다시 확인할 수 있습니다."],
+    failed: ["실패한 작업이 없습니다.", "실패한 작업이 생기면 원인과 다시 시도 가능 여부를 표시합니다."],
   }[filter] || ["작업이 없습니다.", "작업 상태를 확인할 수 있는 공간입니다."];
 
   return `<div class="jobs-empty" data-jobs-empty>
@@ -130,11 +130,11 @@ function renderShell(container, state) {
   container.innerHTML = `<section class="jobs-view" aria-labelledby="lounge-jobs-title">
     <header class="jobs-header">
       <div>
-        <p class="jobs-kicker">MY WORK · SAMPLE</p>
+        <p class="jobs-kicker">MY WORK</p>
         <h1 id="lounge-jobs-title">진행 중 작업</h1>
-        <p class="jobs-lead">샘플 작업 3개의 상태와 진행률을 확인합니다.</p>
+        <p class="jobs-lead">계정 작업의 상태와 진행률을 한곳에서 확인합니다.</p>
       </div>
-      <p class="jobs-privacy">실제 작업은 아직 생성되거나 처리되지 않습니다.</p>
+      <p class="jobs-privacy">화면 확인용 샘플과 연결된 작업을 함께 표시합니다. 샘플에는 별도 표지가 붙습니다.</p>
     </header>
     <div class="jobs-toolbar">
       <div class="jobs-filters" role="tablist" aria-label="작업 상태 필터">${renderTabs(state.filter)}</div>
@@ -149,8 +149,8 @@ function announceAction(container, action) {
   const status = container.querySelector("[data-jobs-action-status]");
   if (!status) return;
   status.textContent = action === "retry"
-    ? "다시 시도 연결 자리는 준비되어 있습니다. 실제 기능 연결 후 사용할 수 있습니다."
-    : "삭제 연결 자리는 준비되어 있습니다. 실제 기능 연결 후 사용할 수 있습니다.";
+    ? "이 작업 유형의 다시 시도 요청은 아직 연결되지 않았습니다."
+    : "이 작업 유형의 삭제 요청은 아직 연결되지 않았습니다.";
 }
 
 function bindEvents(container, state) {

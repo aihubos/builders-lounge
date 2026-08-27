@@ -2,6 +2,9 @@
   --font-small: var(--lounge-label-size, 0.875rem);
   --motion-lift-small: -2px;
   color: var(--text-primary);
+  width: 100%;
+  max-width: 1040px;
+  overflow-wrap: anywhere;
 }
 
 .jobs-header {
@@ -132,6 +135,7 @@
 
 .jobs-row-main {
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .jobs-row-heading {
@@ -144,11 +148,14 @@
   margin: var(--space-2) 0 0;
   font-size: 1.125rem;
   line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .jobs-row-detail {
   margin: var(--space-2) 0 0;
+  font-size: 1rem;
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .jobs-status {
@@ -234,6 +241,7 @@
 
 .jobs-empty p {
   margin: var(--space-2) 0 0;
+  font-size: 1rem;
   line-height: 1.65;
 }
 

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/serve.mjs",
-    "check": "node --check lounge/lounge.js && node --check lounge/platform.js && node --check lounge/shorts.js && node --check lounge/admin.js && node --check lounge/jobs.js && node --check lounge/settings.js && node --check lounge/placeholders.js && node --check lounge/topbar.js && node --check lounge/demo-data.js && node --check lounge/community-data.js && node --check lounge/catalog.js && node --check lounge/community.js && node --check lounge/js/pages/home.js",
+    "check": "node --check lounge/lounge.js && node --check lounge/platform.js && node --check lounge/shorts.js && node --check lounge/admin.js && node --check lounge/jobs.js && node --check lounge/settings.js && node --check lounge/topbar.js && node --check lounge/demo-data.js && node --check lounge/community-data.js && node --check lounge/catalog.js && node --check lounge/community.js && node --check lounge/js/pages/home.js",
     "test": "npm run build && node scripts/check-application.mjs",
     "build": "node scripts/build.mjs"
   }

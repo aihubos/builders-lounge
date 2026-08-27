@@ -173,6 +173,13 @@ function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "h
   if (view === "shorts") return "한 문장을 제작안으로 확장해 실제 세로형 영상을 만들고, 완성 뒤 게시 여부를 직접 선택합니다.";
   if (view === "webtoon") return "웹툰 제작기는 Lounge 로그인과 빌드 잔액을 공유합니다. API 키는 서버에서만 사용합니다.";
   if (view === "masterpiece") return "프롬프트 조합은 무료이며 실제 이미지 생성에만 설정된 빌드가 사용됩니다.";
+  if (view === "jobs") return "화면 확인용 샘플과 연결된 작업을 함께 표시합니다. 샘플에는 별도 표지가 붙습니다.";
+  if (view === "results") return "완료된 결과는 제작 도구에서 확인하며, 화면 확인용 결과에는 샘플 표지가 붙습니다.";
+  if (view === "files") return "쇼츠 영상은 제작 완료 화면에서 저장합니다. 일반 파일 업로드는 별도 연결이 필요합니다.";
+  if (view === "usage") return "Google 로그인 후 실제 적립·사용·환불·관리자 조정 내역을 확인합니다.";
+  if (view === "membership") return "Google 계정과 현재 빌드 잔액은 로그인한 계정 기준으로 표시됩니다.";
+  if (view === "settings") return "보기 설정은 이 브라우저에 저장하고, 연결 상태는 서비스 응답을 기준으로 표시합니다.";
+  if (view === "help") return "로그인, 빌드, 파일 저장, 게시 범위를 실제 운영 기준으로 안내합니다.";
   if (view === "admin") return "관리자만 API 키·모델·빌드 가격·멤버 잔액·삭제 권한을 설정할 수 있습니다. API 키는 다시 표시되지 않습니다.";
   return "";
 }
@@ -180,20 +187,20 @@ function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "h
 function renderResults(root, data) {
   if (!root) return;
   if (!data.results.length) {
-    root.innerHTML = `<div class="panel-heading"><p class="section-label">OUTPUTS</p><h3>결과물</h3><p>샘플 표시가 꺼져 있어 결과물을 숨겼습니다.</p></div><div class="empty-state"><span class="empty-state-icon" aria-hidden="true">✓</span><strong>표시할 결과물이 없습니다.</strong><p>설정에서 샘플 데이터 표시를 다시 켜면 예시 결과를 볼 수 있습니다.</p></div>`;
+    root.innerHTML = `<div class="panel-heading"><p class="section-label">OUTPUTS</p><h3>결과물</h3><p>화면 확인용 데이터 표시가 꺼져 있어 결과물을 숨겼습니다.</p></div><div class="empty-state"><span class="empty-state-icon" aria-hidden="true">✓</span><strong>표시할 결과물이 없습니다.</strong><p>설정에서 화면 확인용 데이터를 켜면 예시 결과를 확인할 수 있습니다.</p></div>`;
     return;
   }
   const result = data.results[0];
-  root.innerHTML = `<div class="panel-heading"><p class="section-label">OUTPUTS</p><h3>결과물</h3><p>완료된 샘플 결과를 미리 확인합니다.</p></div><article class="result-card"><div class="result-card-head"><div><span class="sample-label">샘플 결과</span><h4>${escapeHtml(result.title)}</h4><p>${result.formats.map(escapeHtml).join(" · ")}</p></div><span class="result-date">${formatDate(result.createdAt)}</span></div><details class="result-preview"><summary>샘플 미리보기 <span aria-hidden="true">＋</span></summary><div class="result-preview-body"><strong>요약</strong><p>${escapeHtml(result.summary)}</p><ul><li>장면 3개</li><li>대사 5개</li></ul></div></details><p class="disabled-note">실제 다운로드 주소는 MVP 범위에 포함하지 않습니다.</p></article>`;
+  root.innerHTML = `<div class="panel-heading"><p class="section-label">OUTPUTS</p><h3>결과물</h3><p>화면 확인용 결과를 미리 확인합니다.</p></div><article class="result-card"><div class="result-card-head"><div><span class="sample-label">화면 확인용</span><h4>${escapeHtml(result.title)}</h4><p>${result.formats.map(escapeHtml).join(" · ")}</p></div><span class="result-date">${formatDate(result.createdAt)}</span></div><details class="result-preview"><summary>미리보기 <span aria-hidden="true">＋</span></summary><div class="result-preview-body"><strong>요약</strong><p>${escapeHtml(result.summary)}</p><ul><li>장면 3개</li><li>대사 5개</li></ul></div></details><p class="disabled-note">이 예시에는 다운로드 주소가 없습니다. 실제 쇼츠 결과는 제작 완료 화면에서 저장합니다.</p></article>`;
 }
 
 function renderFiles(root, data) {
   if (!root) return;
   if (!data.files.length) {
-    root.innerHTML = `<div class="panel-heading file-panel-heading"><div><p class="section-label">FILES</p><h3>파일</h3><p>샘플 표시가 꺼져 있어 파일을 숨겼습니다.</p></div><button class="disabled-button" type="button" disabled>업로드 준비 중</button></div><div class="empty-state"><span class="empty-state-icon" aria-hidden="true">□</span><strong>표시할 파일이 없습니다.</strong><p>파일 업로드는 아직 연결되어 있지 않습니다.</p></div>`;
+    root.innerHTML = `<div class="panel-heading file-panel-heading"><div><p class="section-label">FILES</p><h3>파일</h3><p>화면 확인용 데이터 표시가 꺼져 있어 파일을 숨겼습니다.</p></div><button class="disabled-button" type="button" disabled>일반 업로드 미연결</button></div><div class="empty-state"><span class="empty-state-icon" aria-hidden="true">□</span><strong>표시할 파일이 없습니다.</strong><p>쇼츠 영상은 제작 완료 화면에서 저장하며, 일반 파일 업로드는 별도 연결이 필요합니다.</p></div>`;
     return;
   }
-  root.innerHTML = `<div class="panel-heading file-panel-heading"><div><p class="section-label">FILES</p><h3>파일</h3><p>작업 확인용 샘플 파일 3개입니다.</p></div><button class="disabled-button" type="button" disabled aria-describedby="file-disabled-note">업로드 준비 중</button></div><div class="file-list">${data.files.map((file) => `<article class="file-row"><div class="file-icon" aria-hidden="true">${file.kind === "영상" ? "▶" : file.kind === "오디오" ? "♫" : "TXT"}</div><div class="file-copy"><strong>${escapeHtml(file.name)}</strong><span>${escapeHtml(file.kind)} · ${escapeHtml(file.size)} · <span class="sample-label">샘플</span></span></div><button class="disabled-button" type="button" disabled aria-describedby="file-disabled-note">삭제 불가</button></article>`).join("")}</div><p class="disabled-note" id="file-disabled-note">샘플 파일은 업로드·삭제되지 않습니다. 실제 파일 기능은 연결 후 제공됩니다.</p>`;
+  root.innerHTML = `<div class="panel-heading file-panel-heading"><div><p class="section-label">FILES</p><h3>파일</h3><p>화면 확인용 파일 ${data.files.length}개입니다.</p></div><button class="disabled-button" type="button" disabled aria-describedby="file-disabled-note">일반 업로드 미연결</button></div><div class="file-list">${data.files.map((file) => `<article class="file-row"><div class="file-icon" aria-hidden="true">${file.kind === "영상" ? "▶" : file.kind === "오디오" ? "♫" : "TXT"}</div><div class="file-copy"><strong>${escapeHtml(file.name)}</strong><span>${escapeHtml(file.kind)} · ${escapeHtml(file.size)} · <span class="sample-label">화면 확인용</span></span></div><button class="disabled-button" type="button" disabled aria-describedby="file-disabled-note">삭제 불가</button></article>`).join("")}</div><p class="disabled-note" id="file-disabled-note">화면 확인용 파일은 업로드·삭제되지 않습니다. 실제 쇼츠 영상은 제작 완료 화면에서 저장합니다.</p>`;
 }
 
 function renderUsage(root, data) {

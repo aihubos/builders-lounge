@@ -20,24 +20,6 @@ const prompts = [
     status: PUBLISHED,
   },
   {
-    id: "prompt-meeting",
-    cover: "assets/hero-builders-wave-poster.jpg",
-    kicker: "업무",
-    type: "prompt",
-    title: "회의록 자동 작성",
-    summary: "긴 회의 기록을 결정사항·담당자·기한 중심의 실행 문서로 바꿉니다.",
-    tags: ["업무", "회의", "자동화"],
-    category: "업무",
-    useCase: "회의가 끝난 뒤 후속 작업을 놓치지 않고 싶을 때",
-    expected: "핵심 논의와 다음 행동이 표로 정리됩니다.",
-    copyText: "다음 회의 기록을 아래 형식으로 정리해 주세요.\n1. 회의 목적 한 문장\n2. 핵심 논의 3~5개\n3. 확정된 결정사항(결정 이유 포함)\n4. 담당자·기한이 있는 할 일 표\n5. 추가 확인이 필요한 질문\n\n원문에 없는 담당자와 기한은 추측하지 말고 ‘미정’으로 표시해 주세요.",
-    author: "AI Builders Lab 운영팀",
-    sourceLabel: "Builders Lounge 샘플",
-    sourceUrl: "https://aihubos.github.io/builders-lounge/",
-    featured: true,
-    status: PUBLISHED,
-  },
-  {
     id: "prompt-report-mode",
     cover: "assets/report-hub-banner.png",
     kicker: "글쓰기",
@@ -299,4 +281,3 @@ export function getFeaturedPrompts() {
 export function getLatestNewsletter() {
   return publishedItems("newsletters").slice().sort((a, b) => String(b.publishedAt).localeCompare(String(a.publishedAt)))[0] || null;
 }
-
