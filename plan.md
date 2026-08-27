@@ -1,5 +1,7 @@
 # AI Builders Lab 멤버 전용 AI Workspace 구현 계획
 
+> **2026-08-27 현재 상태:** 이 문서는 과거 멤버 전용 Workspace 설계의 보존본입니다. 현재 Builders Lounge 전면 UI/UX 구현에는 사용하지 않습니다. 현재 구현 기준은 Jeremy가 제공한 `Builders Lounge 전면 UI/UX 고도화 및 전체 QA 실행 계획`이며, 기준 커밋은 `93a549d`입니다. Phase 0 기준선은 [`docs/qa-baseline.md`](docs/qa-baseline.md)에 기록합니다.
+
 > **2026-08-23 승인 변경:** GitHub Pages의 `https://aihubos.github.io/builders-lounge/`는 기존 교육 랜딩을 제거하고 Builders Lounge 화면을 루트에서 직접 제공한다. 이 문서의 기존 홈페이지 보존 및 `/lounge` 분리 배포 내용은 해당 GitHub Pages 저장소에 한해 이 변경으로 대체한다. `AI 회의록`과 `AI 쇼츠 스튜디오`는 실제 연결 주소가 승인될 때까지 연결 예정 상태를 유지한다.
 
 - 작성일: 2026-08-22
