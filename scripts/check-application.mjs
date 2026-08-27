@@ -13,6 +13,7 @@ const sourceSupport = [
   "assets/og.webp",
   "assets/report-hub-banner.webp",
   "lounge/tokens.css",
+  "lounge/core.css",
   "lounge/base.css",
   "lounge/lounge.css",
   "lounge/community.css",
@@ -32,6 +33,7 @@ const sourceSupport = [
   "lounge/jobs.css",
   "lounge/jobs.js",
   "lounge/settings.css",
+  "lounge/policies.css",
   "lounge/settings.js",
   "lounge/js/pages/home.css",
   "lounge/js/pages/home.js",
@@ -71,16 +73,10 @@ for (const file of sourceSupport) {
 
 const indexHtml = await readFile(resolve(root, "index.html"), "utf8");
 const expectedLoungeStyles = [
-  "lounge/tokens.css?v=20260827-ui-v1",
-  "lounge/base.css?v=20260827-ui-v1",
-  "lounge/topbar.css?v=20260827-ui-v1",
-  "lounge/lounge.css?v=20260827-ui-v1",
-  "lounge/portal.css?v=20260827-ui-v1",
-  "lounge/js/pages/home.css?v=20260827-ui-v1",
-  "lounge/community.css?v=20260827-ui-v1",
-  "lounge/platform.css?v=20260827-ui-v1",
+  "lounge/core.css?v=20260828-performance-v1",
   "lounge/jobs.css?v=20260827-ui-v1",
   "lounge/settings.css?v=20260827-ui-v1",
+  "lounge/policies.css?v=20260828-policy-v1",
   "lounge/shorts.css?v=20260827-ui-v1",
 ];
 let previousStyleIndex = -1;
@@ -104,18 +100,19 @@ const robots = await readFile(resolve(root, "robots.txt"), "utf8");
 const sitemap = await readFile(resolve(root, "sitemap.xml"), "utf8");
 
 expect(indexHtml.includes("data-lounge-shell"), "루트 Builders Lounge 셸이 없습니다.");
-expect(indexHtml.includes('href="lounge/lounge.css') && indexHtml.includes('href="lounge/portal.css') && indexHtml.includes('href="lounge/shorts.css') && indexHtml.includes('src="lounge/lounge.js'), "루트 Lounge 경로가 없습니다.");
+expect(indexHtml.includes('href="lounge/core.css') && indexHtml.includes('href="lounge/shorts.css') && indexHtml.includes('src="lounge/lounge.js'), "루트 Lounge 경로가 없습니다.");
 expect(indexHtml.includes('href="assets/favicon.png"') && indexHtml.includes('src="assets/builders-lounge-logo.png"') && indexHtml.includes('srcset="assets/builders-lounge-logo.webp"'), "루트 Builders Lounge 자산 경로가 없습니다.");
-expect(indexHtml.includes("data-home-mount") && indexHtml.includes("portal-mobile-nav") && (loungeScript.includes("home-quad-grid") || loungeScript.includes("renderHome")), "홈 마운트, 모바일 메뉴 또는 모아보기 4칸이 없습니다.");
+expect(indexHtml.includes("data-home-mount") && indexHtml.includes("data-home-prerender") && indexHtml.includes("data-home-intro") && indexHtml.includes("portal-mobile-nav") && (loungeScript.includes("home-quad-grid") || loungeScript.includes("renderHome")), "홈 선렌더, 모바일 메뉴 또는 모아보기 4칸이 없습니다.");
 expect(!indexHtml.includes("portal-brand-mark") && !indexHtml.includes("portal-brand-copy"), "이전 임시 Builders Lounge 로고가 남아 있습니다.");
 expect(!indexHtml.includes('src="assets/report-hub-logo.png"') && !indexHtml.includes("lounge-portal-header"), "이전 Report Hub 로고 또는 이중 상단 헤더가 남아 있습니다.");
 expect(indexHtml.includes('<link rel="canonical" href="https://aihubos.github.io/builders-lounge/" />'), "canonical 루트 주소가 없습니다.");
+expect(indexHtml.includes('rel="preconnect" href="https://reportmode-request-board.report-request-board.workers.dev"') && indexHtml.includes('rel="preload" as="fetch" href="https://reportmode-request-board.report-request-board.workers.dev/board/posts'), "홈 게시판 API 사전 연결 또는 선요청이 없습니다.");
 expect(indexHtml.includes('<meta property="og:url" content="https://aihubos.github.io/builders-lounge/" />'), "OG 루트 주소가 없습니다.");
 expect(!/noindex\s*,?\s*nofollow/i.test(indexHtml), "루트 검색 제외 설정이 남아 있습니다.");
 expect(!indexHtml.includes("공개 홈페이지") && !indexHtml.includes("topbar-home-link"), "이전 홈페이지 링크가 남아 있습니다.");
 expect(indexHtml.includes("AI 쇼츠 스튜디오"), "쇼츠 스튜디오가 없습니다.");
 expect(indexHtml.includes('data-community-view="newsletter"') && indexHtml.includes('data-community-view="board"'), "커뮤니티 화면 표기가 없습니다.");
-for (const route of ["home", "shorts", "webtoon", "masterpiece", "prompts", "newsletter", "videos", "memes", "board", "games", "usage", "admin", "help"]) {
+for (const route of ["home", "shorts", "webtoon", "masterpiece", "prompts", "newsletter", "videos", "memes", "board", "games", "usage", "admin", "help", "guidelines", "privacy", "terms"]) {
   expect(indexHtml.includes(`data-view-link="${route}"`) && indexHtml.includes(`data-view-panel="${route}"`), `직접 메뉴 화면 연결이 없습니다: ${route}`);
 }
 for (const route of ["jobs", "results", "files", "membership", "settings"]) {
@@ -126,10 +123,13 @@ expect(indexHtml.includes("세계명화 프롬프트") && indexHtml.includes('da
 expect(!indexHtml.includes('<iframe class="webtoon-iframe" src=') && !indexHtml.includes('<iframe class="app-iframe" src='), "임베드 도구가 홈에서 미리 로드됩니다.");
 expect(indexHtml.includes("embed-page") && indexHtml.includes("data-embed-loading") && indexHtml.includes("data-embed-fallback"), "임베드 지연 로딩 안내가 없습니다.");
 expect(indexHtml.includes("커뮤니티 운영 중") && indexHtml.includes("실제 파일"), "실제 커뮤니티와 샘플 기능의 범위 안내가 부족합니다.");
+expect(indexHtml.includes("data-platform-policy-consent") && indexHtml.includes("개인정보 처리 안내") && indexHtml.includes("커뮤니티 운영정책"), "로그인 동의 또는 회원 운영정책 화면이 없습니다.");
 const nonVisitorScripts = loungeScript.replace(topbarScript, "").replace(communityScript, "").replace(platformScript, "").replace(shortsScript, "");
 expect(!/\b(XMLHttpRequest|FormData)\b/.test(nonVisitorScripts) && !/\bfetch\s*\(/.test(nonVisitorScripts), "허용되지 않은 외부 요청·업로드 로직이 있습니다.");
 expect(communityScript.includes("reportmode-request-board.report-request-board.workers.dev") && communityScript.includes("/board/posts"), "통합 게시판 API 연결이 없습니다.");
-expect(platformScript.includes("/lounge/me") && platformScript.includes("/lounge/tools/") && indexHtml.includes("https://accounts.google.com/gsi/client"), "Google 로그인 또는 빌드 도구 API 연결이 없습니다.");
+expect(communityScript.includes("reportMailto") && communityScript.includes('["video/webm", "video/mp4"]'), "게시글·댓글 신고 또는 MP4 게시물 표시 계약이 없습니다.");
+expect(platformScript.includes("policy_consent_required") && platformScript.includes("data-platform-policy-consent"), "Google 로그인 전 정책 확인 계약이 없습니다.");
+expect(platformScript.includes("/lounge/me") && platformScript.includes("/lounge/tools/") && platformScript.includes("https://accounts.google.com/gsi/client"), "Google 로그인 또는 빌드 도구 API 연결이 없습니다.");
 expect(shortsScript.includes("renderWebm") && shortsScript.includes("BuildersPlatform.shorts.upload") && shortsScript.includes("BuildersPlatform.shorts.render") && shortsScript.includes("BuildersPlatform.shorts.renderSync") && shortsScript.includes("BuildersPlatform.shorts.publish"), "쇼츠 MPT·브라우저 렌더·저장·수동 게시 흐름이 없습니다.");
 expect(shortsScript.includes("data-shorts-progress") && shortsScript.includes("data-shorts-progress-value") && shortsScript.includes("startEstimatedProgress"), "쇼츠 제작 애니메이션 또는 진행률 표시가 없습니다.");
 expect(shortsScript.includes("BuildersPlatform?.getTool") && shortsScript.includes("data-shorts-cost-value") && !shortsScript.includes("Build 5"), "쇼츠 비용이 관리자 설정에서 동적으로 표시되지 않습니다.");
@@ -175,6 +175,7 @@ for (const file of [
   ".nojekyll",
   "THIRD_PARTY_NOTICES.md",
   "lounge/tokens.css",
+  "lounge/core.css",
   "lounge/base.css",
   "lounge/lounge.css",
   "lounge/community.css",
@@ -194,6 +195,7 @@ for (const file of [
   "lounge/jobs.css",
   "lounge/jobs.js",
   "lounge/settings.css",
+  "lounge/policies.css",
   "lounge/settings.js",
   "lounge/js/pages/home.css",
   "lounge/js/pages/home.js",

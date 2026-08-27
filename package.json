@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node scripts/serve.mjs",
-    "check": "node --check lounge/lounge.js && node --check lounge/platform.js && node --check lounge/shorts.js && node --check lounge/admin.js && node --check lounge/jobs.js && node --check lounge/settings.js && node --check lounge/topbar.js && node --check lounge/demo-data.js && node --check lounge/community-data.js && node --check lounge/catalog.js && node --check lounge/community.js && node --check lounge/js/pages/home.js",
+    "bundle:css": "node scripts/bundle-css.mjs",
+    "dev": "npm run bundle:css && node scripts/serve.mjs",
+    "check": "npm run bundle:css && node --check lounge/lounge.js && node --check lounge/platform.js && node --check lounge/shorts.js && node --check lounge/admin.js && node --check lounge/jobs.js && node --check lounge/settings.js && node --check lounge/topbar.js && node --check lounge/demo-data.js && node --check lounge/community-data.js && node --check lounge/catalog.js && node --check lounge/community.js && node --check lounge/js/pages/home.js",
     "test": "npm run build && node scripts/check-application.mjs",
-    "build": "node scripts/build.mjs",
+    "build": "npm run bundle:css && node scripts/build.mjs",
     "qa:ui": "playwright test",
     "qa:shots": "playwright test --grep @visual --update-snapshots",
     "qa": "npm run check && npm test && npm run qa:ui"

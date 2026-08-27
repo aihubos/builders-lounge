@@ -1,11 +1,9 @@
-import "./platform.js?v=20260826-unified-cards-v2";
+import "./platform.js?v=20260828-policy-v1";
 import { renderHome } from "./js/pages/home.js?v=20260826-unified-cards-v2";
 import { mountJobs } from "./jobs.js";
-import { mountAdmin } from "./admin.js?v=20260825-masterpiece-provider-v1";
 import "./settings.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";
-import { mountCommunity } from "./community.js?v=20260826-unified-cards-v2";
-import { mountShorts } from "./shorts.js?v=20260825-editable-progress-v2";
+import { mountCommunity } from "./community.js?v=20260828-policy-v1";
 import { catalogItems } from "./catalog.js";
 import { publishedItems } from "./community-data.js";
 
@@ -50,6 +48,9 @@ const viewMeta = Object.freeze({
   admin: { title: "관리자 설정", layout: "wide" },
   settings: { title: "설정", layout: "form" },
   help: { title: "이용 안내", layout: "reading" },
+  guidelines: { title: "커뮤니티 운영정책", layout: "reading" },
+  privacy: { title: "개인정보 처리 안내", layout: "reading" },
+  terms: { title: "이용약관", layout: "reading" },
 });
 
 let demoMode = readDemoMode();
@@ -57,6 +58,7 @@ let jobsController = null;
 let searchReturnFocus = null;
 const lazyEmbedRoutesLoaded = new Set();
 const mountedRouteModules = new Set();
+const routeModuleLoads = new Map();
 
 const SEARCH_TOOLS = Object.freeze([
   { id: "search-shorts", title: "AI 쇼츠 스튜디오", summary: "긴 영상에서 세로형 숏폼 후보를 찾는 제작 흐름", route: "shorts", typeLabel: "제작 도구", icon: "▶" },
@@ -182,6 +184,9 @@ function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "h
   if (view === "membership") return "Google 계정과 현재 빌드 잔액은 로그인한 계정 기준으로 표시됩니다.";
   if (view === "settings") return "보기 설정은 이 브라우저에 저장하고, 연결 상태는 서비스 응답을 기준으로 표시합니다.";
   if (view === "help") return "로그인, 빌드, 파일 저장, 게시 범위를 실제 운영 기준으로 안내합니다.";
+  if (view === "guidelines") return "신고 방법과 게시물·계정 운영 기준을 확인할 수 있습니다.";
+  if (view === "privacy") return "수집 정보, 이용 목적과 계정 삭제 요청 방법을 안내합니다.";
+  if (view === "terms") return "계정, 게시물, 빌드 포인트와 AI 결과물 이용 기준을 안내합니다.";
   if (view === "admin") return "관리자만 API 키·모델·빌드 가격·멤버 잔액·삭제 권한을 설정할 수 있습니다. API 키는 다시 표시되지 않습니다.";
   return "";
 }
@@ -333,14 +338,32 @@ function loadLazyEmbed(view) {
 }
 
 function mountRouteModule(view) {
-  if (mountedRouteModules.has(view)) return;
+  if (mountedRouteModules.has(view) || routeModuleLoads.has(view)) return;
   if (view === "shorts") {
     const root = document.querySelector('[data-view-panel="shorts"]');
-    if (root) { mountShorts(root); mountedRouteModules.add(view); }
+    if (!root) return;
+    root.innerHTML = '<div class="community-loading" role="status" aria-live="polite">AI 쇼츠 스튜디오를 불러오는 중입니다.</div>';
+    const loading = import("./shorts.js?v=20260825-editable-progress-v2").then(({ mountShorts }) => {
+      mountShorts(root);
+      mountedRouteModules.add(view);
+      promoteRouteTitle(view);
+    }).catch((error) => {
+      root.innerHTML = `<div class="community-error-state" role="alert"><strong>AI 쇼츠 스튜디오를 불러오지 못했습니다.</strong><p>${escapeHtml(error.message)}</p></div>`;
+    }).finally(() => routeModuleLoads.delete(view));
+    routeModuleLoads.set(view, loading);
   }
   if (view === "admin") {
     const root = document.querySelector('[data-admin-slot]');
-    if (root) { mountAdmin(root); mountedRouteModules.add(view); }
+    if (!root) return;
+    root.innerHTML = '<div class="community-loading" role="status" aria-live="polite">관리자 설정을 불러오는 중입니다.</div>';
+    const loading = import("./admin.js?v=20260825-masterpiece-provider-v1").then(({ mountAdmin }) => {
+      mountAdmin(root);
+      mountedRouteModules.add(view);
+      promoteRouteTitle(view);
+    }).catch((error) => {
+      root.innerHTML = `<div class="community-error-state" role="alert"><strong>관리자 설정을 불러오지 못했습니다.</strong><p>${escapeHtml(error.message)}</p></div>`;
+    }).finally(() => routeModuleLoads.delete(view));
+    routeModuleLoads.set(view, loading);
   }
 }
 

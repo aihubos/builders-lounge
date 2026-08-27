@@ -11,22 +11,15 @@
     <meta property="og:description" content="AI 도구를 만들고, 프롬프트와 경험을 나누며 함께 성장하는 AI Builders Lab의 공식 커뮤니티 허브입니다." />
     <meta property="og:image" content="https://aihubos.github.io/builders-lounge/assets/og.png" />
     <link rel="canonical" href="https://aihubos.github.io/builders-lounge/" />
+    <link rel="preconnect" href="https://reportmode-request-board.report-request-board.workers.dev" crossorigin />
+    <link rel="preload" as="fetch" href="https://reportmode-request-board.report-request-board.workers.dev/board/posts?page=1&amp;pageSize=6&amp;category=all&amp;sort=latest&amp;q=" crossorigin />
     <meta name="description" content="AI 도구를 만들고, 프롬프트와 경험을 나누며 함께 성장하는 AI Builders Lab의 공식 커뮤니티 허브입니다." />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <link rel="preload" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css" />
-    <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css" />
-    <link rel="stylesheet" href="lounge/tokens.css?v=20260827-ui-v1" />
-    <link rel="stylesheet" href="lounge/base.css?v=20260827-ui-v1" />
-    <link rel="stylesheet" href="lounge/topbar.css?v=20260827-ui-v1" />
-    <link rel="stylesheet" href="lounge/lounge.css?v=20260827-ui-v1" />
-    <link rel="stylesheet" href="lounge/portal.css?v=20260827-ui-v1" />
-    <link rel="stylesheet" href="lounge/js/pages/home.css?v=20260827-ui-v1" />
-    <link rel="stylesheet" href="lounge/community.css?v=20260827-ui-v1" />
-    <link rel="stylesheet" href="lounge/platform.css?v=20260827-ui-v1" />
-    <link rel="stylesheet" href="lounge/jobs.css?v=20260827-ui-v1" />
-    <link rel="stylesheet" href="lounge/settings.css?v=20260827-ui-v1" />
-    <link rel="stylesheet" href="lounge/shorts.css?v=20260827-ui-v1" />
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="lounge/core.css?v=20260828-performance-v1" />
+    <link rel="stylesheet" href="lounge/jobs.css?v=20260827-ui-v1" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="lounge/settings.css?v=20260827-ui-v1" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="lounge/policies.css?v=20260828-policy-v1" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="lounge/shorts.css?v=20260827-ui-v1" media="print" onload="this.media='all'" />
     <title>Builders Lounge | AI Builders Lab</title>
   </head>
   <body class="lounge-page">
@@ -111,6 +104,7 @@
                 <a class="nav-item" href="#membership" data-view-link="membership"><span class="nav-label">내 계정</span></a>
                 <a class="nav-item" href="#settings" data-view-link="settings"><span class="nav-label">설정</span></a>
                 <a class="nav-item" href="#help" data-view-link="help"><span class="nav-label">도움말</span></a>
+                <a class="nav-item" href="#guidelines" data-view-link="guidelines"><span class="nav-label">커뮤니티 운영정책</span></a>
               </div>
             </div>
             <div class="nav-group" data-admin-nav-group data-admin-only hidden>
@@ -144,7 +138,16 @@
             <div class="lounge-notice" role="status" aria-live="polite" data-lounge-notice>
             </div>
 
-            <section class="view-panel is-visible" id="view-home" data-view-panel="home"><div data-home-mount></div></section>
+            <section class="view-panel is-visible" id="view-home" data-view-panel="home">
+              <div data-home-mount>
+                <section class="lounge-home portal-home" aria-labelledby="home-dashboard-title" data-home-prerender>
+                  <section class="portal-home-intro" data-home-intro>
+                    <div class="portal-home-intro-copy"><p class="portal-home-eyebrow">BUILDERS LOUNGE</p><h1 id="home-dashboard-title">만들고, 나누고, 함께 성장해요</h1><p>만든 결과와 경험을 읽고, 다음 작업을 바로 시작하세요.</p></div>
+                    <div class="portal-home-intro-actions"><span class="portal-home-intro-caption">AI 제작 도구</span><div class="portal-home-intro-buttons"><button class="primary-button" type="button" data-home-module="shorts">AI 쇼츠 만들기</button><button class="secondary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></div></div>
+                  </section>
+                </section>
+              </div>
+            </section>
             <section class="view-panel" id="view-shorts" data-view-panel="shorts" hidden></section>
             <section class="view-panel embed-page" id="view-webtoon" data-view-panel="webtoon" hidden>
               <div class="webtoon-embed-head"><div><p class="section-label">MAKE · WEBTOON</p><h3>웹툰 제작기</h3><p>Google 로그인과 빌드 잔액을 공유해 공감툰 스토리와 프롬프트를 만듭니다.</p></div><div class="webtoon-embed-actions"><span class="sample-label webtoon-live-label" data-tool-cost-label="webtoon">관리자 설정 사용</span><a class="secondary-button" href="https://aihubos.github.io/gonggamtoon/" target="_blank" rel="noopener">새 탭으로 열기 <span aria-hidden="true">↗</span></a></div></div>
@@ -168,7 +171,15 @@
             <section class="view-panel" id="view-usage" data-view-panel="usage" hidden><div data-usage-slot></div></section>
             <section class="view-panel" id="view-membership" data-view-panel="membership" hidden>
               <div class="panel-heading"><p class="section-label">GOOGLE ACCOUNT</p><h3>내 계정</h3><p>Google 계정과 빌드 잔액을 확인합니다.</p></div>
-                <div class="membership-status-card"><span class="status-mark status-mark-review" aria-hidden="true"></span><div><span class="sample-label">빌드 잔액</span><h4 data-build-balance>로그인 전</h4><p>글이나 댓글을 남기면 각각 1빌드가 적립됩니다. 쇼츠 영상은 저장 성공 시 관리자 설정 비용을 사용하고, 실패하거나 취소하면 사용되지 않습니다.</p><button class="primary-button" type="button" data-platform-login-open>Google 계정 확인</button></div></div>
+              <div class="membership-status-card"><span class="status-mark status-mark-review" aria-hidden="true"></span><div><span class="sample-label">빌드 잔액</span><h4 data-build-balance>로그인 전</h4><p>글이나 댓글을 남기면 각각 1빌드가 적립됩니다. 쇼츠 영상은 저장 성공 시 관리자 설정 비용을 사용하고, 실패하거나 취소하면 사용되지 않습니다.</p><button class="primary-button" type="button" data-platform-login-open>Google 계정 확인</button></div></div>
+              <section class="membership-delete-card" aria-labelledby="membership-delete-title">
+                <h2 id="membership-delete-title">계정과 공개 글 관리</h2>
+                <p>계정 삭제는 운영 메일로 요청할 수 있습니다. 본인 확인 후 관리자가 계정과 빌드 내역을 삭제하며, 공개 글과 댓글도 함께 삭제할지 확인합니다.</p>
+                <div class="membership-actions">
+                  <a class="secondary-button" href="mailto:hello@ai-hub-os.com?subject=%5BBuilders%20Lounge%5D%20%EA%B3%84%EC%A0%95%20%EC%82%AD%EC%A0%9C%20%EC%9A%94%EC%B2%AD">계정 삭제 요청</a>
+                  <a class="text-button" href="#privacy" data-view-link="privacy">개인정보 처리 안내 보기</a>
+                </div>
+              </section>
             </section>
             <section class="view-panel" id="view-admin" data-view-panel="admin" hidden><div data-admin-slot></div></section>
             <section class="view-panel" id="view-settings" data-view-panel="settings" hidden><div data-settings-slot></div></section>
@@ -179,19 +190,56 @@
                 <details><summary>샘플 데이터란 무엇인가요?</summary><p>화면 구성과 이동을 확인하기 위한 가상의 작업·결과·파일입니다. 모든 항목에 샘플 표시가 붙으며 실제 데이터가 아닙니다.</p></details>
                 <details><summary>실제 파일이 전송되나요?</summary><p>쇼츠는 MoneyPrinterTurbo(MPT)가 만든 MP4 또는 브라우저가 만든 WebM을 인증된 저장소에 보관하며, 사용자가 게시 버튼을 누르기 전에는 공개되지 않습니다.</p></details>
                 <details><summary>API 키는 어디에 저장되나요?</summary><p>사용자 브라우저에는 저장하지 않습니다. Jeremy 관리자 계정이 입력한 키만 서버에서 암호화해 보관하며, 저장 후 화면에 다시 표시하지 않습니다.</p></details>
-                <details><summary>게시판 로그인과 개인정보는 어떻게 처리하나요?</summary><p>Builders Lounge에서는 Google 로그인 계정 이름으로 글과 댓글을 작성합니다. 로그인 토큰은 현재 탭의 메모리에만 유지합니다. 공개 글에는 일반 텍스트만 허용하므로 개인정보·비밀값·내부 경로를 작성하지 마세요.</p></details>
-                <details><summary>부적절한 글이나 운영 문제는 어디에 알리나요?</summary><p>하단 문의하기 또는 hello@ai-hub-os.com으로 글 주소와 사유를 보내 주세요. 운영자는 Report Hub와 공유된 관리자 기능으로 필요한 조치를 확인합니다.</p></details>
+                <details><summary>게시판 로그인과 개인정보는 어떻게 처리하나요?</summary><p>Builders Lounge에서는 Google 로그인 계정 이름으로 글과 댓글을 작성합니다. 로그인 토큰은 현재 탭의 메모리에만 유지합니다. 자세한 수집 항목과 삭제 요청 방법은 개인정보 처리 안내에서 확인할 수 있습니다.</p></details>
+                <details><summary>부적절한 글이나 운영 문제는 어디에 알리나요?</summary><p>글과 댓글의 신고 링크를 누르면 항목 번호와 주소가 포함된 운영 메일을 보낼 수 있습니다. 직접 문의할 때는 hello@ai-hub-os.com으로 글 주소와 사유를 보내 주세요.</p></details>
                 <details><summary>뉴스레터·영상·프롬프트 출처는 어디인가요?</summary><p>Vault 후보를 공개 가능한 내용으로 다시 작성하고 원문 링크를 붙입니다. 외부 뉴스레터·영상·기사 전문을 복사하지 않으며, 원본 프로젝트와 YouTube는 사용자가 직접 열 때만 불러옵니다.</p></details>
                 <details><summary>게임과 영상이 보이지 않으면 어떻게 하나요?</summary><p>브라우저가 iframe을 차단할 수 있습니다. 각 카드의 새 탭 링크로 원본을 열어 주세요. 자동 재생은 하지 않고 선택한 콘텐츠 하나만 표시합니다.</p></details>
                 <details><summary>메뉴와 보기 설정을 초기화하려면?</summary><p>설정에서 보기 밀도와 샘플 표시를 바꿀 수 있습니다. 브라우저 저장값을 지우면 기본값(여유 있게·샘플 표시)으로 돌아갑니다.</p></details>
               </div>
             </section>
 
+            <section class="view-panel" id="view-guidelines" data-view-panel="guidelines" hidden>
+              <article class="policy-page" aria-labelledby="guidelines-title">
+                <div class="panel-heading"><p class="section-label">COMMUNITY POLICY</p><h3 id="guidelines-title">커뮤니티 운영정책</h3><p>안전하게 질문하고 결과물을 나누기 위한 기본 원칙입니다.</p></div>
+                <div class="policy-meta"><span>시행일 <strong>2026년 8월 28일</strong></span><span>운영 문의 <strong>hello@ai-hub-os.com</strong></span></div>
+                <section class="policy-summary"><h2>사람과 결과물을 존중합니다</h2><p>Builders Lounge는 AI를 만들고 배우는 사람이 경험을 공유하는 커뮤니티입니다. 의견이 달라도 사람을 공격하지 않고, 공개 권한이 있는 내용만 올립니다.</p></section>
+                <section class="policy-section"><h2>게시할 수 없는 내용</h2><ul class="policy-list"><li>불법 행위, 사기, 피싱 또는 위험한 행동을 돕는 내용</li><li>특정인을 모욕하거나 위협하고 차별과 혐오를 조장하는 내용</li><li>타인의 개인정보, 비밀번호, API 키, 내부 경로와 비공개 자료</li><li>반복 광고, 도배, 악성 링크와 서비스 운영을 방해하는 내용</li><li>저작권, 상표권, 초상권 등 타인의 권리를 침해하는 자료</li><li>설명 없이 실제 사람으로 오인하게 만드는 조작 이미지와 영상</li></ul></section>
+                <section class="policy-section"><h2>신고와 운영 조치</h2><p>각 글과 댓글의 신고 링크에서 항목 번호, 주소, 신고 사유를 운영 메일로 보낼 수 있습니다. 운영자는 내용을 확인한 뒤 게시물이나 댓글을 삭제하거나 계정을 제한할 수 있습니다. 조치에 이견이 있으면 같은 메일로 재검토를 요청할 수 있습니다.</p></section>
+                <section class="policy-contact"><h2>빠른 신고</h2><p>신고 대상 주소와 이유를 함께 보내 주세요. 긴급한 범죄나 신체 위협은 서비스 메일보다 관계 기관에 먼저 연락해 주세요.</p><div class="policy-actions"><a class="primary-button" href="mailto:hello@ai-hub-os.com?subject=%5BBuilders%20Lounge%5D%20%EC%BD%98%ED%85%90%EC%B8%A0%20%EC%8B%A0%EA%B3%A0">운영 메일로 신고</a><a class="secondary-button" href="#board" data-view-link="board">자유게시판으로 돌아가기</a></div></section>
+              </article>
+            </section>
+
+            <section class="view-panel" id="view-privacy" data-view-panel="privacy" hidden>
+              <article class="policy-page" aria-labelledby="privacy-title">
+                <div class="panel-heading"><p class="section-label">PRIVACY</p><h3 id="privacy-title">개인정보 처리 안내</h3><p>어떤 정보를 왜 사용하고 어떻게 삭제를 요청하는지 안내합니다.</p></div>
+                <div class="policy-meta"><span>시행일 <strong>2026년 8월 28일</strong></span><span>개인정보 문의 <strong>hello@ai-hub-os.com</strong></span></div>
+                <section class="policy-section"><h2>수집하는 정보</h2><ul class="policy-list"><li>Google 로그인 식별자, 이메일, 표시 이름과 프로필 이미지 주소</li><li>사용자가 작성한 게시글과 댓글, 생성 도구에 입력한 내용</li><li>빌드 적립과 사용 내역, AI 작업 상태와 결과 파일 정보</li><li>중복 방문을 구분하기 위한 무작위 방문자 번호와 방문 날짜</li></ul></section>
+                <section class="policy-section"><h2>이용 목적</h2><p>로그인 확인, 게시글 작성자 구분, 빌드 잔액 계산, AI 도구 실행, 결과 저장, 오류 대응과 커뮤니티 운영을 위해 사용합니다. 광고 목적의 개인정보 판매는 하지 않습니다.</p></section>
+                <section class="policy-section"><h2>보관과 외부 서비스</h2><p>정적 화면은 GitHub Pages에서 제공하고, 계정·게시판·빌드·AI 작업 정보는 Cloudflare 기반 서버와 저장소에서 처리합니다. Google 로그인을 사용하며, 사용자가 AI 생성 기능을 실행할 때 입력 내용이 관리자가 선택한 AI 제공자에게 전송될 수 있습니다. 로그인 토큰은 현재 탭 메모리에만 유지합니다.</p></section>
+                <section class="policy-section"><h2>삭제와 공개 범위</h2><p>계정 정보는 서비스 이용 중 보관하며 삭제 요청을 확인한 뒤 관리자가 삭제합니다. 공개 글과 댓글은 사용자가 직접 삭제하거나 계정 삭제 요청 때 함께 삭제를 요청할 수 있습니다. 운영상 필요한 최소 처리 기록은 분쟁 대응을 위해 별도로 남을 수 있습니다.</p></section>
+                <section class="policy-contact"><h2>열람·정정·삭제 요청</h2><p>Google 계정 이메일로 요청하면 본인 확인 뒤 관리자 화면에서 처리합니다. 자동 완료 기능은 아직 제공하지 않습니다.</p><div class="policy-actions"><a class="primary-button" href="mailto:hello@ai-hub-os.com?subject=%5BBuilders%20Lounge%5D%20%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%20%EC%9A%94%EC%B2%AD">개인정보 요청 보내기</a><a class="secondary-button" href="#terms" data-view-link="terms">이용약관 보기</a></div></section>
+              </article>
+            </section>
+
+            <section class="view-panel" id="view-terms" data-view-panel="terms" hidden>
+              <article class="policy-page" aria-labelledby="terms-title">
+                <div class="panel-heading"><p class="section-label">TERMS</p><h3 id="terms-title">이용약관</h3><p>계정, 게시물, 빌드와 AI 도구 이용 기준을 안내합니다.</p></div>
+                <div class="policy-meta"><span>시행일 <strong>2026년 8월 28일</strong></span><span>서비스 문의 <strong>hello@ai-hub-os.com</strong></span></div>
+                <section class="policy-section"><h2>계정과 서비스 이용</h2><p>Google 계정으로 로그인하면 Builders Lounge 계정이 생성됩니다. 사용자는 본인 계정을 사용하고, 계정으로 이루어진 활동과 공개 게시물에 책임을 집니다. 서비스 운영을 방해하거나 다른 사람의 권리를 침해하면 게시물 삭제 또는 계정 이용 제한이 이루어질 수 있습니다.</p></section>
+                <section class="policy-section"><h2>게시물과 AI 결과물</h2><p>사용자가 작성한 게시물의 권리는 사용자에게 있습니다. 사용자는 서비스가 게시물을 화면에 표시하고 운영하는 데 필요한 범위의 이용을 허락합니다. AI 결과물은 오류나 권리 문제가 있을 수 있으므로 공개·배포 전 사용자가 사실과 권리를 확인해야 합니다.</p></section>
+                <section class="policy-section"><h2>빌드 포인트</h2><p>빌드는 사이트 안에서 AI 도구 사용량을 표시하는 운영 포인트이며 현금이나 전자금융 수단이 아닙니다. 글과 댓글 삭제, 작업 실패, 관리자 조정에 따라 잔액이 달라질 수 있습니다. 유료 판매를 시작하기 전에는 별도 가격과 환불 기준을 먼저 안내합니다.</p></section>
+                <section class="policy-section"><h2>서비스 변경과 책임 범위</h2><p>외부 AI 제공자, 저장소, 로그인 서비스의 장애나 정책 변경으로 일부 기능이 일시 중단될 수 있습니다. 중요한 결과물은 사용자가 별도로 보관해 주세요. 운영정책이나 약관이 바뀌면 시행일과 변경 내용을 이 화면에 알립니다.</p></section>
+                <section class="policy-contact"><h2>동의와 문의</h2><p>Google 로그인 전 이용약관과 개인정보 처리 안내를 확인하고 동의해야 합니다. 궁금한 점이나 이의가 있으면 운영 메일로 알려 주세요.</p><div class="policy-actions"><a class="primary-button" href="mailto:hello@ai-hub-os.com?subject=%5BBuilders%20Lounge%5D%20%EC%9D%B4%EC%9A%A9%20%EB%AC%B8%EC%9D%98">운영자에게 문의</a><a class="secondary-button" href="#privacy" data-view-link="privacy">개인정보 처리 안내 보기</a></div></section>
+              </article>
+            </section>
+
             <footer class="portal-footer">
-              <div class="portal-footer-brand"><picture><source srcset="assets/builders-lounge-logo.webp" type="image/webp" /><img class="portal-footer-logo" src="assets/builders-lounge-logo.png" width="180" height="60" alt="Builders Lounge" loading="lazy" decoding="async" /></picture><p>AI를 만들고 배우는 사람들이 함께 성장하는 AI Builders Lab의 공식 커뮤니티 허브입니다.</p></div>
+              <div class="portal-footer-brand"><picture><source srcset="assets/builders-lounge-logo.webp" type="image/webp" /><img class="portal-footer-logo" src="assets/builders-lounge-logo.png" width="180" height="60" alt="Builders Lounge" decoding="async" /></picture><p>AI를 만들고 배우는 사람들이 함께 성장하는 AI Builders Lab의 공식 커뮤니티 허브입니다.</p></div>
               <nav aria-label="Builders Lounge 하단 메뉴">
                 <a href="#help" data-view-link="help">이용 안내</a>
-                <a href="#board" data-view-link="board">커뮤니티 운영</a>
+                <a href="#guidelines" data-view-link="guidelines">커뮤니티 운영정책</a>
+                <a href="#privacy" data-view-link="privacy">개인정보 처리 안내</a>
+                <a href="#terms" data-view-link="terms">이용약관</a>
                 <a href="mailto:hello@ai-hub-os.com">문의하기</a>
                 <a href="https://github.com/aihubos/builders-lounge" target="_blank" rel="noopener">공개 저장소</a>
                 <a href="THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener">오픈소스 라이선스</a>
@@ -231,12 +279,16 @@
           <li><b>AI</b><span>빌드로 쇼츠·웹툰·세계명화 생성 기능을 사용합니다.</span></li>
           <li><b>KEY</b><span>사용자는 API 키를 입력하지 않습니다. 관리자가 서버에서 설정합니다.</span></li>
         </ul>
+        <label class="platform-policy-consent">
+          <input type="checkbox" data-platform-policy-consent />
+          <span><a href="#terms" data-platform-policy-route="terms">이용약관</a>과 <a href="#privacy" data-platform-policy-route="privacy">개인정보 처리 안내</a>를 확인했고 동의합니다.</span>
+        </label>
         <div class="platform-google-button" data-google-signin-button></div>
         <p class="platform-login-status" data-platform-login-status role="status"></p>
       </section>
     </dialog>
 
     <div class="visually-hidden" role="status" aria-live="polite" data-lounge-live></div>
-    <script type="module" src="lounge/lounge.js?v=20260826-unified-cards-v2"></script>
+    <script type="module" src="lounge/lounge.js?v=20260828-policy-v1"></script>
   </body>
 </html>

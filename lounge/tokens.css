@@ -16,7 +16,7 @@
   --weight-medium: 500;
   --weight-semibold: 600;
   --weight-bold: 700;
-  --font-family-sans: "Wanted Sans Variable", "Wanted Sans", "Apple SD Gothic Neo", Pretendard, "Noto Sans KR", sans-serif;
+  --font-family-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Wanted Sans Variable", "Wanted Sans", Pretendard, "Noto Sans KR", sans-serif;
 
   /* Plan color tokens */
   --color-brand-navy: #000c3d;
@@ -158,6 +158,10 @@
   --lounge-font-meta: var(--type-meta);
   --lounge-font-chip: var(--type-label);
   --lounge-home-quad-min: 280px;
+  --lounge-home-reserve-wide: 105rem;
+  --lounge-home-reserve-tablet: 144rem;
+  --lounge-home-reserve-mobile: 223rem;
+  --lounge-home-board-reserve: 13.5rem;
   --lounge-card-cover-ratio: 16 / 10;
   --lounge-card-radius: var(--radius-card);
   --lounge-radius: var(--radius-panel);

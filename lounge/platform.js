@@ -4,6 +4,7 @@ const API_BASE = window.location.port === "8787"
 
 const ERROR_MESSAGES = Object.freeze({
   login_required: "Google 로그인이 필요합니다.",
+  policy_consent_required: "이용약관과 개인정보 처리 안내 확인이 필요합니다.",
   google_login_not_configured: "Google 로그인 설정이 아직 완료되지 않았습니다.",
   invalid_google_token: "로그인 시간이 만료되었습니다. 다시 로그인해 주세요.",
   unverified_google_account: "확인된 Google 계정으로 로그인해 주세요.",
@@ -68,6 +69,7 @@ const subscribers = new Set();
 let expiryTimer = 0;
 let initPromise = null;
 let loginReturnFocus = null;
+let googleIdentityPromise = null;
 
 function errorMessage(code, fallback = "요청을 처리하지 못했습니다.") {
   return ERROR_MESSAGES[code] || fallback;
@@ -147,6 +149,9 @@ function setLiveMessage(message) {
 }
 
 async function acceptCredential(credential) {
+  if (!document.querySelector("[data-platform-policy-consent]")?.checked) {
+    throw Object.assign(new Error(ERROR_MESSAGES.policy_consent_required), { code: "policy_consent_required" });
+  }
   state.credential = String(credential || "");
   state.error = "";
   try {
@@ -167,15 +172,42 @@ async function acceptCredential(credential) {
   }
 }
 
-function waitForGoogle(attempt = 0) {
+function loadGoogleIdentity() {
   if (window.google?.accounts?.id) return Promise.resolve(window.google.accounts.id);
-  if (attempt >= 80) return Promise.reject(new Error("Google 로그인 모듈을 불러오지 못했습니다."));
-  return new Promise((resolve) => window.setTimeout(resolve, 100)).then(() => waitForGoogle(attempt + 1));
+  if (googleIdentityPromise) return googleIdentityPromise;
+  googleIdentityPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.dataset.googleIdentity = "true";
+    script.addEventListener("load", () => {
+      if (window.google?.accounts?.id) resolve(window.google.accounts.id);
+      else reject(new Error("Google 로그인 모듈을 확인하지 못했습니다."));
+    }, { once: true });
+    script.addEventListener("error", () => reject(new Error("Google 로그인 모듈을 불러오지 못했습니다.")), { once: true });
+    document.head.append(script);
+  }).catch((error) => {
+    googleIdentityPromise = null;
+    throw error;
+  });
+  return googleIdentityPromise;
 }
 
 async function renderGoogleButtons() {
-  if (!state.config?.googleClientId) return;
-  const googleId = await waitForGoogle();
+  const consent = document.querySelector("[data-platform-policy-consent]")?.checked === true;
+  if (!consent || !state.config?.googleClientId) {
+    document.querySelectorAll("[data-google-signin-button]").forEach((container) => {
+      const placeholder = document.createElement("button");
+      placeholder.type = "button";
+      placeholder.className = "platform-policy-login-placeholder";
+      placeholder.disabled = true;
+      placeholder.textContent = consent ? "Google 로그인 설정을 확인하고 있습니다" : "약관 확인 후 Google 로그인 가능";
+      container.replaceChildren(placeholder);
+    });
+    return;
+  }
+  const googleId = await loadGoogleIdentity();
   googleId.initialize({
     client_id: state.config.googleClientId,
     callback: (response) => { void acceptCredential(response?.credential).catch((error) => showLoginStatus(error.message, true)); },
@@ -209,9 +241,11 @@ function openLogin() {
   const dialog = document.querySelector("[data-platform-login-dialog]");
   if (!dialog) return;
   if (!dialog.open) loginReturnFocus = document.activeElement;
+  const policyConsent = dialog.querySelector("[data-platform-policy-consent]");
+  if (policyConsent) policyConsent.checked = false;
   if (!dialog.open) dialog.showModal?.();
   if (!state.config?.loginReady) showLoginStatus("Google OAuth 클라이언트 ID를 서버에 먼저 설정해 주세요.", true);
-  else showLoginStatus("로그인 정보는 현재 탭의 메모리에만 유지되며 API 키는 서버에서만 사용됩니다.");
+  else showLoginStatus("이용약관과 개인정보 처리 안내를 확인하면 Google 로그인 버튼이 열립니다.");
   void renderGoogleButtons().catch((error) => showLoginStatus(error.message, true));
   window.requestAnimationFrame(() => dialog.querySelector("[data-platform-login-close]")?.focus({ preventScroll: true }));
 }
@@ -270,6 +304,14 @@ function escapeHtml(value) {
 
 function bindUi() {
   document.addEventListener("click", (event) => {
+    const policyRoute = event.target.closest("[data-platform-policy-route]");
+    if (policyRoute) {
+      event.preventDefault();
+      const view = policyRoute.dataset.platformPolicyRoute;
+      closeLogin();
+      window.requestAnimationFrame(() => window.dispatchEvent(new CustomEvent("lounge:navigate", { detail: { view } })));
+      return;
+    }
     if (event.target.closest("[data-platform-login-open]")) { openLogin(); return; }
     if (event.target.closest("[data-platform-login-close]")) { closeLogin(); return; }
     if (event.target.closest("[data-platform-logout]")) { clearSession(false); setLiveMessage("로그아웃되었습니다."); return; }
@@ -285,6 +327,13 @@ function bindUi() {
       return;
     }
     document.querySelectorAll("[data-platform-account-popover]").forEach((node) => { node.hidden = true; });
+  });
+  document.addEventListener("change", (event) => {
+    if (!event.target.matches?.("[data-platform-policy-consent]")) return;
+    showLoginStatus(event.target.checked
+      ? "동의가 확인되었습니다. Google 계정으로 계속해 주세요."
+      : "이용약관과 개인정보 처리 안내 확인이 필요합니다.", !event.target.checked);
+    void renderGoogleButtons().catch((error) => showLoginStatus(error.message, true));
   });
   document.querySelector("[data-platform-login-dialog]")?.addEventListener("click", (event) => {
     if (event.target === event.currentTarget) closeLogin();

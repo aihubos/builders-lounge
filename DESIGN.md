@@ -67,7 +67,7 @@
 
 교육 홈페이지 기본 글꼴은 `-apple-system`, `BlinkMacSystemFont`, `Apple SD Gothic Neo`, `Pretendard`, `Noto Sans KR`, `sans-serif` 순서다. 별도 웹폰트는 내려받지 않는다.
 
-Builders Lounge 공개 커뮤니티는 다모앙형 읽기 리듬을 따른다. 본문 글꼴은 Wanted Sans Variable을 실제로 불러오고, 제목보다 글 목록이 먼저 보이게 한다.
+Builders Lounge 공개 커뮤니티는 다모앙형 읽기 리듬을 따른다. 본문 글꼴은 macOS·iOS 시스템 한글 글꼴을 먼저 사용하고, 기기에 설치된 Wanted Sans·Pretendard·Noto Sans KR을 순서대로 사용한다. 외부 웹폰트 때문에 첫 글자와 배치가 늦게 바뀌지 않게 하며, 제목보다 글 목록이 먼저 보이게 한다.
 
 | 역할 | 크기 | 굵기 | 행간 | 자간 |
 |---|---:|---:|---:|---:|
@@ -153,7 +153,7 @@ CSS에서는 작은 글 크기를 `--font-small: 0.875rem` 토큰으로 사용�
 - `--lounge-focus-ring-width: 3px`: 키보드 포커스 링 두께
 - `--lounge-motion-duration: 180ms`: 색상·투명도 전환 시간
 - `--lounge-motion-ease: cubic-bezier(0.22, 1, 0.36, 1)`: 전환 easing
-- `--lounge-font-sans: "Wanted Sans Variable", "Wanted Sans", "Apple SD Gothic Neo", Pretendard, "Noto Sans KR", sans-serif`: 라운지 본문 글꼴
+- `--lounge-font-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Wanted Sans Variable", "Wanted Sans", Pretendard, "Noto Sans KR", sans-serif`: 외부 다운로드 없는 라운지 본문 글꼴
 - `--lounge-font-weight-body: 400`: 본문 기본 굵기
 - `--lounge-letter-spacing: -0.025em`: 본문 자간
 - `--lounge-topbar-height: 64px`: 데스크톱 상단 높이
@@ -221,16 +221,32 @@ CSS에서는 작은 글 크기를 `--font-small: 0.875rem` 토큰으로 사용�
 - `--lounge-font-meta: 0.875rem`: 작성자, 댓글, 날짜
 - `--lounge-font-chip: 0.8125rem`: 분류 칩
 - `--lounge-home-quad-min: 280px`: 홈 콘텐츠 묶음의 최소 높이
+- `--lounge-home-reserve-wide: 105rem`, `--lounge-home-reserve-tablet: 144rem`, `--lounge-home-reserve-mobile: 223rem`: 첫 홈 렌더 전 최종 콘텐츠 높이에 가까운 공간
+- `--lounge-home-board-reserve: 13.5rem`: 게시판 응답 전 글 목록 공간
 - `--lounge-card-cover-ratio: 16 / 10`: 프롬프트, 뉴스레터, 이미지 게시판 카드 비율
 - `--lounge-card-radius: 12px`: 카드뉴스 모서리
 - `--lounge-shadow: 0 4px 16px rgba(7, 19, 49, 0.08)`: 모바일 메뉴와 상단바에만 허용하는 낮은 그림자
 
 앱 본문은 흰색 배경과 1px 구분선을 기본으로 하며, 동일 크기 기능 카드를 반복하지 않는다. AI 회의록 메뉴와 제작 화면은 공개 라운지에서 제거한다. 쇼츠 스튜디오는 만들기 메뉴에 유지한다.
 
+모바일 홈의 첫 제목은 `--type-page-title`을 사용해 긴 게시글 제목보다 시각적 위계가 높아야 한다. 글 목록 본문은 1rem 이상을 유지하되 홈 제목보다 커지지 않는다.
+
+홈 게시판 미리보기 제목은 32자까지 표시하고 나머지는 말줄임표로 줄인다. 링크의 접근성 이름과 `title`에는 전체 제목을 유지하며 게시판 목록·상세의 원문은 줄이지 않는다.
+
 ## Lounge 현재 화면·접근성 계약
 
-현재 라우트는 `#home`, `#shorts`, `#webtoon`, `#masterpiece`, `#prompts`, `#newsletter`, `#videos`, `#memes`, `#board`, `#games`, `#jobs`, `#results`, `#files`, `#usage`, `#membership`, `#settings`, `#help`, `#admin`이다. 홈은 게시판·프롬프트·뉴스레터·이미지 게시판·AI 제작 도구를 먼저 보여주며, 쇼츠·커뮤니티·관리자 화면은 해당 라우트에 처음 들어왔을 때 마운트한다.
+현재 라우트는 `#home`, `#shorts`, `#webtoon`, `#masterpiece`, `#prompts`, `#newsletter`, `#videos`, `#memes`, `#board`, `#games`, `#jobs`, `#results`, `#files`, `#usage`, `#membership`, `#settings`, `#help`, `#guidelines`, `#privacy`, `#terms`, `#admin`이다. 홈은 게시판·프롬프트·뉴스레터·이미지 게시판·AI 제작 도구를 먼저 보여주며, 쇼츠·커뮤니티·관리자 화면은 해당 라우트에 처음 들어왔을 때 마운트한다.
 
 키보드 사용자는 건너뛰기 링크와 `:focus-visible` 링을 사용할 수 있고, 주요 조작은 최소 44px 높이로 유지한다. 모바일 메뉴가 닫히면 사이드바는 `inert` 상태가 되며, 검색·로그인·커뮤니티 대화상자는 닫을 때 열기 버튼으로 포커스를 돌려준다. 상태는 텍스트와 `role="status"` 또는 `role="alert"`를 함께 사용해 색상만으로 구분하지 않는다.
 
 홈 진입 시 iframe은 불러오지 않는다. 웹툰·세계명화 iframe은 해당 라우트 진입 때만 지연 로드하고, 영상·게임은 한 번에 하나의 플레이어만 유지한다. 카드 이미지는 `loading="lazy"`, `decoding="async"`, 대체 텍스트와 크기 힌트를 사용하며, 상단·하단 로고는 원본 PNG를 유지한 100KB 이하 WebP를 우선 사용한다.
+
+첫 화면에서 Google Identity Services 스크립트를 내려받지 않는다. 사용자가 로그인창을 열고 정책 확인 체크를 완료한 뒤에만 불러온다. 쇼츠와 관리자 JavaScript는 각 메뉴에 처음 들어갈 때 동적으로 불러오고, 작업·설정·정책·쇼츠 전용 CSS는 초기 렌더를 막지 않게 비동기 로드한다. 홈에 필요한 토큰·셸·커뮤니티·계정 CSS는 소스 순서를 유지한 `lounge/core.css` 한 파일로 묶는다. 홈 제목과 첫 행동은 HTML에 먼저 두고 JavaScript가 같은 노드를 보존한 채 실시간 게시판과 카드 영역을 연결한다.
+
+홈에서 사용하는 공개 게시글 6개 요청은 API origin을 사전 연결하고 HTML `preload`로 먼저 시작한다. 같은 GET 응답을 홈 미리보기가 재사용하며, 쓰기 요청과 로그인 사용자 응답은 캐시하지 않는다.
+
+## Lounge 회원 운영 정책 계약
+
+이용약관, 개인정보 처리 안내, 커뮤니티 운영정책은 기존 `reading` 폭과 본문 1rem 이상 크기를 사용한다. 별도 장식 카드나 새 색상을 만들지 않고 흰 표면, 1px 구분선, `--space-*`, 기존 상태색만 사용한다. 정책의 시행일과 문의 주소는 첫 화면에서 바로 확인할 수 있어야 한다.
+
+Google 로그인 버튼은 이용약관과 개인정보 처리 안내 확인 체크 전에는 활성화하지 않는다. 게시글과 댓글의 신고는 해당 항목 식별자와 현재 주소가 포함된 운영 메일로 연결하고, 계정 삭제 요청은 내 계정 화면에서 운영 메일과 관리자 삭제 흐름으로 이어진다. 자동 처리나 처리 기한을 구현하지 않은 상태에서 완료를 약속하지 않는다.

@@ -17,6 +17,7 @@ const requiredFiles = [
   "assets/og.webp",
   "assets/report-hub-banner.webp",
   "lounge/tokens.css",
+  "lounge/core.css",
   "lounge/base.css",
   "lounge/lounge.css",
   "lounge/community.css",
@@ -36,6 +37,7 @@ const requiredFiles = [
   "lounge/jobs.css",
   "lounge/jobs.js",
   "lounge/settings.css",
+  "lounge/policies.css",
   "lounge/settings.js",
   "lounge/js/pages/home.css",
   "lounge/js/pages/home.js",
@@ -69,16 +71,10 @@ await cp(resolve(projectRoot, "assets"), resolve(clientRoot, "assets"), {
 
 const html = await readFile(resolve(clientRoot, "index.html"), "utf8");
 const expectedLoungeStyles = [
-  "lounge/tokens.css?v=20260827-ui-v1",
-  "lounge/base.css?v=20260827-ui-v1",
-  "lounge/topbar.css?v=20260827-ui-v1",
-  "lounge/lounge.css?v=20260827-ui-v1",
-  "lounge/portal.css?v=20260827-ui-v1",
-  "lounge/js/pages/home.css?v=20260827-ui-v1",
-  "lounge/community.css?v=20260827-ui-v1",
-  "lounge/platform.css?v=20260827-ui-v1",
+  "lounge/core.css?v=20260828-performance-v1",
   "lounge/jobs.css?v=20260827-ui-v1",
   "lounge/settings.css?v=20260827-ui-v1",
+  "lounge/policies.css?v=20260828-policy-v1",
   "lounge/shorts.css?v=20260827-ui-v1",
 ];
 let previousStyleIndex = -1;
@@ -102,7 +98,7 @@ if (!html.includes("data-lounge-shell") || !html.includes("AI 쇼츠 스튜디�
 if (!html.includes('data-community-view="newsletter"') || !html.includes('data-community-view="board"')) {
   throw new Error("Builders Lounge 커뮤니티 화면이 없습니다.");
 }
-if (!html.includes('href="lounge/lounge.css') || !html.includes('href="lounge/portal.css') || !html.includes('href="lounge/shorts.css') || !html.includes('src="lounge/lounge.js')) {
+if (!html.includes('href="lounge/core.css') || !html.includes('href="lounge/shorts.css') || !html.includes('src="lounge/lounge.js')) {
   throw new Error("루트에서 Lounge 지원 파일 경로를 찾을 수 없습니다.");
 }
 if (!html.includes('src="assets/builders-lounge-logo.png"') || !html.includes("data-home-mount") || !html.includes("portal-mobile-nav")) {

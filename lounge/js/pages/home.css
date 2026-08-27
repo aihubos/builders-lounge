@@ -1,5 +1,9 @@
 /* Builders Lounge home: board-first reading flow. */
 
+[data-home-mount] {
+  min-height: var(--lounge-home-reserve-wide);
+}
+
 .portal-home {
   display: grid;
   gap: var(--space-4);
@@ -180,7 +184,7 @@
 }
 
 .portal-home .home-board-preview {
-  min-height: 0;
+  min-height: var(--lounge-home-board-reserve);
   margin-top: var(--space-4);
 }
 
@@ -598,6 +602,10 @@
 }
 
 @media (max-width: 1024px) {
+  [data-home-mount] {
+    min-height: var(--lounge-home-reserve-tablet);
+  }
+
   .portal-home-layout {
     grid-template-columns: 1fr;
   }
@@ -624,6 +632,10 @@
 }
 
 @media (max-width: 700px) {
+  [data-home-mount] {
+    min-height: var(--lounge-home-reserve-mobile);
+  }
+
   .portal-home {
     gap: var(--space-4);
     margin-top: calc(var(--topbar-height-mobile) - var(--space-3) + var(--space-1));
@@ -638,7 +650,7 @@
   }
 
   .portal-home-intro h1 {
-    font-size: var(--type-section-title);
+    font-size: var(--type-page-title);
     line-height: var(--leading-title);
   }
 

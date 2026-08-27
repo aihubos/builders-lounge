@@ -2,6 +2,7 @@ import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, resolve, sep } from "node:path";
+import { createGzip } from "node:zlib";
 
 const projectRoot = resolve(process.env.SITE_ROOT || process.cwd());
 const port = Number(process.env.PORT || 4173);
@@ -152,12 +153,21 @@ const server = createServer(async (request, response) => {
   try {
     const fileStat = await stat(filePath);
     if (!fileStat.isFile()) throw new Error("not-file");
-
-    response.writeHead(200, {
+    const extension = extname(filePath);
+    const acceptsGzip = String(request.headers["accept-encoding"] || "").includes("gzip");
+    const compressible = new Set([".html", ".css", ".js", ".json", ".md", ".svg", ".txt"]).has(extension);
+    const headers = {
       "Content-Type": contentTypes.get(extname(filePath)) || "application/octet-stream",
       "Cache-Control": "no-cache",
-    });
-    createReadStream(filePath).pipe(response);
+    };
+    if (acceptsGzip && compressible) {
+      headers["Content-Encoding"] = "gzip";
+      headers.Vary = "Accept-Encoding";
+    }
+    response.writeHead(200, headers);
+    const source = createReadStream(filePath);
+    if (acceptsGzip && compressible) source.pipe(createGzip()).pipe(response);
+    else source.pipe(response);
   } catch {
     response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
     response.end("파일을 찾을 수 없습니다.");

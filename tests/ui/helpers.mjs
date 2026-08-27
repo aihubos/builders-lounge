@@ -4,6 +4,7 @@ export const ROUTES = Object.freeze([
   "home", "board", "prompts", "newsletter", "videos", "memes", "games",
   "shorts", "webtoon", "masterpiece", "jobs", "results", "files", "usage",
   "membership", "settings", "help", "admin",
+  "guidelines", "privacy", "terms",
 ]);
 
 export const ROUTE_TITLES = Object.freeze({
@@ -25,6 +26,9 @@ export const ROUTE_TITLES = Object.freeze({
   settings: "설정",
   help: "이용 안내",
   admin: "관리자 설정",
+  guidelines: "커뮤니티 운영정책",
+  privacy: "개인정보 처리 안내",
+  terms: "이용약관",
 });
 
 export const VIEWPORTS = Object.freeze([

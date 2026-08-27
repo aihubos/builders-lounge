@@ -74,9 +74,12 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
   const session = window.BuildersPlatform?.snapshot?.() || null;
   root.__homeCallbacks = { onNavigate, onModuleOpen, onWrite };
 
+  const existingIntro = root.querySelector("[data-home-intro]");
+  const existingHome = existingIntro?.closest(".lounge-home");
   const existingPreview = root.querySelector("[data-home-board-preview]");
-  root.innerHTML = `<section class="lounge-home portal-home" aria-labelledby="home-dashboard-title">
-    <section class="portal-home-intro">
+  const template = document.createElement("template");
+  template.innerHTML = `<section class="lounge-home portal-home" aria-labelledby="home-dashboard-title">
+    <section class="portal-home-intro" data-home-intro>
       <div class="portal-home-intro-copy"><p class="portal-home-eyebrow">BUILDERS LOUNGE</p><h1 id="home-dashboard-title">만들고, 나누고, 함께 성장해요</h1><p>만든 결과와 경험을 읽고, 다음 작업을 바로 시작하세요.</p></div>
       <div class="portal-home-intro-actions"><span class="portal-home-intro-caption">AI 제작 도구</span><div class="portal-home-intro-buttons"><button class="primary-button" type="button" data-home-module="shorts">AI 쇼츠 만들기</button><button class="secondary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></div></div>
     </section>
@@ -113,6 +116,16 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
       </aside>
     </div>
   </section>`;
+  const nextHome = template.content.firstElementChild;
+  if (existingHome && nextHome) {
+    const existingLayout = existingHome.querySelector(":scope > .portal-home-layout");
+    const nextLayout = nextHome.querySelector(":scope > .portal-home-layout");
+    if (existingLayout && nextLayout) existingLayout.replaceWith(nextLayout);
+    else if (nextLayout) existingHome.append(nextLayout);
+    existingHome.removeAttribute("data-home-prerender");
+  } else if (nextHome) {
+    root.replaceChildren(nextHome);
+  }
   const nextPreview = root.querySelector("[data-home-board-preview]");
   if (existingPreview && nextPreview && existingPreview !== nextPreview) {
     nextPreview.replaceWith(existingPreview);

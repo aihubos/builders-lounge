@@ -36,7 +36,11 @@ async function establishQaSession(page, { isAdmin = false } = {}) {
       tools: [],
     }),
   }));
-  await page.evaluate(() => window.BuildersPlatform.acceptCredential("qa-session-token"));
+  await page.evaluate(() => {
+    const consent = document.querySelector("[data-platform-policy-consent]");
+    if (consent) consent.checked = true;
+    return window.BuildersPlatform.acceptCredential("qa-session-token");
+  });
 }
 
 test("all routes open directly with the correct panel, title, navigation, and no runtime errors", async ({ page }) => {
@@ -130,6 +134,77 @@ test("content and account dialogs open, close, and return focus", async ({ page 
     await expect(dialog).not.toHaveAttribute("open", "");
     await expectFocusOn(page, opener);
   }
+});
+
+test("policy routes are public and Google login stays closed until policy consent", async ({ page }) => {
+  await page.route("https://accounts.google.com/gsi/client", (route) => route.abort());
+  await page.addInitScript(() => {
+    window.google = {
+      accounts: {
+        id: {
+          initialize() {},
+          renderButton(container) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = "Google 계정으로 계속";
+            container.replaceChildren(button);
+          },
+        },
+      },
+    };
+  });
+  await page.route("**/lounge/config", (route) => route.fulfill({
+    contentType: "application/json",
+    headers: { "access-control-allow-origin": "*" },
+    body: JSON.stringify({ loginReady: true, googleClientId: "qa-client-id", tools: [] }),
+  }));
+  for (const route of ["guidelines", "privacy", "terms"]) {
+    await openRoute(page, route);
+    await expect(page.locator(`[data-view-panel="${route}"] .policy-meta`)).toBeVisible();
+  }
+  await openRoute(page, "membership");
+  await page.locator("[data-platform-login-open]").first().click();
+  const dialog = page.locator("[data-platform-login-dialog]");
+  await expect(dialog.locator(".platform-policy-login-placeholder")).toBeDisabled();
+  await dialog.locator("[data-platform-policy-consent]").check();
+  await expect(dialog.locator("[data-google-signin-button] button")).toHaveText("Google 계정으로 계속");
+});
+
+test("board detail displays MP4 shorts and offers post and comment reporting", async ({ page }) => {
+  const post = {
+    id: "post-qa-mp4",
+    category: "knowledge_share",
+    title: "공개 쇼츠 확인",
+    content: "공개된 쇼츠 본문입니다.",
+    author: "QA 빌더",
+    is_admin: 0,
+    view_count: 3,
+    comment_count: 1,
+    created_at: "2026-08-28T00:00:00.000Z",
+    origin: "shorts",
+    mediaUrl: "https://media.example.com/shorts.mp4",
+    mediaType: "video/mp4",
+    can_edit: false,
+  };
+  await page.route("**/board/posts/post-qa-mp4/comments", (route) => route.fulfill({
+    contentType: "application/json",
+    headers: { "access-control-allow-origin": "*" },
+    body: JSON.stringify({ comments: [{ id: "comment-qa", author: "댓글 작성자", content: "확인 댓글", created_at: "2026-08-28T00:01:00.000Z", can_edit: false }] }),
+  }));
+  await page.route("**/board/posts/post-qa-mp4/views", (route) => route.fulfill({
+    contentType: "application/json",
+    headers: { "access-control-allow-origin": "*" },
+    body: JSON.stringify({ ok: true }),
+  }));
+  await page.route("**/board/posts/post-qa-mp4", (route) => route.fulfill({
+    contentType: "application/json",
+    headers: { "access-control-allow-origin": "*" },
+    body: JSON.stringify({ post }),
+  }));
+  await page.goto("/?post=post-qa-mp4#board", { waitUntil: "domcontentloaded" });
+  await expect(page.locator(".board-detail-media")).toHaveAttribute("src", post.mediaUrl);
+  await expect(page.locator(".board-detail-actions a").filter({ hasText: "신고" })).toHaveAttribute("href", /mailto:hello@ai-hub-os\.com/);
+  await expect(page.locator(".board-comment-actions a").filter({ hasText: "신고" })).toHaveAttribute("href", /mailto:hello@ai-hub-os\.com/);
 });
 
 test("board writing requires the existing Google login gate before opening its form", async ({ page }) => {
