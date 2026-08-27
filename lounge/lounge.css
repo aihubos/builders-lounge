@@ -160,7 +160,8 @@ button:disabled { cursor: not-allowed; }
 .tool-step-list p { margin: 3px 0 0; color: var(--lounge-sub); font-size: 12px; }
 .tool-placeholder-footer { margin-top: 9px; padding-top: 17px; display: flex; align-items: center; justify-content: space-between; gap: 14px; border-top: 1px solid #eef1f4; }
 .tool-placeholder-footer p { margin: 0; color: var(--lounge-muted); font-size: 11px; }
-.app-embed-head, .webtoon-embed-head { margin-bottom: 16px; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.embed-page { display: grid; min-width: 0; gap: 16px; }
+.app-embed-head, .webtoon-embed-head { margin-bottom: 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
 .app-embed-head h3, .webtoon-embed-head h3 { margin: 0; color: var(--lounge-navy); font-size: 26px; letter-spacing: -0.06em; }
 .app-embed-head > div:first-child > p:last-child, .webtoon-embed-head > div:first-child > p:last-child { margin: 7px 0 0; color: var(--lounge-sub); font-size: 13px; }
 .app-embed-actions, .webtoon-embed-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -172,8 +173,19 @@ button:disabled { cursor: not-allowed; }
 .app-embed-dot, .webtoon-embed-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #17a673; box-shadow: 0 0 0 4px rgba(23, 166, 115, 0.12); }
 .app-embed-dot-art { background: #e77436; box-shadow: 0 0 0 4px rgba(231, 116, 54, 0.12); }
 .app-embed-dot-cost { background: #5579dd; box-shadow: 0 0 0 4px rgba(85, 121, 221, 0.12); }
-.app-iframe, .webtoon-iframe { width: 100%; height: calc(100vh - 260px); min-height: 780px; display: block; border: 0; background: #f5f5f7; }
+.embed-frame-shell { position: relative; min-width: 0; overflow: hidden; background: #f5f5f7; }
+.app-iframe, .webtoon-iframe { width: 100%; height: max(720px, calc(100dvh - 190px)); min-height: 720px; display: block; border: 0; background: #f5f5f7; }
 .app-iframe-token { min-height: 720px; }
+.embed-loading, .embed-fallback { position: absolute; inset: 0; z-index: 1; display: grid; align-content: center; justify-items: center; gap: 8px; padding: 24px; background: linear-gradient(145deg, #f7faff 0%, #eef4fb 100%); color: var(--lounge-ink); text-align: center; }
+.embed-loading[hidden], .embed-fallback[hidden] { display: none; }
+.embed-loading strong, .embed-fallback strong { font-size: 17px; }
+.embed-loading p, .embed-fallback p { max-width: 34rem; margin: 0; color: var(--lounge-sub); font-size: 13px; }
+.embed-loading-mark { width: 42px; height: 42px; border: 4px solid #dbeafe; border-top-color: var(--lounge-blue); border-radius: 50%; animation: embed-loading-spin .9s linear infinite; }
+.embed-fallback { z-index: 2; background: #fffaf3; }
+.embed-fallback strong { color: #9a3412; }
+.embed-fallback p { color: #7c2d12; }
+.embed-fallback .primary-button { min-height: 44px; margin-top: 6px; }
+@keyframes embed-loading-spin { to { transform: rotate(360deg); } }
 .app-safety-note, .webtoon-safety-note { margin: 10px 2px 0; color: var(--lounge-muted); font-size: 11px; }
 .app-safety-note strong, .webtoon-safety-note strong { color: var(--lounge-sub); }
 .help-list { overflow: hidden; }
@@ -291,7 +303,7 @@ html[data-page-layout="reading"] .view-panel.is-visible { width: min(100%, var(-
   .app-embed-actions .secondary-button, .webtoon-embed-actions .secondary-button { flex: 1; }
   .app-embed-bar, .webtoon-embed-bar { padding: 0 11px; }
   .app-embed-bar > span:nth-of-type(2), .webtoon-embed-bar > span:nth-of-type(2), .app-embed-bar a, .webtoon-embed-bar a { display: none; }
-  .app-iframe, .webtoon-iframe { height: 720px; min-height: 720px; }
+  .app-iframe, .webtoon-iframe { height: max(620px, calc(100dvh - 150px)); min-height: 620px; }
   .result-card-head, .settings-card, .tool-placeholder-footer { align-items: flex-start; flex-direction: column; }
   .result-date { order: -1; }
   .file-row { padding: 13px; }

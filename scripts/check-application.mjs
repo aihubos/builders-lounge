@@ -120,8 +120,10 @@ for (const route of ["home", "shorts", "webtoon", "masterpiece", "prompts", "new
 for (const route of ["jobs", "results", "files", "membership", "settings"]) {
   expect(indexHtml.includes(`data-view-panel="${route}"`), `내부 화면 패널이 없습니다: ${route}`);
 }
-expect(indexHtml.includes("웹툰 제작기") && indexHtml.includes("https://aihubos.github.io/gonggamtoon/"), "웹툰 제작기 메뉴 연결이 없습니다.");
-expect(indexHtml.includes("세계명화 프롬프트") && indexHtml.includes('src="https://aihubos.github.io/world-masterpiece-bot/'), "세계명화 프롬프트 메뉴 연결이 없습니다.");
+expect(indexHtml.includes("웹툰 제작기") && indexHtml.includes('data-src="https://aihubos.github.io/gonggamtoon/?v=20260824-expanded"'), "웹툰 제작기 메뉴 연결이 없습니다.");
+expect(indexHtml.includes("세계명화 프롬프트") && indexHtml.includes('data-src="https://aihubos.github.io/world-masterpiece-bot/?v=20260824-openrouter"'), "세계명화 프롬프트 메뉴 연결이 없습니다.");
+expect(!indexHtml.includes('<iframe class="webtoon-iframe" src=') && !indexHtml.includes('<iframe class="app-iframe" src='), "임베드 도구가 홈에서 미리 로드됩니다.");
+expect(indexHtml.includes("embed-page") && indexHtml.includes("data-embed-loading") && indexHtml.includes("data-embed-fallback"), "임베드 지연 로딩 안내가 없습니다.");
 expect(indexHtml.includes("커뮤니티 운영 중") && indexHtml.includes("실제 파일"), "실제 커뮤니티와 샘플 기능의 범위 안내가 부족합니다.");
 const nonVisitorScripts = loungeScript.replace(topbarScript, "").replace(communityScript, "").replace(platformScript, "").replace(shortsScript, "");
 expect(!/\b(XMLHttpRequest|FormData)\b/.test(nonVisitorScripts) && !/\bfetch\s*\(/.test(nonVisitorScripts), "허용되지 않은 외부 요청·업로드 로직이 있습니다.");
@@ -129,13 +131,14 @@ expect(communityScript.includes("reportmode-request-board.report-request-board.w
 expect(platformScript.includes("/lounge/me") && platformScript.includes("/lounge/tools/") && indexHtml.includes("https://accounts.google.com/gsi/client"), "Google 로그인 또는 빌드 도구 API 연결이 없습니다.");
 expect(shortsScript.includes("renderWebm") && shortsScript.includes("BuildersPlatform.shorts.upload") && shortsScript.includes("BuildersPlatform.shorts.render") && shortsScript.includes("BuildersPlatform.shorts.renderSync") && shortsScript.includes("BuildersPlatform.shorts.publish"), "쇼츠 MPT·브라우저 렌더·저장·수동 게시 흐름이 없습니다.");
 expect(shortsScript.includes("data-shorts-progress") && shortsScript.includes("data-shorts-progress-value") && shortsScript.includes("startEstimatedProgress"), "쇼츠 제작 애니메이션 또는 진행률 표시가 없습니다.");
+expect(shortsScript.includes("BuildersPlatform?.getTool") && shortsScript.includes("data-shorts-cost-value") && !shortsScript.includes("Build 5"), "쇼츠 비용이 관리자 설정에서 동적으로 표시되지 않습니다.");
 expect(shortsScript.includes("data-shorts-plan-form") && shortsScript.includes("data-scene-narration") && platformScript.includes("updatePlan"), "쇼츠 제작 내용 수정·저장 흐름이 없습니다.");
 expect(shortsScript.includes("data-auth-required") && shortsScript.includes("Google 로그인 후 제작"), "쇼츠 제작 버튼의 Google 로그인 잠금이 없습니다.");
 expect(platformScript.includes("shortsRendererReady") || shortsScript.includes("shortsRendererReady"), "쇼츠 렌더 서버 준비 상태 계약이 없습니다.");
 expect(platformScript.includes('"video/mp4"') && shortsScript.includes('"video/mp4"') && shortsScript.includes("MPT_KOREAN_VOICE"), "쇼츠 MP4·한국어 음성 표시 계약이 없습니다.");
 expect(shortsScript.includes("게시 버튼을 누르기 전에는 게시되지 않습니다") && shortsScript.includes("rewardBuilds") && communityScript.includes("board-detail-media"), "쇼츠 수동 게시 또는 게시판 영상 표시 계약이 없습니다.");
 expect(!/localStorage\.(setItem|getItem)\([^\n]*(credential|token|api.?key)/i.test(platformScript), "로그인 토큰이나 API 키를 브라우저 영구 저장소에 보관하고 있습니다.");
-expect(indexHtml.includes("쇼츠 영상은 저장 성공 시 5빌드") && indexHtml.includes("data-admin-slot") && indexHtml.includes("data-platform-account"), "빌드 포인트 또는 관리자 화면 연결이 없습니다.");
+expect(indexHtml.includes("쇼츠 영상은 저장 성공 시 관리자 설정 비용") && indexHtml.includes("data-admin-slot") && indexHtml.includes("data-platform-account"), "빌드 포인트 또는 관리자 화면 연결이 없습니다.");
 expect(!/\/Users\/JeremyLee\//.test(communityScript) && !/\/Users\/JeremyLee\//.test(indexHtml), "로컬 절대 경로가 공개 코드에 포함되어 있습니다.");
 expect(topbarScript.includes('SITE_ID = "builders-lounge"') && topbarScript.includes("builders-lounge:visitor-id") && topbarScript.includes("/visits"), "방문 집계 설정이 Builders Lounge 전용이 아닙니다.");
 expect(settingsScript.includes('href="#help"') && !settingsScript.includes("기존 홈페이지"), "설정 도움말 링크가 잘못되었습니다.");

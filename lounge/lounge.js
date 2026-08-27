@@ -13,6 +13,8 @@ const ROUTE_STORAGE_KEY = "ai-builders-lounge-route";
 const DENSITY_STORAGE_KEY = "ai-builders-lounge-density";
 const ALLOWED_DENSITIES = new Set(["comfortable", "compact"]);
 const MOBILE_BREAKPOINT = 1180;
+const LAZY_EMBED_TIMEOUT_MS = 12000;
+const LAZY_EMBED_ROUTES = new Set(["webtoon", "masterpiece"]);
 
 const shell = document.querySelector("[data-lounge-shell]");
 const sidebar = document.querySelector("[data-lounge-sidebar]");
@@ -52,6 +54,7 @@ const viewMeta = Object.freeze({
 let demoMode = readDemoMode();
 let jobsController = null;
 let searchReturnFocus = null;
+const lazyEmbedRoutesLoaded = new Set();
 
 const SEARCH_TOOLS = Object.freeze([
   { id: "search-shorts", title: "AI 쇼츠 스튜디오", summary: "긴 영상에서 세로형 숏폼 후보를 찾는 제작 흐름", route: "shorts", typeLabel: "제작 도구", icon: "▶" },
@@ -269,6 +272,48 @@ function syncMenuForViewport() {
   syncSidebarAccessibility(mobileMenu.matches && Boolean(shell?.hasAttribute("data-menu-open")));
 }
 
+function loadLazyEmbed(view) {
+  if (!LAZY_EMBED_ROUTES.has(view) || lazyEmbedRoutesLoaded.has(view)) return;
+  const panel = document.querySelector(`[data-view-panel="${view}"]`);
+  const frame = panel?.querySelector("iframe[data-src]");
+  const frameShell = frame?.closest("[data-embed-shell]");
+  if (!frame || !frameShell) return;
+  lazyEmbedRoutesLoaded.add(view);
+
+  const loading = frameShell.querySelector("[data-embed-loading]");
+  const fallback = frameShell.querySelector("[data-embed-fallback]");
+  const source = String(frame.dataset.src || "").trim();
+  let settled = false;
+  let timeoutId = 0;
+
+  const finish = (state) => {
+    if (settled) return;
+    settled = true;
+    if (timeoutId) window.clearTimeout(timeoutId);
+    frame.removeEventListener("load", onLoad);
+    frame.removeEventListener("error", onError);
+    frameShell.dataset.embedState = state;
+    frameShell.setAttribute("aria-busy", "false");
+    if (loading) loading.hidden = true;
+    if (fallback) fallback.hidden = state !== "error";
+  };
+  const onLoad = () => finish("loaded");
+  const onError = () => finish("error");
+
+  frameShell.dataset.embedState = "loading";
+  frameShell.setAttribute("aria-busy", "true");
+  if (loading) loading.hidden = false;
+  if (fallback) fallback.hidden = true;
+  if (!source) {
+    finish("error");
+    return;
+  }
+  frame.addEventListener("load", onLoad);
+  frame.addEventListener("error", onError);
+  frame.setAttribute("src", source);
+  timeoutId = window.setTimeout(() => finish("error"), LAZY_EMBED_TIMEOUT_MS);
+}
+
 function showView(requestedView, { updateHash = false, announce = true, userInitiated = false } = {}) {
   const view = viewMeta[requestedView] ? requestedView : "home";
   const meta = viewMeta[view];
@@ -303,6 +348,7 @@ function showView(requestedView, { updateHash = false, announce = true, userInit
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
   }
+  loadLazyEmbed(view);
   window.dispatchEvent(new CustomEvent("lounge:viewchange", { detail: { view } }));
 }
 
