@@ -52,8 +52,7 @@ function configuredToolCount(tools) {
 
 function isRetiredTool(tool) {
   const id = String(tool?.id || "").trim().toLocaleLowerCase("en-US");
-  const name = String(tool?.name || "").trim();
-  return id === "meeting" || id === "minutes" || name.includes("회의록");
+  return id === "meeting" || id === "minutes";
 }
 
 function renderTool(tool) {

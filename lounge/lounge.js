@@ -55,10 +55,11 @@ let demoMode = readDemoMode();
 let jobsController = null;
 let searchReturnFocus = null;
 const lazyEmbedRoutesLoaded = new Set();
+const mountedRouteModules = new Set();
 
 const SEARCH_TOOLS = Object.freeze([
   { id: "search-shorts", title: "AI 쇼츠 스튜디오", summary: "긴 영상에서 세로형 숏폼 후보를 찾는 제작 흐름", route: "shorts", typeLabel: "제작 도구", icon: "▶" },
-  { id: "search-webtoon", title: "웹툰 제작기", summary: "빌드 포인트로 대화와 아이디어를 공감 카드로 바꾸는 도구", route: "webtoon", typeLabel: "제작 도구", icon: "▣" },
+  { id: "search-webtoon", title: "웹툰 제작기", summary: "빌드로 대화와 아이디어를 공감 카드로 바꾸는 도구", route: "webtoon", typeLabel: "제작 도구", icon: "▣" },
   { id: "search-masterpiece", title: "세계명화 프롬프트", summary: "명화와 캐릭터를 조합하는 이미지 프롬프트 도구", route: "masterpiece", typeLabel: "제작 도구", icon: "♜" },
   { id: "search-board", title: "자유게시판", summary: "질문, 정보와 빌더 결과물을 나누는 통합 게시판", route: "board", typeLabel: "커뮤니티", icon: "☷" },
 ]);
@@ -175,7 +176,7 @@ function getNoticeCopy(view = document.documentElement.dataset.loungeRoute || "h
   if (view === "masterpiece") return "프롬프트 조합은 무료이며 실제 이미지 생성에만 설정된 빌드가 사용됩니다.";
   if (view === "jobs") return "화면 확인용 샘플과 연결된 작업을 함께 표시합니다. 샘플에는 별도 표지가 붙습니다.";
   if (view === "results") return "완료된 결과는 제작 도구에서 확인하며, 화면 확인용 결과에는 샘플 표지가 붙습니다.";
-  if (view === "files") return "쇼츠 영상은 제작 완료 화면에서 저장합니다. 일반 파일 업로드는 별도 연결이 필요합니다.";
+  if (view === "files") return "쇼츠 영상은 제작 완료 화면에서 저장합니다. 일반 파일 업로드는 이 화면에서 제공하지 않습니다.";
   if (view === "usage") return "Google 로그인 후 실제 적립·사용·환불·관리자 조정 내역을 확인합니다.";
   if (view === "membership") return "Google 계정과 현재 빌드 잔액은 로그인한 계정 기준으로 표시됩니다.";
   if (view === "settings") return "보기 설정은 이 브라우저에 저장하고, 연결 상태는 서비스 응답을 기준으로 표시합니다.";
@@ -197,10 +198,10 @@ function renderResults(root, data) {
 function renderFiles(root, data) {
   if (!root) return;
   if (!data.files.length) {
-    root.innerHTML = `<div class="panel-heading file-panel-heading"><div><p class="section-label">FILES</p><h3>파일</h3><p>화면 확인용 데이터 표시가 꺼져 있어 파일을 숨겼습니다.</p></div><button class="disabled-button" type="button" disabled>일반 업로드 미연결</button></div><div class="empty-state"><span class="empty-state-icon" aria-hidden="true">□</span><strong>표시할 파일이 없습니다.</strong><p>쇼츠 영상은 제작 완료 화면에서 저장하며, 일반 파일 업로드는 별도 연결이 필요합니다.</p></div>`;
+    root.innerHTML = `<div class="panel-heading file-panel-heading"><div><p class="section-label">FILES</p><h3>파일</h3><p>화면 확인용 데이터 표시가 꺼져 있어 파일을 숨겼습니다.</p></div><button class="disabled-button" type="button" disabled>일반 업로드는 제공하지 않음</button></div><div class="empty-state"><span class="empty-state-icon" aria-hidden="true">□</span><strong>표시할 파일이 없습니다.</strong><p>쇼츠 영상은 제작 완료 화면에서 저장하며, 일반 파일 업로드는 이 화면에서 제공하지 않습니다.</p></div>`;
     return;
   }
-  root.innerHTML = `<div class="panel-heading file-panel-heading"><div><p class="section-label">FILES</p><h3>파일</h3><p>화면 확인용 파일 ${data.files.length}개입니다.</p></div><button class="disabled-button" type="button" disabled aria-describedby="file-disabled-note">일반 업로드 미연결</button></div><div class="file-list">${data.files.map((file) => `<article class="file-row"><div class="file-icon" aria-hidden="true">${file.kind === "영상" ? "▶" : file.kind === "오디오" ? "♫" : "TXT"}</div><div class="file-copy"><strong>${escapeHtml(file.name)}</strong><span>${escapeHtml(file.kind)} · ${escapeHtml(file.size)} · <span class="sample-label">화면 확인용</span></span></div><button class="disabled-button" type="button" disabled aria-describedby="file-disabled-note">삭제 불가</button></article>`).join("")}</div><p class="disabled-note" id="file-disabled-note">화면 확인용 파일은 업로드·삭제되지 않습니다. 실제 쇼츠 영상은 제작 완료 화면에서 저장합니다.</p>`;
+  root.innerHTML = `<div class="panel-heading file-panel-heading"><div><p class="section-label">FILES</p><h3>파일</h3><p>화면 확인용 파일 ${data.files.length}개입니다.</p></div><button class="disabled-button" type="button" disabled aria-describedby="file-disabled-note">일반 업로드는 제공하지 않음</button></div><div class="file-list">${data.files.map((file) => `<article class="file-row"><div class="file-icon" aria-hidden="true">${file.kind === "영상" ? "▶" : file.kind === "오디오" ? "♫" : "TXT"}</div><div class="file-copy"><strong>${escapeHtml(file.name)}</strong><span>${escapeHtml(file.kind)} · ${escapeHtml(file.size)} · <span class="sample-label">화면 확인용</span></span></div><button class="disabled-button" type="button" disabled aria-describedby="file-disabled-note">삭제 불가</button></article>`).join("")}</div><p class="disabled-note" id="file-disabled-note">화면 확인용 파일은 업로드·삭제되지 않습니다. 실제 쇼츠 영상은 제작 완료 화면에서 저장합니다.</p>`;
 }
 
 function renderUsage(root, data) {
@@ -321,9 +322,22 @@ function loadLazyEmbed(view) {
   timeoutId = window.setTimeout(() => finish("error"), LAZY_EMBED_TIMEOUT_MS);
 }
 
+function mountRouteModule(view) {
+  if (mountedRouteModules.has(view)) return;
+  if (view === "shorts") {
+    const root = document.querySelector('[data-view-panel="shorts"]');
+    if (root) { mountShorts(root); mountedRouteModules.add(view); }
+  }
+  if (view === "admin") {
+    const root = document.querySelector('[data-admin-slot]');
+    if (root) { mountAdmin(root); mountedRouteModules.add(view); }
+  }
+}
+
 function showView(requestedView, { updateHash = false, announce = true, userInitiated = false } = {}) {
   const view = viewMeta[requestedView] ? requestedView : "home";
   const meta = viewMeta[view];
+  mountRouteModule(view);
   document.documentElement.dataset.loungeRoute = view;
   document.documentElement.dataset.pageLayout = meta.layout;
   document.querySelectorAll("[data-view-panel]").forEach((panel) => {
@@ -360,15 +374,11 @@ function showView(requestedView, { updateHash = false, announce = true, userInit
 }
 
 function initializeModules() {
-  const shorts = document.querySelector('[data-view-panel="shorts"]');
   const settings = document.querySelector("[data-settings-slot]");
-  const admin = document.querySelector("[data-admin-slot]");
-  if (shorts) mountShorts(shorts);
   renderHomeModule();
   if (settings) window.LoungeSettings?.render(settings, { demoMode, onDemoChange: setDemoMode });
   renderDataModules();
   mountCommunity();
-  if (admin) mountAdmin(admin);
 }
 
 function bindNavigation() {
@@ -405,6 +415,7 @@ function bindNavigation() {
   window.addEventListener("lounge:authchange", () => {
     renderDataModules();
     if (document.documentElement.dataset.loungeRoute === "home") renderHomeModule();
+    mountRouteModule(document.documentElement.dataset.loungeRoute || "home");
   });
 }
 

@@ -17,21 +17,47 @@ function escapeHtml(value) {
 
 function renderTool(module) {
   const setting = window.BuildersPlatform?.getTool?.(module.id);
-  const detail = setting?.enabled ? `${Number(setting.cost || 0).toLocaleString("ko-KR")}빌드` : "API 준비 중";
+  const cost = Number(setting?.cost);
+  const detail = setting?.enabled && Number.isFinite(cost) && cost >= 0
+    ? `${cost.toLocaleString("ko-KR")}빌드`
+    : setting
+      ? "관리자 설정 필요"
+      : "비용 확인 중";
   return `<button class="portal-tool-card portal-tool-${module.accent}" type="button" data-home-module="${module.action}"><span class="portal-tool-icon" aria-hidden="true">${module.icon}</span><span class="portal-tool-copy"><span><strong>${module.title}</strong><em>${detail}</em></span><small>${module.description}</small></span><span class="portal-row-arrow" aria-hidden="true">→</span></button>`;
 }
 
 function renderBuildCard(session) {
   if (!session?.authenticated) {
-    return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><h4>빌드 포인트</h4></div><span>로그인 전</span></div><p>Google 로그인 후 글이나 댓글을 남기면 각각 1빌드가 적립됩니다.</p><button class="primary-button" type="button" data-home-login>Google 로그인</button></section>`;
+    return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><h4>빌드 잔액</h4></div><span>로그인 전</span></div><p>Google 로그인 후 글이나 댓글을 남기면 각각 1빌드가 적립됩니다.</p><button class="primary-button" type="button" data-home-login>Google 로그인</button></section>`;
   }
   const user = session.user || {};
-  return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><h4>${escapeHtml(user.name || "빌더")}님의 빌드</h4></div><span>${Number(user.balance || 0).toLocaleString("ko-KR")}빌드</span></div><p>일반 글·댓글은 +1빌드, 쇼츠 영상은 저장 성공 시 5빌드입니다.</p><div class="portal-build-actions"><button class="primary-button" type="button" data-home-write>글 쓰고 적립</button><button class="text-button" type="button" data-home-nav="usage">내역 보기</button></div></section>`;
+  const shorts = window.BuildersPlatform?.getTool?.("shorts");
+  const shortsCost = Number(shorts?.cost);
+  const shortsCopy = shorts?.enabled && Number.isFinite(shortsCost) && shortsCost >= 0
+    ? `일반 글·댓글은 +1빌드, 쇼츠 영상은 저장 성공 시 ${shortsCost.toLocaleString("ko-KR")}빌드입니다.`
+    : "일반 글·댓글은 +1빌드, 쇼츠 영상은 저장 성공 시 관리자 설정 비용을 사용합니다.";
+  return `<section class="portal-rail-card portal-build-card"><div class="portal-rail-head"><div><h4>${escapeHtml(user.name || "빌더")}님의 빌드</h4></div><span>${Number(user.balance || 0).toLocaleString("ko-KR")}빌드</span></div><p>${shortsCopy}</p><div class="portal-build-actions"><button class="primary-button" type="button" data-home-write>글 쓰고 적립</button><button class="text-button" type="button" data-home-nav="usage">내역 보기</button></div></section>`;
 }
 
 function cardCover(item, fallback) {
   const src = catalogCardCover(item);
-  return `<img src="${escapeHtml(src)}" alt="${escapeHtml(item.title || fallback)}" loading="lazy">`;
+  const optimized = { "assets/og.png": "assets/og.webp", "assets/report-hub-banner.png": "assets/report-hub-banner.webp" }[src];
+  return `<picture>${optimized ? `<source srcset="${optimized}" type="image/webp">` : ""}<img src="${escapeHtml(src)}" alt="${escapeHtml(item.title || fallback)}" width="1600" height="1000" loading="lazy" decoding="async"></picture>`;
+}
+
+function bindBrokenImages(root) {
+  root.querySelectorAll(".catalog-card-cover img").forEach((image) => {
+    if (image.dataset.errorBound) return;
+    image.dataset.errorBound = "true";
+    image.addEventListener("error", () => {
+      const fallback = document.createElement("span");
+      fallback.className = "image-fallback";
+      fallback.setAttribute("role", "img");
+      fallback.setAttribute("aria-label", "이미지를 불러오지 못했습니다");
+      fallback.textContent = "이미지를 불러오지 못했습니다";
+      image.replaceWith(fallback);
+    }, { once: true });
+  });
 }
 
 function renderHomeCard(item, route, kicker) {
@@ -91,6 +117,7 @@ function renderHome(rootOrOptions, maybeOptions = {}) {
   if (existingPreview && nextPreview && existingPreview !== nextPreview) {
     nextPreview.replaceWith(existingPreview);
   }
+  bindBrokenImages(root);
 
   if (!root.dataset.homeBound) {
     root.addEventListener("click", (event) => {

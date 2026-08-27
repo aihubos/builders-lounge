@@ -54,6 +54,14 @@ button {
   color: inherit;
 }
 
+:where(.primary-button, .secondary-button, .text-button, .icon-button, .community-filter-chip, .choice-button, .toggle-button, .jobs-filter, .jobs-row-action, .board-page-button, .menu-toggle, .mobile-search-opener, .topbar-search-opener, .topbar-write-opener, .portal-mobile-nav a, .portal-mobile-nav button) {
+  min-height: var(--control-height-lg);
+}
+
+:where(.build-tool-form input, .build-tool-form textarea, .build-tool-form select, .admin-tool-form input, .admin-tool-form textarea, .admin-tool-form select, .admin-inline-form input, .admin-user-adjust input, .admin-search-label input, .community-search input, .board-search-form input, .board-sort-label select) {
+  min-height: var(--control-height-lg);
+}
+
 :focus-visible {
   outline: var(--lounge-focus-ring-width, 3px) solid var(--brand-blue-accessible);
   outline-offset: var(--space-1, 4px);
@@ -81,6 +89,9 @@ button {
   *,
   *::before,
   *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }

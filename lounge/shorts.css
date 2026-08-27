@@ -48,13 +48,13 @@
 .shorts-recovery .shorts-actions { flex: 0 0 auto; margin: 0; }
 .shorts-panel { padding: 32px; border: 1px solid #dbe5f4; border-radius: 20px; background: #fff; box-shadow: 0 10px 28px rgba(15, 23, 42, .055); }
 .shorts-panel label { display: grid; gap: 8px; color: #1e293b; font-weight: 750; }
-.shorts-panel textarea, .shorts-panel input, .shorts-panel select { width: 100%; min-width: 0; border: 1px solid #cbd5e1; border-radius: 14px; background: #fff; color: #0f172a; font: inherit; padding: 13px 14px; }
+.shorts-panel textarea, .shorts-panel input, .shorts-panel select { width: 100%; min-width: 0; min-height: var(--control-height-lg, 48px); border: 1px solid #cbd5e1; border-radius: 14px; background: #fff; color: #0f172a; font: inherit; padding: 13px 14px; }
 .shorts-panel textarea { resize: vertical; line-height: 1.65; }
 .shorts-panel textarea:focus, .shorts-panel input:focus, .shorts-panel select:focus { outline: 3px solid rgba(20, 87, 217, .18); border-color: #1457d9; }
 .shorts-topic textarea { min-height: 128px; margin-top: 3px; font-size: 18px; }
 .shorts-topic small, .shorts-settings small { color: #64748b; font-weight: 500; }
 .shorts-examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
-.shorts-examples button { min-height: 40px; border: 1px solid #dbe5f4; border-radius: 999px; background: #f8fbff; color: #334155; padding: 8px 12px; cursor: pointer; }
+.shorts-examples button { min-height: var(--control-height-lg, 48px); border: 1px solid #dbe5f4; border-radius: 999px; background: #f8fbff; color: #334155; padding: 8px 12px; cursor: pointer; }
 .shorts-examples button:hover { border-color: #93b4ed; color: #1457d9; }
 .shorts-settings { margin: 18px 0; border: 1px solid #e2e8f0; border-radius: 18px; overflow: hidden; }
 .shorts-settings summary { min-height: 48px; padding: 0 17px; display: flex; align-items: center; cursor: pointer; font-weight: 800; }

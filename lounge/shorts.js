@@ -653,7 +653,7 @@ export function mountShorts(root) {
     form.querySelectorAll("input, textarea").forEach((control) => { control.disabled = true; });
     const publishStatus = form.querySelector("[data-publish-status]");
     publishStatus.dataset.error = "false";
-    publishStatus.innerHTML = `<strong>${restored ? "게시 상태 복구 완료" : "게시판 등록 완료"}</strong><span>게시판 등록에는 Build가 추가로 사용되지 않았습니다.</span><a class="primary-button" href="${escapeHtml(published.postUrl)}">게시글 보기</a>`;
+    publishStatus.innerHTML = `<strong>${restored ? "게시 상태 복구 완료" : "게시판 등록 완료"}</strong><span>게시판 등록에는 빌드가 추가로 사용되지 않았습니다.</span><a class="primary-button" href="${escapeHtml(published.postUrl)}">게시글 보기</a>`;
     setStep("publish");
     statusText(root, restored ? "서버에서 게시글 1건을 확인해 화면을 복원했습니다." : "게시글 1건이 등록됐습니다. 재시도해도 같은 글을 사용합니다.");
     persistRecovery();
@@ -728,7 +728,7 @@ export function mountShorts(root) {
 
   const finishReleasedServerState = (server) => {
     if (server.reservationStatus !== "released" || !server.releaseEventId) {
-      throw new Error("Build 예약 해제 원장 상태를 확인하지 못했습니다.");
+      throw new Error("빌드 예약 해제 원장 상태를 확인하지 못했습니다.");
     }
     const expired = server.status === "expired" || server.reservationExpired === true;
     resetPreparedState();
@@ -795,7 +795,7 @@ export function mountShorts(root) {
       } catch (error) {
         if (!RETRYABLE_RENDER_ERRORS.has(error?.code) || retryCount >= 5) throw error;
         retryCount += 1;
-        showProgress(lastProgress, "영상 작업 연결을 다시 확인하고 있어요", `완료 여부를 ${retryCount}/6회 다시 확인합니다. 새 Build 요청은 보내지 않습니다.`, "reconnecting");
+        showProgress(lastProgress, "영상 작업 연결을 다시 확인하고 있어요", `완료 여부를 ${retryCount}/6회 다시 확인합니다. 새 빌드 요청은 보내지 않습니다.`, "reconnecting");
         announceProgress(`영상 작업은 유지됩니다. 서버 연결을 다시 확인하고 있어요. ${lastProgress}%`, lastProgress, "reconnecting");
         await wait(1800);
       }
@@ -818,14 +818,14 @@ export function mountShorts(root) {
         if (server.renderStarted === true && server.renderState === "processing") {
           const progress = Math.max(0, Math.min(99, Math.trunc(Number(server.renderProgress) || 0)));
           showProgress(progress, "영상 작업은 서버에서 계속되고 있어요", "상태 다시 확인을 누르면 기존 작업만 이어서 확인합니다.", "reconnecting");
-          showRecovery("영상 작업 연결을 다시 확인해 주세요.", `${originalError.message} 기존 작업은 유지되며 새 Build 예약은 만들지 않습니다.`);
+          showRecovery("영상 작업 연결을 다시 확인해 주세요.", `${originalError.message} 기존 작업은 유지되며 새 빌드 예약은 만들지 않습니다.`);
           announceProgress(`서버에서 기존 영상 작업 ${progress}% 상태를 확인했습니다.`, progress, "recovered", true);
           return;
         }
         state.renderBlocked = false;
         renderPlan(state.plan, { restored: true });
         revealRestoredPlan(`${originalError.message} 아래 제작안을 확인한 뒤 같은 버튼으로 이어서 제작할 수 있습니다.`);
-        statusText(root, "제작안 편집 화면으로 이동했습니다. Build 예약은 새로 만들지 않았습니다.");
+        statusText(root, "제작안 편집 화면으로 이동했습니다. 빌드 예약은 새로 만들지 않았습니다.");
         return;
       }
       throw new Error("서버가 알 수 없는 쇼츠 상태를 반환했습니다.");
@@ -833,7 +833,7 @@ export function mountShorts(root) {
       state.renderBlocked = true;
       showProgress(0, "작업 상태를 확인하지 못했어요", "상태 다시 확인을 누르면 새 요청 없이 기존 작업만 조회합니다.", "failed");
       showRecovery("작업 결과를 아직 확인하지 못했습니다.", `${statusError.message || originalError.message} 새 생성 요청은 보내지 않습니다.`, true);
-      statusText(root, "기존 작업의 완료 또는 Build 해제를 확인한 뒤 다시 제작할 수 있습니다.", true);
+      statusText(root, "기존 작업의 완료 또는 빌드 해제를 확인한 뒤 다시 제작할 수 있습니다.", true);
     }
   };
 
@@ -870,11 +870,11 @@ export function mountShorts(root) {
             setStep("video");
             await pollRenderer(server, { restored: true });
           } else {
-            revealRestoredPlan("아래 제작안을 확인하고 ‘수정 내용 저장하고 영상 만들기’를 누르면 기존 Build 예약으로 이어서 제작합니다.");
-            statusText(root, "예약된 제작안 편집 화면으로 이동했습니다. 새 Build 예약은 만들지 않았습니다.");
+            revealRestoredPlan("아래 제작안을 확인하고 ‘수정 내용 저장하고 영상 만들기’를 누르면 기존 빌드 예약으로 이어서 제작합니다.");
+            statusText(root, "예약된 제작안 편집 화면으로 이동했습니다. 새 빌드 예약은 만들지 않았습니다.");
           }
         } else {
-          showRecovery("제작 내용을 준비하고 있어요.", "같은 작업을 서버에서 다시 확인하면 새 Build 예약 없이 이어집니다.");
+          showRecovery("제작 내용을 준비하고 있어요.", "같은 작업을 서버에서 다시 확인하면 새 빌드 예약 없이 이어집니다.");
           setStep("plan");
           statusText(root, "서버에서 기존 작업을 처리 중입니다. 잠시 후 상태를 다시 확인해 주세요.");
         }
@@ -888,7 +888,7 @@ export function mountShorts(root) {
         statusText(root, "복구할 서버 작업을 찾지 못했습니다. 새 쇼츠를 시작해 주세요.", true);
       } else {
         showRecovery("기존 작업 상태를 확인하지 못했습니다.", `${error.message} 새 생성 요청은 보내지 않았습니다.`, true);
-        statusText(root, "상태 확인이 끝날 때까지 새 Build 예약을 만들지 않습니다.", true);
+        statusText(root, "상태 확인이 끝날 때까지 새 빌드 예약을 만들지 않습니다.", true);
       }
     } finally {
       state.restoring = false;
@@ -1066,14 +1066,14 @@ export function mountShorts(root) {
       } catch (renderError) {
         const released = await window.BuildersPlatform.shorts.release({ jobId: state.jobId, requestId: state.requestId, reason: "render_failed" });
         if (!TERMINAL_RELEASE_STATUSES.has(released.status) || !released.releaseEventId) {
-          throw new Error(`${renderError.message} Build 예약 해제 상태를 확인하지 못했습니다.`);
+          throw new Error(`${renderError.message} 빌드 예약 해제 상태를 확인하지 못했습니다.`);
         }
         resetPreparedState();
         statusText(root, `${renderError.message} ${costLabel()} 예약 해제를 확인했습니다.`, true);
         return;
       }
       state.video = blob;
-      showProgress(98, "완성 영상을 저장하고 있어요", "영상 파일과 Build 사용 결과를 서버에서 확인합니다.");
+      showProgress(98, "완성 영상을 저장하고 있어요", "영상 파일과 빌드 사용 결과를 서버에서 확인합니다.");
       statusText(root, "완성된 영상을 안전하게 저장하고 있어요.");
       let uploaded;
       try {
@@ -1092,7 +1092,7 @@ export function mountShorts(root) {
         }
         const released = await window.BuildersPlatform.shorts.release({ jobId: state.jobId, requestId: state.requestId, reason: "upload_failed" });
         if (!TERMINAL_RELEASE_STATUSES.has(released.status) || !released.releaseEventId) {
-          throw new Error(`${uploadError.message} Build 예약 해제 상태를 확인하지 못했습니다.`);
+          throw new Error(`${uploadError.message} 빌드 예약 해제 상태를 확인하지 못했습니다.`);
         }
         resetPreparedState();
         statusText(root, `${uploadError.message} ${costLabel()} 예약 해제를 확인했습니다.`, true);
@@ -1136,12 +1136,12 @@ export function mountShorts(root) {
         && Number(published.rewardBuilds) === 0
         && published.publishStatus === "active";
       if (!confirmed) {
-        throw new Error("게시 요청·작업·주소·공개 범위·분류·Build 보상 응답을 모두 확인하지 못했습니다.");
+        throw new Error("게시 요청·작업·주소·공개 범위·분류·빌드 보상 응답을 모두 확인하지 못했습니다.");
       }
       renderPublished(published);
     } catch (error) {
       persistRecovery();
-      publishStatus.textContent = `게시 결과를 확인하지 못했어요. 같은 게시 요청 번호로 다시 시도하거나 서버 상태를 확인해 주세요. 영상은 보관되어 있고 추가 Build는 사용되지 않습니다. ${error.message}`;
+      publishStatus.textContent = `게시 결과를 확인하지 못했어요. 같은 게시 요청 번호로 다시 시도하거나 서버 상태를 확인해 주세요. 영상은 보관되어 있고 추가 빌드는 사용되지 않습니다. ${error.message}`;
       publishStatus.dataset.error = "true";
     } finally { setBusy(false); }
   });

@@ -99,13 +99,13 @@
 
 @media (max-width: 1180px) {
   .platform-account { margin-left: auto; }
-  .platform-login-button, .platform-balance-button { min-height: 36px; }
+  .platform-login-button, .platform-balance-button { min-height: 44px; }
   .platform-balance-button small { display: none; }
 }
 
 @media (max-width: 700px) {
   .platform-account-loading { display: none; }
-  .platform-login-button, .platform-balance-button { min-height: 36px; padding: 0 8px; }
+  .platform-login-button, .platform-balance-button { min-height: 44px; padding: 0 8px; }
   .platform-login-button strong { display: inline; font-size: 11px; }
   .platform-balance-button > span:last-child { display: none; }
   .platform-account-popover { position: fixed; top: 64px; right: 12px; }

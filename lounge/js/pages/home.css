@@ -286,6 +286,12 @@
   object-fit: cover;
 }
 
+.portal-home .home-compact-cards > .catalog-card .catalog-card-cover picture {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .portal-home .home-compact-cards > .catalog-card .catalog-card-copy {
   min-width: 0;
   padding: var(--space-5);

@@ -37,7 +37,8 @@ function copyToClipboard(text, button, successText = "복사됨") {
 
 function cardCover(item, fallback) {
   const src = catalogCardCover(item);
-  return `<img src="${escapeHtml(src)}" alt="${escapeHtml(item.title || fallback)}" width="1600" height="1000" loading="lazy" decoding="async">`;
+  const optimized = { "assets/og.png": "assets/og.webp", "assets/report-hub-banner.png": "assets/report-hub-banner.webp" }[src];
+  return `<picture>${optimized ? `<source srcset="${optimized}" type="image/webp">` : ""}<img src="${escapeHtml(src)}" alt="${escapeHtml(item.title || fallback)}" width="1600" height="1000" loading="lazy" decoding="async"></picture>`;
 }
 
 function bindBrokenImages(scope) {
@@ -53,6 +54,33 @@ function bindBrokenImages(scope) {
       image.replaceWith(fallback);
     }, { once: true });
   });
+}
+
+function openCommunityDialog(dialog, focusTarget) {
+  if (!dialog) return;
+  if (!dialog.dataset.focusBound) {
+    dialog.dataset.focusBound = "true";
+    dialog.addEventListener("close", () => {
+      const target = dialog.__returnFocus;
+      dialog.__returnFocus = null;
+      window.requestAnimationFrame(() => target?.focus?.({ preventScroll: true }));
+    });
+  }
+  dialog.__returnFocus = document.activeElement;
+  if (typeof dialog.showModal === "function") dialog.showModal();
+  else dialog.setAttribute("open", "");
+  window.requestAnimationFrame(() => focusTarget?.focus?.({ preventScroll: true }));
+}
+
+function closeCommunityDialog(dialog) {
+  if (!dialog) return;
+  if (dialog.open && typeof dialog.close === "function") dialog.close();
+  else {
+    dialog.removeAttribute("open");
+    const target = dialog.__returnFocus;
+    dialog.__returnFocus = null;
+    target?.focus?.({ preventScroll: true });
+  }
 }
 
 function adminForm(type, fields) {
@@ -97,12 +125,12 @@ function renderPromptPanel(root) {
         } else {
           source.removeAttribute("href");
         }
-        if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+        openCommunityDialog(dialog, dialog.querySelector("[data-prompt-dialog-close]"));
         return;
       }
       const copyButton = event.target.closest("[data-prompt-copy]");
       if (copyButton) { const item = items.find((candidate) => candidate.id === copyButton.dataset.promptCopyId); if (item) copyToClipboard(item.copyText, copyButton, "복사됨"); }
-      if (event.target.closest("[data-prompt-dialog-close]")) { const dialog = root.querySelector("[data-prompt-dialog]"); dialog.close?.(); dialog.removeAttribute("open"); }
+      if (event.target.closest("[data-prompt-dialog-close]")) closeCommunityDialog(root.querySelector("[data-prompt-dialog]"));
       handleCatalogDelete(event, "prompts");
     });
     root.addEventListener("input", (event) => { if (event.target.closest("[data-prompt-search]")) fillPromptGrid(root); });
@@ -144,10 +172,10 @@ function renderNewsletterPanel(root) {
         root.querySelector("[data-newsletter-dialog-body]").innerHTML = `<p class="newsletter-dialog-lead">${escapeHtml(item.summary)}</p><div class="newsletter-dialog-sections">${(item.sections || []).map((section) => `<section><h5>${escapeHtml(section.heading)}</h5><p>${escapeHtml(section.body)}</p></section>`).join("")}</div>`;
         const source = root.querySelector("[data-newsletter-dialog-source]");
         source.innerHTML = item.sourceUrl ? `<a class="text-button" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(item.sourceLabel || "원문")} 열기 ↗</a>` : "";
-        if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+        openCommunityDialog(dialog, dialog.querySelector("[data-newsletter-dialog-close]"));
         return;
       }
-      if (event.target.closest("[data-newsletter-dialog-close]")) { const dialog = root.querySelector("[data-newsletter-dialog]"); dialog.close?.(); dialog.removeAttribute("open"); }
+      if (event.target.closest("[data-newsletter-dialog-close]")) closeCommunityDialog(root.querySelector("[data-newsletter-dialog]"));
       handleCatalogDelete(event, "newsletters");
     });
     root.dataset.catalogBound = "true";
@@ -177,10 +205,10 @@ function renderMemePanel(root) {
         root.querySelector("[data-meme-art]").innerHTML = cardCover(item, "이미지");
         root.querySelector("[data-meme-summary]").textContent = `${item.summary || ""} ${item.credit ? "· " + item.credit : ""}`.trim();
         bindBrokenImages(dialog);
-        if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+        openCommunityDialog(dialog, dialog.querySelector("[data-meme-close]"));
         return;
       }
-      if (event.target.closest("[data-meme-close]")) { const dialog = root.querySelector("[data-meme-dialog]"); dialog.close?.(); dialog.removeAttribute("open"); }
+      if (event.target.closest("[data-meme-close]")) closeCommunityDialog(root.querySelector("[data-meme-dialog]"));
       handleCatalogDelete(event, "memes");
     });
     root.dataset.catalogBound = "true";
@@ -220,11 +248,11 @@ function bindCatalogForm(root, type) {
     const status = root.querySelector(`[data-catalog-status="${type}"]`);
     try {
       addCatalogItem(type, form);
-      if (status) { status.textContent = "올렸습니다. 이 브라우저에서는 새로고침 후에도 유지됩니다."; status.dataset.error = "false"; }
+      if (status) { status.textContent = "올렸습니다. 이 브라우저에서는 새로고침 후에도 유지됩니다."; status.dataset.error = "false"; status.setAttribute("role", "status"); status.setAttribute("aria-live", "polite"); }
       form.reset();
       window.dispatchEvent(new CustomEvent("lounge:catalogchange"));
     } catch (error) {
-      if (status) { status.textContent = error.message; status.dataset.error = "true"; }
+      if (status) { status.textContent = error.message; status.dataset.error = "true"; status.setAttribute("role", "alert"); status.setAttribute("aria-live", "assertive"); }
     }
   });
 }
@@ -318,15 +346,15 @@ function renderBoard(root, onReady) {
   const state = { root, page: 1, pageSize: 20, category: "all", sort: "latest", query: "", postId: "", post: null, posts: [], comments: [], total: 0, totalPages: 1, busy: false, dialogMode: "create", action: "", lastFocus: null };
   const list = root.querySelector("[data-board-list-wrap]"); const detail = root.querySelector("[data-board-detail]"); const listLayout = root.querySelector("[data-board-list-layout]"); const pagination = root.querySelector("[data-board-pagination]");
   const postDialog = root.querySelector("[data-board-post-dialog]"); const actionDialog = root.querySelector("[data-board-action-dialog]"); const commentDialog = root.querySelector("[data-board-comment-dialog]"); const postForm = root.querySelector("[data-board-post-form]"); const actionForm = root.querySelector("[data-board-action-form]"); const commentForm = root.querySelector("[data-board-comment-form]");
-  const setStatus = (selector, text, error = false) => { const node = root.querySelector(selector); if (node) { node.textContent = text || ""; node.dataset.error = String(error); } };
+  const setStatus = (selector, text, error = false) => { const node = root.querySelector(selector); if (node) { node.textContent = text || ""; node.dataset.error = String(error); node.setAttribute("role", error ? "alert" : "status"); node.setAttribute("aria-live", error ? "assertive" : "polite"); } };
   const setRoute = (next, replace = false) => { Object.assign(state, next); boardUrl(state, replace); renderRoute(); };
   const renderPagination = () => { pagination.innerHTML = ""; if (state.totalPages <= 1) return; const add = (label, disabled, current, callback) => { const button = document.createElement("button"); button.type = "button"; button.className = "board-page-button"; button.textContent = label; button.disabled = disabled; if (current) button.setAttribute("aria-current", "page"); button.addEventListener("click", callback); pagination.appendChild(button); }; add("이전", state.page <= 1, false, () => { if (state.page > 1) setRoute({ postId: "", page: state.page - 1 }); }); const start = Math.max(1, state.page - 2); const end = Math.min(state.totalPages, start + 4); for (let pageNumber = start; pageNumber <= end; pageNumber += 1) add(String(pageNumber), false, pageNumber === state.page, () => setRoute({ postId: "", page: pageNumber })); add("다음", state.page >= state.totalPages, false, () => { if (state.page < state.totalPages) setRoute({ postId: "", page: state.page + 1 }); }); };
   const renderList = (data) => { state.posts = Array.isArray(data.posts) ? data.posts : []; state.total = Number(data.pagination?.total || 0); state.totalPages = Math.max(1, Number(data.pagination?.totalPages || 1)); root.querySelector("[data-board-result-count]").textContent = state.total ? `총 ${state.total.toLocaleString("ko-KR")}개의 글` : "아직 등록된 글 없음"; if (!state.posts.length) { list.innerHTML = `<div class="community-empty-state"><strong>${state.query ? "검색 조건에 맞는 글이 없습니다." : "아직 작성된 글이 없습니다. 첫 의견을 남겨 주세요."}</strong></div>`; } else { list.innerHTML = state.posts.map((post) => { const dateValue = post.updated_at || post.created_at; return `<a class="board-post-row" href="?post=${encodeURIComponent(post.id)}#board" data-board-post-id="${escapeHtml(post.id)}"><span class="community-chip">${escapeHtml(BOARD_CATEGORIES[post.category] || "기타")}</span><span class="board-post-copy"><strong>${escapeHtml(post.title)}${post.origin === "shorts" ? ' <em class="board-media-badge">쇼츠</em>' : ""}</strong><small>${escapeHtml(post.summary || post.content || "")}</small></span><span class="board-post-meta"><span class="board-post-author">${escapeHtml(post.author || "방문자")}${Number(post.is_admin) === 1 ? "<em>관리자</em>" : ""}</span><time datetime="${escapeHtml(dateValue || "")}"><span class="board-date-full">${formatDate(dateValue)}</span><span class="board-date-short">${formatShortDate(dateValue)}</span></time></span><span class="board-post-stat">댓글 ${Number(post.comment_count || 0).toLocaleString("ko-KR")}</span></a>`; }).join(""); } renderPagination(); };
-  const loadPosts = async () => { list.setAttribute("aria-busy", "true"); list.innerHTML = `<div class="community-loading">게시판을 불러오는 중입니다.</div>`; const params = new URLSearchParams({ page: String(state.page), pageSize: String(state.pageSize), category: state.category, sort: state.sort, q: state.query }); try { renderList(await boardRequest(`/board/posts?${params}`)); } catch (error) { root.querySelector("[data-board-result-count]").textContent = "불러오기 실패"; list.innerHTML = `<div class="community-error-state"><strong>게시판을 불러오지 못했습니다.</strong><p>${escapeHtml(error.message)}</p><button class="secondary-button" type="button" data-board-refresh>다시 시도</button></div>`; } finally { list.setAttribute("aria-busy", "false"); } };
+  const loadPosts = async () => { list.setAttribute("aria-busy", "true"); list.innerHTML = `<div class="community-loading" role="status" aria-live="polite">게시판을 불러오는 중입니다.</div>`; const params = new URLSearchParams({ page: String(state.page), pageSize: String(state.pageSize), category: state.category, sort: state.sort, q: state.query }); try { renderList(await boardRequest(`/board/posts?${params}`)); } catch (error) { root.querySelector("[data-board-result-count]").textContent = "불러오기 실패"; list.innerHTML = `<div class="community-error-state" role="alert"><strong>게시판을 불러오지 못했습니다.</strong><p>${escapeHtml(error.message)}</p><button class="secondary-button" type="button" data-board-refresh>다시 시도</button></div>`; } finally { list.setAttribute("aria-busy", "false"); } };
   const renderComments = (comments) => comments.length ? comments.map((comment) => `<article class="board-comment" data-comment-id="${escapeHtml(comment.id)}"><div class="board-comment-head"><strong>${escapeHtml(comment.author || "방문자")}</strong>${Number(comment.is_admin) === 1 ? '<span class="community-chip">관리자</span>' : ""}<time>${formatDate(comment.updated_at || comment.created_at, true)}</time></div><p>${escapeHtml(comment.content || "")}</p>${comment.can_edit ? `<div class="board-comment-actions"><button class="text-button" type="button" data-board-comment-edit="${escapeHtml(comment.id)}">수정</button><button class="text-button" type="button" data-board-comment-delete="${escapeHtml(comment.id)}">삭제</button></div>` : ""}</article>`).join("") : '<div class="community-empty-state"><strong>아직 댓글이 없습니다.</strong></div>';
-  const loadComments = async (postId) => { const target = root.querySelector("[data-board-comments]"); target.innerHTML = `<div class="community-loading">댓글을 불러오는 중입니다.</div>`; try { const data = await boardRequest(`/board/posts/${encodeURIComponent(postId)}/comments`); state.comments = Array.isArray(data.comments) ? data.comments : []; target.innerHTML = renderComments(state.comments); root.querySelector("[data-board-comment-count]").textContent = `${state.comments.length}개`; } catch (error) { target.innerHTML = `<div class="community-error-state">${escapeHtml(error.message)}</div>`; } };
+  const loadComments = async (postId) => { const target = root.querySelector("[data-board-comments]"); target.innerHTML = `<div class="community-loading" role="status" aria-live="polite">댓글을 불러오는 중입니다.</div>`; try { const data = await boardRequest(`/board/posts/${encodeURIComponent(postId)}/comments`); state.comments = Array.isArray(data.comments) ? data.comments : []; target.innerHTML = renderComments(state.comments); root.querySelector("[data-board-comment-count]").textContent = `${state.comments.length}개`; } catch (error) { target.innerHTML = `<div class="community-error-state" role="alert">${escapeHtml(error.message)}</div>`; } };
   const renderDetail = (post) => { const mediaUrl = /^https:\/\//.test(post.mediaUrl || "") && post.mediaType === "video/webm" ? post.mediaUrl : ""; state.post = post; detail.innerHTML = `<div class="board-detail-top"><button class="text-button" type="button" data-board-back>목록으로</button><span class="community-chip">${escapeHtml(BOARD_CATEGORIES[post.category] || "기타")}</span>${post.origin === "shorts" ? '<span class="board-media-badge">쇼츠 영상</span>' : ""}</div><article class="board-detail-card"><h4>${escapeHtml(post.title)}</h4><div class="board-detail-meta"><strong>${escapeHtml(post.author || "방문자")}</strong>${Number(post.is_admin) === 1 ? '<span class="community-chip">관리자</span>' : ""}<time>${formatDate(post.created_at, true)}</time><span>조회 ${Number(post.view_count || 0).toLocaleString("ko-KR")}</span></div>${mediaUrl ? `<video class="board-detail-media" controls playsinline preload="metadata" src="${escapeHtml(mediaUrl)}" aria-label="${escapeHtml(post.title)} 쇼츠 영상"></video>` : ""}<p class="board-detail-content">${escapeHtml(post.content || "")}</p><div class="board-detail-actions"><button class="secondary-button" type="button" data-board-copy>링크 복사</button>${post.can_edit ? '<button class="text-button" type="button" data-board-edit>수정</button><button class="text-button danger-text" type="button" data-board-delete>삭제</button>' : ""}</div></article><section class="board-comments" aria-labelledby="board-comments-title"><div class="board-comments-head"><h5 id="board-comments-title">댓글 <span data-board-comment-count>0개</span></h5><button class="primary-button" type="button" data-board-open-comment>댓글 쓰기</button></div><div data-board-comments></div></section>`; listLayout.hidden = true; detail.hidden = false; loadComments(post.id); };
-  const loadPost = async (postId) => { try { const data = await boardRequest(`/board/posts/${encodeURIComponent(postId)}`); renderDetail(data.post); void boardRequest(`/board/posts/${encodeURIComponent(postId)}/views`, { method: "POST", body: JSON.stringify({ visitorId: boardVisitorId() }) }); } catch (error) { state.postId = ""; boardUrl(state, true); listLayout.hidden = false; detail.hidden = true; list.innerHTML = `<div class="community-error-state"><strong>${escapeHtml(error.message)}</strong><button class="secondary-button" type="button" data-board-refresh>목록 다시 불러오기</button></div>`; } };
+  const loadPost = async (postId) => { try { const data = await boardRequest(`/board/posts/${encodeURIComponent(postId)}`); renderDetail(data.post); void boardRequest(`/board/posts/${encodeURIComponent(postId)}/views`, { method: "POST", body: JSON.stringify({ visitorId: boardVisitorId() }) }); } catch (error) { state.postId = ""; boardUrl(state, true); listLayout.hidden = false; detail.hidden = true; list.innerHTML = `<div class="community-error-state" role="alert"><strong>${escapeHtml(error.message)}</strong><button class="secondary-button" type="button" data-board-refresh>목록 다시 불러오기</button></div>`; } };
   const renderRoute = () => { readBoardUrl(state); if (state.postId) loadPost(state.postId); else { listLayout.hidden = false; detail.hidden = true; loadPosts(); } };
   const ensureLogin = () => { if (window.BuildersPlatform?.snapshot?.().user) return true; window.BuildersPlatform?.openLogin?.(); return false; };
   const openWrite = (post = null) => { if (!ensureLogin()) return; state.lastFocus = document.activeElement; state.dialogMode = post ? "edit" : "create"; postForm.reset(); postForm.elements.postId.value = post?.id || ""; postForm.elements.category.value = post?.category || "report_opinion"; postForm.elements.category.disabled = post?.origin === "shorts"; postForm.elements.title.value = post?.title || ""; postForm.elements.content.value = post?.content || ""; root.querySelector("[data-board-form-title]").textContent = post ? "게시글 수정" : "새 글 작성"; root.querySelector("[data-board-save]").textContent = post ? "수정 저장" : "게시하고 1빌드 받기"; setStatus("[data-board-post-status]", "", false); dialogOpen(postDialog, postForm.elements.title); };
@@ -369,26 +397,63 @@ async function renderHomeBoardPreview(root) {
     const posts = Array.isArray(data.posts) ? data.posts : [];
     root.innerHTML = posts.length ? `<ul class="home-board-list">${posts.map((post) => `<li><a href="?post=${encodeURIComponent(post.id)}#board" data-home-board-post="${escapeHtml(post.id)}"><span class="community-chip">${escapeHtml(BOARD_CATEGORIES[post.category] || "기타")}</span><strong>${escapeHtml(post.title)}</strong><small>${escapeHtml(post.author || "방문자")} · 댓글 ${Number(post.comment_count || 0).toLocaleString("ko-KR")} · ${formatDate(post.updated_at || post.created_at)}</small></a></li>`).join("")}</ul>` : '<div class="community-empty-inline">아직 게시글이 없습니다. 첫 글을 남겨보세요.</div>';
     root.querySelectorAll("[data-home-board-post]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); window.history.pushState({}, "", link.getAttribute("href")); window.dispatchEvent(new PopStateEvent("popstate")); window.dispatchEvent(new CustomEvent("lounge:navigate", { detail: { view: "board" } })); }));
-  } catch (error) { root.innerHTML = `<div class="community-error-state"><strong>게시판을 불러오지 못했습니다.</strong><p>${escapeHtml(error.message)}</p><button class="secondary-button" type="button" data-home-board-retry>다시 시도</button></div>`; root.querySelector("[data-home-board-retry]")?.addEventListener("click", () => renderHomeBoardPreview(root)); }
+  } catch (error) { root.innerHTML = `<div class="community-error-state" role="alert"><strong>게시판을 불러오지 못했습니다.</strong><p>${escapeHtml(error.message)}</p><button class="secondary-button" type="button" data-home-board-retry>다시 시도</button></div>`; root.querySelector("[data-home-board-retry]")?.addEventListener("click", () => renderHomeBoardPreview(root)); }
 }
 
 export function mountCommunity() {
-  const paintCommunity = () => {
-    const prompts = document.querySelector('[data-community-view="prompts"]'); if (prompts) renderPromptPanel(prompts);
-    const newsletter = document.querySelector('[data-community-view="newsletter"]'); if (newsletter) renderNewsletterPanel(newsletter);
-    const videos = document.querySelector('[data-community-view="videos"]'); if (videos && !videos.dataset.ready) { renderVideoPanel(videos); videos.dataset.ready = "true"; }
-    const memes = document.querySelector('[data-community-view="memes"]'); if (memes) renderMemePanel(memes);
-    const games = document.querySelector('[data-community-view="games"]'); if (games && !games.dataset.ready) { renderGamePanel(games); games.dataset.ready = "true"; }
-  };
-  paintCommunity();
-  const board = document.querySelector('[data-community-view="board"]'); let boardController = null; if (board) renderBoard(board, (controller) => { boardController = controller; });
+  const mountedViews = new Set();
+  let boardController = null;
+  const catalogViews = new Set(["prompts", "newsletter", "memes"]);
+  const communityViews = new Set(["prompts", "newsletter", "videos", "memes", "board", "games"]);
+
   const bindHomePreview = () => { void renderHomeBoardPreview(document.querySelector("[data-home-board-preview]")); };
-  bindHomePreview();
-  window.addEventListener("lounge:viewchange", (event) => { if (event.detail?.view === "home") bindHomePreview(); });
+  const renderCatalogView = (view) => {
+    const panel = document.querySelector(`[data-community-view="${view}"]`);
+    if (!panel) return;
+    if (view === "prompts") renderPromptPanel(panel);
+    if (view === "newsletter") renderNewsletterPanel(panel);
+    if (view === "memes") renderMemePanel(panel);
+  };
+  const mountView = (view) => {
+    if (view === "home") { bindHomePreview(); return; }
+    if (!communityViews.has(view) || mountedViews.has(view)) return;
+    const panel = document.querySelector(`[data-community-view="${view}"]`);
+    if (!panel) return;
+    if (catalogViews.has(view)) renderCatalogView(view);
+    if (view === "videos") { renderVideoPanel(panel); panel.dataset.ready = "true"; }
+    if (view === "games") { renderGamePanel(panel); panel.dataset.ready = "true"; }
+    if (view === "board") renderBoard(panel, (controller) => { boardController = controller; });
+    mountedViews.add(view);
+  };
+  const refreshMountedCatalog = () => {
+    mountedViews.forEach((view) => { if (catalogViews.has(view)) renderCatalogView(view); });
+  };
+  const clearInactivePlayers = (view) => {
+    if (view !== "videos") {
+      const player = document.querySelector("[data-video-player]");
+      if (player?.querySelector("iframe")) player.innerHTML = '<div class="video-player-placeholder"><strong>재생할 영상을 선택해 주세요.</strong><p>자동 재생하지 않으며, 선택한 영상 하나만 표시합니다.</p></div>';
+    }
+    if (view !== "games") {
+      const player = document.querySelector("[data-game-player]");
+      if (player?.querySelector("iframe")) { player.hidden = true; player.innerHTML = ""; }
+    }
+  };
+
+  const initialRoute = window.location.hash.slice(1) || document.documentElement.dataset.loungeRoute || "home";
+  mountView(initialRoute);
+  window.addEventListener("lounge:viewchange", (event) => {
+    const view = event.detail?.view || document.documentElement.dataset.loungeRoute || "home";
+    mountView(view);
+    clearInactivePlayers(view);
+    if (view === "home") bindHomePreview();
+  });
   window.addEventListener("lounge:catalogchange", () => {
-    paintCommunity();
+    refreshMountedCatalog();
     if (document.documentElement.dataset.loungeRoute === "home") window.dispatchEvent(new CustomEvent("lounge:authchange"));
   });
-  window.addEventListener("lounge:authchange", paintCommunity);
+  window.addEventListener("lounge:authchange", () => {
+    refreshMountedCatalog();
+    if (document.documentElement.dataset.loungeRoute === "home") bindHomePreview();
+  });
   window.LoungeCommunity = Object.freeze({ openWrite: () => boardController?.openWrite?.(), refreshBoard: () => boardController?.renderRoute?.(), refreshHomePreview: bindHomePreview, clearBoardQuery: () => boardController?.clearQuery?.() });
 }

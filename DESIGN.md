@@ -220,9 +220,17 @@ CSS에서는 작은 글 크기를 `--font-small: 0.875rem` 토큰으로 사용�
 - `--lounge-font-board-title: 1.125rem`: 글 목록 제목
 - `--lounge-font-meta: 0.875rem`: 작성자, 댓글, 날짜
 - `--lounge-font-chip: 0.8125rem`: 분류 칩
-- `--lounge-home-quad-min: 280px`: 모아보기 4칸의 최소 높이
+- `--lounge-home-quad-min: 280px`: 홈 콘텐츠 묶음의 최소 높이
 - `--lounge-card-cover-ratio: 16 / 10`: 프롬프트, 뉴스레터, 이미지 게시판 카드 비율
 - `--lounge-card-radius: 12px`: 카드뉴스 모서리
 - `--lounge-shadow: 0 4px 16px rgba(7, 19, 49, 0.08)`: 모바일 메뉴와 상단바에만 허용하는 낮은 그림자
 
 앱 본문은 흰색 배경과 1px 구분선을 기본으로 하며, 동일 크기 기능 카드를 반복하지 않는다. AI 회의록 메뉴와 제작 화면은 공개 라운지에서 제거한다. 쇼츠 스튜디오는 만들기 메뉴에 유지한다.
+
+## Lounge 현재 화면·접근성 계약
+
+현재 라우트는 `#home`, `#shorts`, `#webtoon`, `#masterpiece`, `#prompts`, `#newsletter`, `#videos`, `#memes`, `#board`, `#games`, `#jobs`, `#results`, `#files`, `#usage`, `#membership`, `#settings`, `#help`, `#admin`이다. 홈은 게시판·프롬프트·뉴스레터·이미지 게시판·AI 제작 도구를 먼저 보여주며, 쇼츠·커뮤니티·관리자 화면은 해당 라우트에 처음 들어왔을 때 마운트한다.
+
+키보드 사용자는 건너뛰기 링크와 `:focus-visible` 링을 사용할 수 있고, 주요 조작은 최소 44px 높이로 유지한다. 모바일 메뉴가 닫히면 사이드바는 `inert` 상태가 되며, 검색·로그인·커뮤니티 대화상자는 닫을 때 열기 버튼으로 포커스를 돌려준다. 상태는 텍스트와 `role="status"` 또는 `role="alert"`를 함께 사용해 색상만으로 구분하지 않는다.
+
+홈 진입 시 iframe은 불러오지 않는다. 웹툰·세계명화 iframe은 해당 라우트 진입 때만 지연 로드하고, 영상·게임은 한 번에 하나의 플레이어만 유지한다. 카드 이미지는 `loading="lazy"`, `decoding="async"`, 대체 텍스트와 크기 힌트를 사용하며, 상단·하단 로고는 원본 PNG를 유지한 100KB 이하 WebP를 우선 사용한다.

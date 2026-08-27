@@ -21,7 +21,7 @@ function isLocalPreview() {
 
 function formatVisitorCount(payload) {
   const total = Number(payload?.total);
-  return Number.isFinite(total) ? `방문 ${total.toLocaleString("ko-KR")}` : "방문 집계 준비 중";
+  return Number.isFinite(total) ? `방문 ${total.toLocaleString("ko-KR")}` : "방문 집계 확인 중";
 }
 
 async function loadVisitorCount(output) {
@@ -44,7 +44,7 @@ async function loadVisitorCount(output) {
     if (!response.ok) throw new Error(`visitor status ${response.status}`);
     output.textContent = formatVisitorCount(await response.json());
   } catch {
-    output.textContent = "방문 집계 준비 중";
+    output.textContent = "방문 집계 확인 중";
   }
 }
 
@@ -87,4 +87,3 @@ export function mountReportHubTopbar(root = document) {
   void loadVisitorCount(visitor);
   return () => stopClock();
 }
-

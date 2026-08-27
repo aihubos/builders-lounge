@@ -19,36 +19,36 @@ const ERROR_MESSAGES = Object.freeze({
   request_already_used: "같은 생성 요청이 이미 처리되었습니다. 다시 눌러 새 요청을 시작해 주세요.",
   prompt_required: "생성할 내용을 입력해 주세요.",
   invalid_endpoint: "API 주소는 외부 HTTPS 주소만 사용할 수 있습니다.",
-  shorts_cost_misconfigured: "쇼츠 사용 비용이 Build 5로 설정되어 있지 않습니다.",
+  shorts_cost_misconfigured: "쇼츠 사용 비용이 5빌드로 설정되어 있지 않습니다.",
   shorts_topic_too_short: "만들고 싶은 내용을 한 문장으로 조금 더 적어 주세요.",
-  shorts_storage_not_configured: "영상 저장소가 아직 연결되지 않았습니다.",
+  shorts_storage_not_configured: "영상 저장소가 아직 설정되지 않았습니다.",
   shorts_webm_required: "이 브라우저에서 WebM 영상을 만들지 못했습니다.",
   shorts_file_size_invalid: "영상 파일 크기를 확인하지 못했거나 25MB를 넘었습니다.",
-  shorts_reservation_released: "이 작업의 Build 예약은 이미 해제되었습니다.",
+  shorts_reservation_released: "이 작업의 빌드 예약은 이미 해제되었습니다.",
   shorts_already_completed: "이미 완성된 영상은 취소할 수 없습니다.",
   shorts_not_completed: "영상 저장이 끝난 뒤 게시할 수 있습니다.",
   shorts_rights_confirmation_required: "사용할 자료와 게시 내용의 권리를 확인해 주세요.",
   shorts_media_missing: "저장된 영상을 찾지 못했습니다.",
   shorts_publish_failed: "게시판에 등록하지 못했습니다. 같은 버튼으로 다시 시도해 주세요.",
-  shorts_upload_commit_failed: "영상 저장은 끝났지만 Build 확정 상태를 확인하지 못했습니다. 다시 시도하지 말고 관리자에게 알려 주세요.",
-  shorts_renderer_not_configured: "MoneyPrinterTurbo 렌더 서버가 아직 연결되지 않았습니다.",
+  shorts_upload_commit_failed: "영상 저장은 끝났지만 빌드 확정 상태를 확인하지 못했습니다. 다시 시도하지 말고 관리자에게 알려 주세요.",
+  shorts_renderer_not_configured: "MoneyPrinterTurbo 렌더 서버가 아직 설정되지 않았습니다.",
   shorts_renderer_unreachable: "영상 렌더 서버와 연결이 끊어졌습니다. 기존 작업 상태를 다시 확인해 주세요.",
   shorts_renderer_request_failed: "영상 렌더 서버가 작업을 처리하지 못했습니다. 기존 작업 상태를 다시 확인해 주세요.",
-  shorts_renderer_unauthorized: "영상 렌더 서버의 내부 인증을 확인하지 못했습니다. 제작 내용과 Build 예약은 그대로 보존됩니다.",
+  shorts_renderer_unauthorized: "영상 렌더 서버의 내부 인증을 확인하지 못했습니다. 제작 내용과 빌드 예약은 그대로 보존됩니다.",
   shorts_renderer_busy: "영상 렌더 서버가 다른 작업을 처리 중입니다. 잠시 후 같은 제작안을 다시 시도해 주세요.",
   shorts_renderer_plan_invalid: "영상 서버가 제작안 형식을 확인하지 못했습니다. 장면 내용을 수정한 뒤 다시 시도해 주세요.",
-  shorts_renderer_task_missing: "영상 서버에서 이전 작업을 찾지 못해 Build 예약을 해제했습니다. 새로 시작해 주세요.",
+  shorts_renderer_task_missing: "영상 서버에서 이전 작업을 찾지 못해 빌드 예약을 해제했습니다. 새로 시작해 주세요.",
   shorts_renderer_invalid_response: "영상 렌더 서버 응답을 확인하지 못했습니다.",
   shorts_renderer_video_fetch_failed: "완성된 MP4를 렌더 서버에서 가져오지 못했습니다.",
   shorts_renderer_media_type_invalid: "렌더 서버가 MP4가 아닌 파일을 반환했습니다.",
   shorts_renderer_video_url_invalid: "렌더 서버의 완성 영상 주소가 허용된 작업 경로와 다릅니다.",
-  shorts_renderer_storage_failed: "완성된 MP4를 안전한 저장소에 보관하지 못해 Build 예약을 해제했습니다.",
-  shorts_mp4_structure_invalid: "완성 파일의 MP4 구조를 확인하지 못해 Build 예약을 해제했습니다.",
+  shorts_renderer_storage_failed: "완성된 MP4를 안전한 저장소에 보관하지 못해 빌드 예약을 해제했습니다.",
+  shorts_mp4_structure_invalid: "완성 파일의 MP4 구조를 확인하지 못해 빌드 예약을 해제했습니다.",
   shorts_render_not_started: "아직 시작하지 않은 렌더 작업입니다.",
-  shorts_render_plan_incomplete: "렌더할 제작안의 장면 구성이 부족해 Build 예약을 해제했습니다.",
+  shorts_render_plan_incomplete: "렌더할 제작안의 장면 구성이 부족해 빌드 예약을 해제했습니다.",
   shorts_plan_invalid: "제작 방향과 장면 내용을 모두 확인해 주세요.",
   shorts_plan_locked: "영상 제작이 시작되어 제작 내용을 더 이상 수정할 수 없습니다.",
-  shorts_reservation_expired: "30분이 지나 Build 예약이 해제되었습니다. 새로 시작해 주세요.",
+  shorts_reservation_expired: "30분이 지나 빌드 예약이 해제되었습니다. 새로 시작해 주세요.",
   shorts_upload_in_progress: "같은 영상의 저장을 이미 처리하고 있습니다. 작업 상태를 다시 확인해 주세요.",
   shorts_use_studio: "쇼츠는 AI 쇼츠 스튜디오 화면에서 만들어 주세요.",
   server_error: "서버에서 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.",
@@ -67,6 +67,7 @@ const state = {
 const subscribers = new Set();
 let expiryTimer = 0;
 let initPromise = null;
+let loginReturnFocus = null;
 
 function errorMessage(code, fallback = "요청을 처리하지 못했습니다.") {
   return ERROR_MESSAGES[code] || fallback;
@@ -97,6 +98,7 @@ async function request(path, options = {}) {
 
 function notify() {
   renderAccount();
+  renderToolCostLabels();
   subscribers.forEach((callback) => {
     try { callback(snapshot()); } catch { /* 한 화면 오류가 로그인 상태 갱신을 막지 않게 합니다. */ }
   });
@@ -198,12 +200,15 @@ function showLoginStatus(message, error = false) {
   document.querySelectorAll("[data-platform-login-status]").forEach((node) => {
     node.textContent = message || "";
     node.dataset.error = String(error);
+    node.setAttribute("role", error ? "alert" : "status");
+    node.setAttribute("aria-live", error ? "assertive" : "polite");
   });
 }
 
 function openLogin() {
   const dialog = document.querySelector("[data-platform-login-dialog]");
   if (!dialog) return;
+  if (!dialog.open) loginReturnFocus = document.activeElement;
   if (!dialog.open) dialog.showModal?.();
   if (!state.config?.loginReady) showLoginStatus("Google OAuth 클라이언트 ID를 서버에 먼저 설정해 주세요.", true);
   else showLoginStatus("로그인 정보는 현재 탭의 메모리에만 유지되며 API 키는 서버에서만 사용됩니다.");
@@ -214,6 +219,18 @@ function openLogin() {
 function closeLogin() {
   const dialog = document.querySelector("[data-platform-login-dialog]");
   if (dialog?.open) dialog.close();
+}
+
+function renderToolCostLabels() {
+  document.querySelectorAll("[data-tool-cost-label]").forEach((node) => {
+    const tool = getTool(node.dataset.toolCostLabel);
+    const cost = Number(tool?.cost);
+    node.textContent = tool?.enabled && Number.isFinite(cost) && cost >= 0
+      ? `${cost.toLocaleString("ko-KR")}빌드`
+      : tool
+        ? "관리자 설정 필요"
+        : "비용 확인 중";
+  });
 }
 
 function renderAccount() {
@@ -230,7 +247,7 @@ function renderAccount() {
     }
     root.innerHTML = `<div class="platform-account-signed">
       <button class="platform-balance-button" type="button" data-platform-account-menu aria-label="내 계정 메뉴 열기">
-        ${state.user.picture ? `<img src="${escapeHtml(state.user.picture)}" alt="" referrerpolicy="no-referrer">` : '<span class="platform-avatar-fallback" aria-hidden="true">B</span>'}
+        ${state.user.picture ? `<img src="${escapeHtml(state.user.picture)}" alt="" width="28" height="28" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : '<span class="platform-avatar-fallback" aria-hidden="true">B</span>'}
         <span><strong data-build-balance>${Number(state.user.balance || 0).toLocaleString("ko-KR")} 빌드</strong><small>${escapeHtml(state.user.name || state.user.email)}</small></span>
       </button>
       <div class="platform-account-popover" data-platform-account-popover hidden>
@@ -271,6 +288,11 @@ function bindUi() {
   });
   document.querySelector("[data-platform-login-dialog]")?.addEventListener("click", (event) => {
     if (event.target === event.currentTarget) closeLogin();
+  });
+  document.querySelector("[data-platform-login-dialog]")?.addEventListener("close", () => {
+    const target = loginReturnFocus;
+    loginReturnFocus = null;
+    window.requestAnimationFrame(() => target?.focus?.({ preventScroll: true }));
   });
 }
 

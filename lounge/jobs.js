@@ -149,8 +149,8 @@ function announceAction(container, action) {
   const status = container.querySelector("[data-jobs-action-status]");
   if (!status) return;
   status.textContent = action === "retry"
-    ? "이 작업 유형의 다시 시도 요청은 아직 연결되지 않았습니다."
-    : "이 작업 유형의 삭제 요청은 아직 연결되지 않았습니다.";
+    ? "이 작업 유형은 이 화면에서 다시 시도할 수 없습니다."
+    : "이 작업 유형은 이 화면에서 삭제할 수 없습니다.";
 }
 
 function bindEvents(container, state) {
