@@ -1,5 +1,5 @@
 import "./platform.js?v=20260828-policy-v1";
-import { renderHome } from "./js/pages/home.js?v=20260826-unified-cards-v2";
+import { renderHome } from "./js/pages/home.js?v=20260925-simple-v1";
 import { mountJobs } from "./jobs.js";
 import "./settings.js";
 import { DEMO_MODE_STORAGE_KEY, getCounts, getDemoSnapshot } from "./demo-data.js";
@@ -10,7 +10,6 @@ import { publishedItems } from "./community-data.js";
 const ROUTE_STORAGE_KEY = "ai-builders-lounge-route";
 const DENSITY_STORAGE_KEY = "ai-builders-lounge-density";
 const ALLOWED_DENSITIES = new Set(["comfortable", "compact"]);
-const MOBILE_BREAKPOINT = 1180;
 const LAZY_EMBED_TIMEOUT_MS = 12000;
 const LAZY_EMBED_ROUTES = new Set(["webtoon", "masterpiece"]);
 
@@ -19,11 +18,11 @@ const sidebar = document.querySelector("[data-lounge-sidebar]");
 const menuToggle = document.querySelector("[data-lounge-menu-toggle]");
 const menuCloseButtons = [...document.querySelectorAll("[data-lounge-menu-close]")];
 const drawerScrim = document.querySelector(".drawer-scrim");
-const drawerBackground = [...document.querySelectorAll(".archive-topbar, .lounge-mobile-toolbar, #lounge-main, .portal-mobile-nav")];
+const drawerBackground = [...document.querySelectorAll(".archive-topbar, #lounge-main, .portal-mobile-nav")];
 const liveRegion = document.querySelector("[data-lounge-live]");
 const notice = document.querySelector("[data-lounge-notice]");
-const mobilePageTitle = document.querySelector("[data-mobile-page-title]");
-const mobileMenu = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+// 전체 메뉴는 모든 화면 너비에서 서랍으로 열립니다. 주요 메뉴는 상단 바에 있습니다.
+const mobileMenu = window.matchMedia("all");
 const searchDialog = document.querySelector("[data-global-search-dialog]");
 const searchInput = document.querySelector("[data-global-search-input]");
 const searchResults = document.querySelector("[data-global-search-results]");
@@ -283,7 +282,7 @@ function setMenuOpen(isOpen, { restoreFocus = false } = {}) {
   document.body.classList.toggle("lounge-menu-open", shouldOpen);
   if (drawerScrim) drawerScrim.hidden = !shouldOpen;
   menuToggle?.setAttribute("aria-expanded", String(shouldOpen));
-  menuToggle?.setAttribute("aria-label", shouldOpen ? "작업공간 메뉴 닫기" : "작업공간 메뉴 열기");
+  menuToggle?.setAttribute("aria-label", shouldOpen ? "전체 메뉴 닫기" : "전체 메뉴 열기");
   syncSidebarAccessibility(shouldOpen);
   syncDrawerBackground(shouldOpen);
   if (shouldOpen) window.requestAnimationFrame(() => sidebar?.querySelector("[data-lounge-menu-close]")?.focus({ preventScroll: true }));
@@ -403,7 +402,6 @@ function showView(requestedView, { updateHash = false, announce = true, userInit
     link.classList.toggle("is-active", active);
     if (active) link.setAttribute("aria-current", "page"); else link.removeAttribute("aria-current");
   });
-  if (mobilePageTitle) mobilePageTitle.textContent = meta.title;
   document.title = `${meta.title} | Builders Lounge`;
   if (notice) {
     notice.textContent = getNoticeCopy(view);

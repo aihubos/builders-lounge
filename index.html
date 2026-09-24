@@ -15,7 +15,7 @@
     <link rel="preload" as="fetch" href="https://reportmode-request-board.report-request-board.workers.dev/board/posts?page=1&amp;pageSize=6&amp;category=all&amp;sort=latest&amp;q=" crossorigin />
     <meta name="description" content="AI 도구를 만들고, 프롬프트와 경험을 나누며 함께 성장하는 AI Builders Lab의 공식 커뮤니티 허브입니다." />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <link rel="stylesheet" href="lounge/core.css?v=20260828-performance-v1" />
+    <link rel="stylesheet" href="lounge/core.css?v=20260925-simple-v1" />
     <link rel="stylesheet" href="lounge/jobs.css?v=20260827-ui-v1" media="print" onload="this.media='all'" />
     <link rel="stylesheet" href="lounge/settings.css?v=20260827-ui-v1" media="print" onload="this.media='all'" />
     <link rel="stylesheet" href="lounge/policies.css?v=20260828-policy-v1" media="print" onload="this.media='all'" />
@@ -29,7 +29,7 @@
       <header class="archive-topbar" aria-label="Builders Lounge 상단 메뉴">
         <div class="archive-topbar-inner">
           <div class="lounge-topbar-brand-cluster">
-            <button class="menu-toggle portal-menu-toggle" type="button" aria-expanded="false" aria-controls="lounge-sidebar" aria-label="전체 메뉴 열기" data-lounge-menu-toggle>
+            <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="lounge-sidebar" aria-label="전체 메뉴 열기" data-lounge-menu-toggle>
               <span></span><span></span><span></span>
             </button>
             <a class="archive-brand builders-lounge-top-brand" href="#home" data-view-link="home" aria-label="Builders Lounge 홈으로 이동">
@@ -43,28 +43,29 @@
             <button class="mobile-search-opener" type="button" data-global-search-open aria-label="라운지 전체 검색 열기"><span aria-hidden="true">⌕</span></button>
           </div>
 
+          <nav class="topnav" aria-label="주요 메뉴">
+            <a href="#board" data-view-link="board">게시판</a>
+            <a href="#prompts" data-view-link="prompts">프롬프트</a>
+            <a href="#newsletter" data-view-link="newsletter">뉴스레터</a>
+            <a href="#videos" data-view-link="videos">영상</a>
+            <a href="#memes" data-view-link="memes">이미지</a>
+            <a href="#shorts" data-view-link="shorts">AI 만들기</a>
+          </nav>
+
           <div class="archive-topbar-actions">
-            <nav class="archive-topbar-links" aria-label="외부 메뉴">
+            <div class="archive-topbar-links">
               <button class="topbar-search-opener" type="button" data-global-search-open aria-label="라운지 전체 검색 열기"><span aria-hidden="true">⌕</span><span>검색</span><kbd>/</kbd></button>
-              <button class="topbar-write-opener" type="button" data-portal-write>새 글 쓰기</button>
-            </nav>
+              <button class="topbar-write-opener" type="button" data-portal-write>글쓰기</button>
+            </div>
             <div class="platform-account" data-platform-account><span class="platform-account-loading">계정 확인 중</span></div>
           </div>
         </div>
       </header>
 
-      <div class="lounge-mobile-toolbar" data-mobile-toolbar>
-        <span class="mobile-toolbar-label">현재 화면</span>
-        <strong data-mobile-page-title>오늘 무엇을 만들어볼까요?</strong>
-      </div>
-
       <div class="lounge-layout">
         <aside class="lounge-sidebar" id="lounge-sidebar" aria-label="Builders Lounge 메뉴" data-lounge-sidebar tabindex="-1">
           <div class="sidebar-heading">
-            <div>
-              <p class="sidebar-kicker">BUILDERS LOUNGE</p>
-              <h2>라운지 메뉴</h2>
-            </div>
+            <h2>전체 메뉴</h2>
             <button class="sidebar-close" type="button" aria-label="메뉴 닫기" data-lounge-menu-close>닫기</button>
           </div>
 
@@ -116,10 +117,7 @@
           </nav>
 
           <div class="sidebar-footer">
-            <div class="sidebar-demo-card">
-              <span class="sidebar-demo-dot" aria-hidden="true"></span>
-              <div><strong>커뮤니티 운영 중</strong><small>게시판·공개 콘텐츠는 실제로 이용할 수 있습니다.</small></div>
-            </div>
+            <p class="sidebar-status">커뮤니티 운영 중 · 게시판과 공개 콘텐츠는 로그인 없이 볼 수 있어요.</p>
             <a class="sidebar-contact" href="mailto:hello@ai-hub-os.com">문의·오류 신고 <span aria-hidden="true">↗</span></a>
             <nav class="sidebar-external-links" aria-label="외부 링크">
               <a href="https://aihubos.github.io/reportmode/board/" target="_blank" rel="noopener">통합 게시판</a>
@@ -140,10 +138,11 @@
 
             <section class="view-panel is-visible" id="view-home" data-view-panel="home">
               <div data-home-mount>
-                <section class="lounge-home portal-home" aria-labelledby="home-dashboard-title" data-home-prerender>
-                  <section class="portal-home-intro" data-home-intro>
-                    <div class="portal-home-intro-copy"><p class="portal-home-eyebrow">BUILDERS LOUNGE</p><h1 id="home-dashboard-title">만들고, 나누고, 함께 성장해요</h1><p>만든 결과와 경험을 읽고, 다음 작업을 바로 시작하세요.</p></div>
-                    <div class="portal-home-intro-actions"><span class="portal-home-intro-caption">AI 제작 도구</span><div class="portal-home-intro-buttons"><button class="primary-button" type="button" data-home-module="shorts">AI 쇼츠 만들기</button><button class="secondary-button" type="button" data-home-write>글 쓰고 1빌드 받기</button></div></div>
+                <section class="lounge-home" aria-labelledby="home-dashboard-title" data-home-prerender>
+                  <section class="home-hero" data-home-intro>
+                    <h1 id="home-dashboard-title">만들고, 나누고, 함께 성장해요</h1>
+                    <p>AI를 만드는 사람들의 게시판과 자료실입니다. 모든 글은 로그인 없이 볼 수 있어요.</p>
+                    <div class="home-hero-actions"><button class="primary-button" type="button" data-home-nav="board">게시판 둘러보기</button><button class="secondary-button" type="button" data-home-write>글쓰기</button></div>
                   </section>
                 </section>
               </div>
@@ -289,6 +288,6 @@
     </dialog>
 
     <div class="visually-hidden" role="status" aria-live="polite" data-lounge-live></div>
-    <script type="module" src="lounge/lounge.js?v=20260828-policy-v1"></script>
+    <script type="module" src="lounge/lounge.js?v=20260925-simple-v1"></script>
   </body>
 </html>

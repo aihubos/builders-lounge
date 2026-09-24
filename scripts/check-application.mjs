@@ -73,7 +73,7 @@ for (const file of sourceSupport) {
 
 const indexHtml = await readFile(resolve(root, "index.html"), "utf8");
 const expectedLoungeStyles = [
-  "lounge/core.css?v=20260828-performance-v1",
+  "lounge/core.css?v=20260925-simple-v1",
   "lounge/jobs.css?v=20260827-ui-v1",
   "lounge/settings.css?v=20260827-ui-v1",
   "lounge/policies.css?v=20260828-policy-v1",

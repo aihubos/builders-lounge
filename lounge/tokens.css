@@ -1,6 +1,6 @@
 :root {
   /* Type scale */
-  --type-display: clamp(2rem, 3vw, 2.75rem);
+  --type-display: clamp(2rem, 4vw, 3rem);
   --type-page-title: clamp(1.75rem, 2.4vw, 2.25rem);
   --type-section-title: 1.375rem;
   --type-card-title: 1rem;
@@ -27,7 +27,7 @@
   --color-text-secondary: #4e5968;
   --color-text-muted: #5a6573;
   --color-text-decorative: #5f6d82;
-  --color-page: #f6f8fa;
+  --color-page: #ffffff;
   --color-surface: #ffffff;
   --color-surface-subtle: #f9fafb;
   --color-surface-blue: #f2f7ff;
@@ -62,11 +62,11 @@
 
   /* Shape and depth */
   --radius-control: .625rem;
-  --radius-card: 1rem;
-  --radius-panel: 1.125rem;
+  --radius-card: .75rem;
+  --radius-panel: .875rem;
   --radius-dialog: 1.25rem;
   --radius-pill: 999px;
-  --shadow-card: 0 4px 18px rgba(25, 31, 40, .045);
+  --shadow-card: none;
   --shadow-floating: 0 18px 60px rgba(0, 12, 61, .16);
 
   /* Shell and page geometry */
@@ -74,10 +74,10 @@
   --control-height-lg: 3rem;
   --topbar-height: 4rem;
   --topbar-height-mobile: 3.5rem;
-  --sidebar-width: 14.5rem;
-  --shell-max: 92.5rem;
+  --sidebar-width: 18rem;
+  --shell-max: 72rem;
   --shell-gap: 1.5rem;
-  --page-wide: 76.5rem;
+  --page-wide: 72rem;
   --page-studio: 70rem;
   --page-content: 65rem;
   --page-form: 55rem;
@@ -158,9 +158,6 @@
   --lounge-font-meta: var(--type-meta);
   --lounge-font-chip: var(--type-label);
   --lounge-home-quad-min: 280px;
-  --lounge-home-reserve-wide: 105rem;
-  --lounge-home-reserve-tablet: 144rem;
-  --lounge-home-reserve-mobile: 223rem;
   --lounge-home-board-reserve: 13.5rem;
   --lounge-card-cover-ratio: 16 / 10;
   --lounge-card-radius: var(--radius-card);
