@@ -7,7 +7,7 @@
   --blue: #005fcc;
   --blue-bright: #2389fe;
   --danger: #c0392b;
-  --header: 84px; /* 상단 바 높이. 왼쪽·오른쪽 칸이 이 아래에 고정됩니다. */
+  --header: 96px; /* 상단 바 높이. 왼쪽·오른쪽 칸이 이 아래에 고정됩니다. */
 }
 
 * { box-sizing: border-box; }
@@ -34,9 +34,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* 상단: 왼쪽 로고(고정) + 시계·다음 일정 (innox 상단 바 참고) */
 .top { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid var(--line); }
 .top-inner, .wrap, .foot-inner { width: 100%; max-width: 1320px; margin: 0 auto; padding: 0 16px; }
-.top-inner { display: grid; grid-template-columns: 200px minmax(0, 1fr); align-items: center; gap: 28px; min-height: var(--header); }
+.top-inner { display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 28px; min-height: var(--header); }
 .brand { display: flex; align-items: center; gap: 10px; }
-.logo img { display: block; width: auto; height: 42px; }
+.logo img { display: block; width: 218px; height: auto; mix-blend-mode: multiply; } /* 예전 사이트와 같은 표시 크기 218×73 */
 .menu-btn { display: none; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 18px; cursor: pointer; }
 .schedule-bar { display: flex; align-items: center; gap: 16px; min-width: 0; padding: 8px 16px; border-radius: 12px; background: #1554b5; color: #fff; }
 .clock { display: grid; flex-shrink: 0; padding-right: 16px; border-right: 1px solid rgba(255, 255, 255, .3); line-height: 1.15; }
@@ -52,13 +52,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .ev-more { flex-shrink: 0; padding: 6px 8px; border-radius: 6px; font-size: 13px; }
 
 /* 3단: 왼쪽 메뉴 | 가운데 본문 | 오른쪽 로그인·검색 */
-.wrap { flex: 1; display: grid; align-content: start; grid-template-columns: 200px minmax(0, 1fr) 260px; gap: 28px; padding-top: 20px; padding-bottom: 48px; }
+.wrap { flex: 1; display: grid; align-content: start; grid-template-columns: 220px minmax(0, 1fr) 260px; gap: 28px; padding-top: 20px; padding-bottom: 48px; }
 .side, .right { position: sticky; top: calc(var(--header) + 20px); align-self: start; }
 .content:focus { outline: none; }
 .side a { display: block; padding: 7px 10px; border-radius: 4px; }
 .side a[aria-current="page"] { background: #eef5ff; color: var(--blue); font-weight: 700; }
-.side-title { margin: 18px 10px 4px; color: var(--sub); font-size: 12px; font-weight: 700; }
-.side-title:first-child { margin-top: 0; }
 .right { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
 .box { padding: 14px; border: 1px solid var(--line); border-radius: 6px; }
 .box h2 { margin: 0 0 8px; font-size: 13px; }
@@ -181,7 +179,7 @@ textarea.field { resize: vertical; line-height: 1.6; }
 
 /* 중간 폭: 오른쪽 칸은 본문 위 한 줄(로그인·검색)로 */
 @media (max-width: 1199px) {
-  .wrap { grid-template-columns: 200px minmax(0, 1fr); grid-template-areas: "side right" "side main"; grid-template-rows: auto 1fr; row-gap: 12px; }
+  .wrap { grid-template-columns: 220px minmax(0, 1fr); grid-template-areas: "side right" "side main"; grid-template-rows: auto 1fr; row-gap: 12px; }
   .side { grid-area: side; }
   .content { grid-area: main; }
   .right { grid-area: right; position: static; display: flex; align-items: center; gap: 10px; }
@@ -198,7 +196,6 @@ textarea.field { resize: vertical; line-height: 1.6; }
   .top { position: static; }
   .top-inner { grid-template-columns: minmax(0, 1fr); gap: 8px; min-height: 0; padding-top: 8px; padding-bottom: 10px; }
   .menu-btn { display: inline-flex; align-items: center; justify-content: center; }
-  .logo img { height: 34px; }
   .schedule-bar { flex-wrap: wrap; gap: 6px 10px; padding: 8px 12px; }
   .clock { display: flex; align-items: baseline; gap: 8px; padding: 0; border: 0; }
   .clock strong { font-size: 22px; }

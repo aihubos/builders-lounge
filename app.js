@@ -24,7 +24,7 @@ const READINGS = {
   videos: { title: "영상", items: VIDEOS, tag: (item) => item.category, extra: (item) => item.duration || "" },
 };
 const POLICIES = ["guidelines", "privacy", "terms"];
-const CALENDAR_EMBED = "https://calendar.google.com/calendar/embed?src=aibuilderslab.kr%40gmail.com&ctz=Asia%2FSeoul&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&hl=ko&wkst=2";
+const CALENDAR_EMBED = "https://calendar.google.com/calendar/embed?src=aibuilderslab.kr%40gmail.com&src=ko.south_korea%23holiday%40group.v.calendar.google.com&color=%23039BE5&color=%23D50000&ctz=Asia%2FSeoul&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&hl=ko&wkst=2";
 const CALENDAR_SUBSCRIBE = "https://calendar.google.com/calendar/r?cid=aibuilderslab.kr@gmail.com";
 
 const main = document.querySelector("#main");
