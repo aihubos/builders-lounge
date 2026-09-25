@@ -24,6 +24,8 @@ const READINGS = {
   videos: { title: "영상", items: VIDEOS, tag: (item) => item.category, extra: (item) => item.duration || "" },
 };
 const POLICIES = ["guidelines", "privacy", "terms"];
+const CALENDAR_EMBED = "https://calendar.google.com/calendar/embed?src=aibuilderslab.kr%40gmail.com&ctz=Asia%2FSeoul&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&hl=ko&wkst=2";
+const CALENDAR_SUBSCRIBE = "https://calendar.google.com/calendar/r?cid=aibuilderslab.kr@gmail.com";
 
 const main = document.querySelector("#main");
 const loginDialog = document.querySelector("[data-login-dialog]");
@@ -34,6 +36,8 @@ const auth = { credential: "", user: null, config: null, timer: 0 };
 let renderId = 0;
 let lastHref = "";
 let googlePromise = null;
+let calendarEvents = null; // null: 불러오는 중, "error": 실패, 배열: 일정
+let barCache = "";
 
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
 const enc = encodeURIComponent;
@@ -195,6 +199,7 @@ function render(force = false) {
   if (moved) window.scrollTo(0, 0);
   if (name === "board") return renderBoard();
   if (name === "write") return renderWrite();
+  if (name === "calendar") return renderCalendar();
   if (READINGS[name]) return id ? renderReading(name, id) : renderReadingList(name);
   if (POLICIES.includes(name)) return renderPolicy(name);
   window.history.replaceState(null, "", window.location.pathname + "#board"); // 없어진 메뉴 주소는 자유게시판으로 보냅니다.
@@ -381,6 +386,63 @@ function renderPolicy(name) {
   main.replaceChildren(template.content.cloneNode(true));
 }
 
+/* ---------- 시계와 일정 (innox 상단 바 참고) ---------- */
+
+function upcomingEvents(count) {
+  if (!Array.isArray(calendarEvents)) return [];
+  const now = Date.now();
+  return calendarEvents.filter((event) => new Date(event.end || event.start).getTime() > now).slice(0, count);
+}
+
+function eventWhen(event) {
+  const start = new Date(event.start);
+  const now = new Date();
+  if (start <= now) return { badge: "진행 중", text: "지금 진행 중" };
+  const days = Math.round((Date.parse(kst(start).slice(0, 10)) - Date.parse(kst(now).slice(0, 10))) / 86400000);
+  const badge = days === 0 ? "오늘" : days === 1 ? "내일" : "D-" + days;
+  const date = start.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul", month: "long", day: "numeric", weekday: "short" });
+  return { badge, text: date + " " + (event.allDay ? "종일" : kst(start).slice(11, 16)) };
+}
+
+function eventSummary(event) {
+  const when = eventWhen(event);
+  return '<span class="ev-when"><b>' + when.badge + "</b> " + esc(when.text) + '</span><span class="ev-title">' + esc(event.title) + (event.location ? " · " + esc(event.location) : "") + "</span>";
+}
+
+function tickBar() {
+  const now = new Date();
+  document.querySelector("[data-clock]").textContent = now.toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" });
+  const events = upcomingEvents(2);
+  const slots = [0, 1].map((index) => {
+    if (calendarEvents === null) return index ? "" : '<span class="ev-title">일정을 불러오는 중</span>';
+    if (calendarEvents === "error") return index ? "" : '<span class="ev-title">일정을 불러오지 못했습니다</span>';
+    return events[index] ? eventSummary(events[index]) : '<span class="ev-title">' + (index ? "-" : "예정된 일정 없음") + "</span>";
+  });
+  const today = now.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "long", day: "numeric", weekday: "long" });
+  if (today + slots.join("|") === barCache) return; // 바뀐 게 있을 때만 다시 그립니다.
+  barCache = today + slots.join("|");
+  document.querySelector("[data-today]").textContent = today;
+  document.querySelectorAll("[data-ev] .ev-body").forEach((node, index) => { node.innerHTML = slots[index]; });
+}
+
+function renderCalendar() {
+  setTitle("일정");
+  const events = upcomingEvents(10);
+  const list = calendarEvents === null ? '<p class="empty">일정을 불러오는 중입니다.</p>'
+    : calendarEvents === "error" ? '<p class="empty">일정 목록을 불러오지 못했습니다. 아래 달력에서 확인해 주세요.</p>'
+    : events.length ? events.map((event) => {
+      const when = eventWhen(event);
+      return '<div class="row row-calendar"><span class="c-date"><b class="cmt">' + when.badge + "</b> " + esc(when.text) + '</span><span class="c-title">' + esc(event.title) + '</span><span class="c-author">' + esc(event.location || "") + "</span></div>";
+    }).join("")
+    : '<p class="empty">예정된 일정이 없습니다.</p>';
+  const mode = window.matchMedia("(max-width: 767px)").matches ? "AGENDA" : "MONTH";
+  main.innerHTML = '<div class="head"><h1>일정</h1><a class="btn-line" href="' + CALENDAR_SUBSCRIBE + '" target="_blank" rel="noopener">내 구글 캘린더에 추가 ↗</a></div>'
+    + '<div class="list">' + list + "</div>"
+    + '<p class="hint calendar-hint">구글 캘린더에서 바꾼 일정은 위 목록과 상단 바에 반영되기까지 최대 1시간쯤 걸립니다. 아래 달력은 바로 반영됩니다.</p>'
+    + '<iframe class="calendar-frame" src="' + esc(CALENDAR_EMBED + "&mode=" + mode) + '" title="AI Builders Lab 구글 캘린더" loading="lazy"></iframe>';
+}
+
+
 /* ---------- 이벤트 ---------- */
 
 async function copyText(text, button) {
@@ -504,5 +566,12 @@ document.addEventListener("submit", async (event) => {
 
 window.addEventListener("popstate", () => render());
 window.addEventListener("hashchange", () => render());
+fetch("calendar.json", { cache: "no-cache" })
+  .then((response) => (response.ok ? response.json() : Promise.reject(new Error("calendar"))))
+  .then((data) => { calendarEvents = Array.isArray(data.events) ? data.events : []; })
+  .catch(() => { calendarEvents = "error"; })
+  .finally(() => { tickBar(); if (route().name === "calendar") render(true); });
+setInterval(tickBar, 1000);
+tickBar();
 renderAccount();
 render();

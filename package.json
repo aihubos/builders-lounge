@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/serve.mjs",
+    "calendar": "node scripts/calendar.mjs",
     "build": "node --check app.js && node --check data.js && node scripts/build.mjs"
   }
 }

@@ -22,6 +22,14 @@
   <body>
     <a class="skip" href="#main" data-skip>본문 바로가기</a>
 
+    <section class="schedule-bar" aria-label="시계와 다가오는 일정">
+      <div class="schedule-inner">
+        <div class="clock"><strong data-clock>--:--:--</strong><span data-today></span></div>
+        <a class="ev" href="#calendar" data-ev><span class="ev-label">다음 일정</span><span class="ev-body"></span></a>
+        <a class="ev" href="#calendar" data-ev><span class="ev-label">다다음 일정</span><span class="ev-body"></span></a>
+      </div>
+    </section>
+
     <header class="top">
       <div class="top-inner">
         <button class="menu-btn" type="button" aria-label="메뉴 열기" aria-controls="side" aria-expanded="false" data-menu>☰</button>
@@ -43,6 +51,7 @@
       <nav class="side" id="side" aria-label="게시판 메뉴">
         <p class="side-title">커뮤니티</p>
         <a href="#board" data-nav="board">자유게시판</a>
+        <a href="#calendar" data-nav="calendar">일정</a>
         <p class="side-title">읽을거리</p>
         <a href="#prompts" data-nav="prompts">프롬프트</a>
         <a href="#newsletter" data-nav="newsletter">뉴스레터</a>
