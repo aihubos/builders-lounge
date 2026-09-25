@@ -27,7 +27,7 @@ const PROMO = '<section class="promo" aria-label="수업 안내"><div class="pro
   + '<h2>수업을 들으면 누구나<br>쇼츠·롱폼 유튜버가 될 수 있어요</h2>'
   + '<p class="promo-sub">AI와 함께라면 첫 영상도 어렵지 않아요. 수업에서 함께 시작해요.</p>'
   + '<p class="promo-actions"><a class="btn" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">수업 상담하기 ↗</a><a class="btn-line" href="#curriculum">커리큘럼 보기</a></p></div>'
-  + '<img src="assets/promo-youtuber.webp" width="720" height="726" alt="노트북과 스마트폰으로 쇼츠와 롱폼 영상을 만드는 수강생 일러스트"></section>';
+  + '<img src="assets/promo-youtuber-v2.webp" width="720" height="720" alt="노트북과 촬영 장비로 쇼츠와 롱폼 영상을 만드는 키라 캐릭터"></section>';
 
 const POLICIES = ["guidelines", "privacy", "terms"];
 const CALENDAR_EMBED = "https://calendar.google.com/calendar/embed?src=aibuilderslab.kr%40gmail.com&src=ko.south_korea%23holiday%40group.v.calendar.google.com&color=%23039BE5&color=%23D50000&ctz=Asia%2FSeoul&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&hl=ko&wkst=2";
