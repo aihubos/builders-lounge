@@ -1,4 +1,4 @@
-import { MATERIALS, NEWSLETTERS, PROMPTS, VIDEOS } from "./data.js";
+import { CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
 
 const API = window.location.port === "8787"
   ? "http://127.0.0.1:8787"
@@ -20,7 +20,7 @@ const ERRORS = {
 };
 const READINGS = {
   prompts: { title: "프롬프트", items: PROMPTS, tag: (item) => item.category, extra: () => "" },
-  newsletter: { title: "뉴스레터", items: NEWSLETTERS, tag: (item) => item.issue, extra: (item) => item.publishedAt || "" },
+  newsletter: { title: "뉴스레터", items: [], loaded: false, failed: false, tag: (item) => (item.edition === "economy" ? "경제·시사" : "AI·에이전트"), extra: (item) => item.date }, // newsletter.json(키라쨩 카드뉴스)에서 불러옵니다.
   videos: { title: "영상", items: VIDEOS, tag: (item) => item.category, extra: (item) => item.duration || "" },
 };
 const POLICIES = ["guidelines", "privacy", "terms"];
@@ -202,6 +202,7 @@ function render(force = false) {
   if (name === "write") return renderWrite();
   if (name === "calendar") return renderCalendar();
   if (name === "materials") return renderMaterials();
+  if (name === "curriculum") return renderCurriculum();
   if (READINGS[name]) return id ? renderReading(name, id) : renderReadingList(name);
   if (POLICIES.includes(name)) return renderPolicy(name);
   window.history.replaceState(null, "", window.location.pathname + "#board"); // 없어진 메뉴 주소는 자유게시판으로 보냅니다.
@@ -349,6 +350,9 @@ async function renderWrite() {
 
 function renderReadingList(name) {
   const reading = READINGS[name];
+  if (reading.loaded === false) { main.innerHTML = '<p class="empty">불러오는 중입니다.</p>'; return; }
+  if (reading.failed) { main.innerHTML = '<p class="empty">' + reading.title + ' 목록을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.</p>'; return; }
+
   setTitle(reading.title);
   main.innerHTML = '<div class="head"><h1>' + reading.title + '</h1><span class="count">' + reading.items.length + "개</span></div>"
     + '<div class="list">' + (reading.items.map((item) => '<a class="row row-reading" href="#' + name + "/" + enc(item.id) + '"><span class="c-cat">' + esc(reading.tag(item)) + '</span><span class="c-title">' + esc(item.title)
@@ -357,6 +361,9 @@ function renderReadingList(name) {
 
 function renderReading(name, id) {
   const reading = READINGS[name];
+  if (reading.loaded === false) { main.innerHTML = '<p class="empty">불러오는 중입니다.</p>'; return; }
+  if (reading.failed) { main.innerHTML = '<p class="empty">' + reading.title + ' 목록을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.</p>'; return; }
+
   const item = reading.items.find((candidate) => candidate.id === id);
   if (!item) {
     window.history.replaceState(null, "", window.location.pathname + "#" + name);
@@ -370,7 +377,8 @@ function renderReading(name, id) {
       + (item.expected ? "<h2>기대 결과</h2><p>" + esc(item.expected) + "</p>" : "")
       + '<h2>프롬프트</h2><pre class="prompt" tabindex="0">' + esc(item.copyText) + '</pre><button class="btn" type="button" data-copy-prompt="' + esc(item.id) + '">프롬프트 복사</button>';
   } else if (name === "newsletter") {
-    body = (item.sections || []).map((part) => "<h2>" + esc(part.heading) + "</h2><p>" + esc(part.body) + "</p>").join("");
+    body = (item.cards || []).map((src, index) => '<img class="card-img" src="' + esc(src) + '" alt="' + esc(item.title) + " " + (index + 1) + '번째 카드" loading="lazy">').join("") || '<p class="hint">카드 이미지가 아직 없습니다. 아래 원문에서 확인해 주세요.</p>';
+
   } else {
     body = '<div class="player"><button class="btn" type="button" data-play="' + esc(item.videoId) + '">▶ 영상 재생</button></div>';
   }
@@ -453,6 +461,23 @@ function renderMaterials() {
   main.innerHTML = '<div class="head"><h1>교육자료</h1><span class="count">' + (rows ? MATERIALS.length + "개" : "") + "</span></div>"
     + '<div class="list">' + (rows || '<p class="empty">교육자료를 준비 중입니다.</p>') + "</div>";
 }
+
+function renderCurriculum() {
+  setTitle("교육 커리큘럼");
+  const c = CURRICULUM;
+  const contact = '<a class="btn" href="' + esc(c.contact) + '" target="_blank" rel="noopener noreferrer">과정 상담하기 ↗</a>';
+  main.innerHTML = '<div class="head"><h1>교육 커리큘럼</h1>' + contact + "</div>"
+    + '<p class="course-info">' + c.info.map(esc).join(" · ") + "</p>"
+    + '<section class="course-block"><h2><span class="cat">' + esc(c.setup.tag) + "</span>" + esc(c.setup.title) + "</h2>"
+    + "<p>" + esc(c.setup.summary) + '</p><p class="hint">' + esc(c.setup.scope) + '</p><p class="hint">' + esc(c.setup.exclude) + "</p>"
+    + '<ol class="course-steps">' + c.setup.steps.map((step) => "<li><strong>" + esc(step.title) + "</strong><span>" + esc(step.meta) + "</span><p>" + esc(step.body) + "</p></li>").join("") + "</ol></section>"
+    + '<section class="course-block"><h2><span class="cat">READY? LET’S MAKE SOMETHING.</span>제작 과정</h2>'
+    + '<p class="hint">Hermes와 LLM Wiki가 설치되어 있어야 진행할 수 있습니다. 만들고 싶은 결과물 하나를 선택하세요.</p>'
+    + '<div class="list"><div class="row row-course row-head" aria-hidden="true"><span>과정</span><span>내용</span><span>남는 결과</span></div>'
+    + c.courses.map((course) => '<div class="row row-course"><span class="c-cat">' + esc(course.no) + "<br>" + esc(course.tool) + '</span><span class="c-title">' + esc(course.title) + "<small>" + esc(course.summary) + '</small></span><span class="c-author">' + esc(course.result) + "</span></div>").join("")
+    + '</div><p class="hint course-note">' + esc(c.note) + '</p><p class="actions">' + contact + '<a class="btn-line" href="https://builderslab.ai-hub-os.com/#courses" target="_blank" rel="noopener">Builders Lab 과정 안내 원문 ↗</a></p></section>';
+}
+
 
 async function loadRecent() {
   const box = document.querySelector("[data-recent]");
@@ -596,6 +621,12 @@ fetch("calendar.json", { cache: "no-cache" })
   .then((data) => { calendarEvents = Array.isArray(data.events) ? data.events : []; })
   .catch(() => { calendarEvents = "error"; })
   .finally(() => { tickBar(); if (route().name === "calendar") render(true); });
+fetch("newsletter.json", { cache: "no-cache" })
+  .then((response) => (response.ok ? response.json() : Promise.reject(new Error("newsletter"))))
+  .then((data) => { READINGS.newsletter.items = Array.isArray(data.items) ? data.items : []; })
+  .catch(() => { READINGS.newsletter.failed = true; })
+  .finally(() => { READINGS.newsletter.loaded = true; if (route().name === "newsletter") render(true); });
+
 setInterval(tickBar, 1000);
 tickBar();
 renderAccount();

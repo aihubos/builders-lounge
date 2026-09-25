@@ -173,52 +173,6 @@ const prompts = [
   },
 ];
 
-const newsletters = [
-  {
-    id: "newsletter-001",
-    kicker: "뉴스레터",
-    type: "newsletter",
-    title: "AI 빌더스 랩 뉴스레터 1호, AI 에이전트 실전 업무와 보안",
-    summary: "AI 에이전트가 데모를 넘어 실제 업무에 들어오는 순간, 성능보다 운영과 보안이 먼저입니다.",
-    tags: ["AI 에이전트", "자동화", "보안"],
-    issue: "1호",
-    publishedAt: "2026-08-20",
-    author: "AI Builders Lab",
-    sourceLabel: "AI 빌더스 랩 뉴스레터 초안",
-    sourceUrl: "https://aihubos.github.io/builders-lounge/",
-    featured: true,
-    status: "published",
-    sections: [
-      { heading: "이번 호 핵심 문장", body: "에이전트의 다음 경쟁력은 무엇을 할 수 있는가보다, 무엇을 언제 멈추고 사람이 확인하게 하는가에 달려 있습니다." },
-      { heading: "주요 소식", body: "AI 에이전트가 브라우저·코드·업무 도구를 직접 다루는 사례가 늘고 있습니다. 동시에 권한 범위, 로그 보존, 잘못된 자동 실행을 막는 승인 단계가 제품 설계의 중심으로 이동했습니다." },
-      { heading: "빌더에게 의미하는 점", body: "작은 자동화부터 시작하되, 입력·출력·실패 시 행동을 문서로 남겨야 합니다. ‘작동한다’는 확인과 ‘운영해도 안전하다’는 확인을 분리해 보세요." },
-      { heading: "이번 주 직접 해볼 일", body: "반복 업무 하나를 골라 STIC 형식으로 적고, 자동 실행 대신 먼저 초안만 생성하는 검토 모드를 만들어 보세요." },
-      { heading: "다음 호 예고", body: "혼자 만든 도구를 팀이 다시 사용할 수 있게 만드는 공개 문서와 운영 루틴을 다룹니다." },
-    ],
-  },
-  {
-    id: "newsletter-special-agents",
-    kicker: "뉴스레터",
-    type: "newsletter",
-    title: "AI 빌더스 랩 뉴스레터 스페셜, AI 에이전트 삼국지",
-    summary: "모델·도구·사람의 역할을 나누어 보면 에이전트 생태계의 변화가 더 선명해집니다.",
-    tags: ["AI 에이전트", "빌더 이야기"],
-    issue: "스페셜",
-    publishedAt: "2026-08-08",
-    author: "AI Builders Lab",
-    sourceLabel: "배움의 달인 Newsletter 아카이브 참고",
-    sourceUrl: "https://blog.naver.com/jeremylee0213",
-    status: "published",
-    sections: [
-      { heading: "이번 호 핵심 문장", body: "좋은 에이전트는 사람을 대신하는 존재가 아니라 사람의 판단이 필요한 순간을 더 잘 드러내는 도구입니다." },
-      { heading: "주요 소식", body: "모델의 추론 능력, 작업을 연결하는 도구, 결과를 검증하는 사람이 함께 진화하고 있습니다. 어느 하나만 바꿔도 전체 흐름이 달라집니다." },
-      { heading: "빌더에게 의미하는 점", body: "처음부터 거대한 자동화를 만들기보다, 한 번에 한 가지 결과를 내고 사람이 확인하는 작은 루프를 반복하세요." },
-      { heading: "이번 주 직접 해볼 일", body: "자주 쓰는 프롬프트 하나를 공개용 템플릿으로 정리하고, 다른 사람이 재현할 수 있는 입력 예시를 붙여 보세요." },
-      { heading: "다음 호 예고", body: "콘텐츠를 한 번 만들고 뉴스레터·영상·게시판으로 확장하는 자산화 흐름을 소개합니다." },
-    ],
-  },
-];
-
 const videos = [
   { id: "video-openclaw", type: "video", title: "오픈클로 설치법, 자는 동안 일하는 AI 비서", summary: "처음 시작하는 사람을 위한 OpenClaw 설치와 기본 흐름을 살펴봅니다.", tags: ["AI 에이전트", "입문"], category: "AI 에이전트", videoId: "609DF4SFwQs", duration: "18분", difficulty: "입문", author: "배움의 달인", sourceLabel: "YouTube", sourceUrl: "https://www.youtube.com/watch?v=609DF4SFwQs", status: "published" },
   { id: "video-chatgpt-agent", type: "video", title: "ChatGPT 에이전트로 나만의 AI 만들기", summary: "코딩을 몰라도 작업 흐름을 설계하는 방법을 보여주는 입문 영상입니다.", tags: ["AI 입문", "에이전트"], category: "AI 입문", videoId: "-jYKUwldgek", duration: "21분", difficulty: "입문", author: "배움의 달인", sourceLabel: "YouTube", sourceUrl: "https://www.youtube.com/watch?v=-jYKUwldgek", status: "published" },
@@ -232,10 +186,34 @@ const videos = [
 const published = (items) => items.filter((item) => item.status === "published");
 
 export const PROMPTS = published(prompts);
-export const NEWSLETTERS = published(newsletters).sort((a, b) => String(b.publishedAt || "").localeCompare(String(a.publishedAt || "")));
 export const VIDEOS = published(videos);
 
 // 교육자료: 교재 링크를 여기에 추가하면 왼쪽 메뉴 '교육자료'에 바로 나타납니다. 주소는 https:// 로 시작해야 합니다.
 // 예) { title: "AI 에이전트 입문 교재", url: "https://...", category: "입문", author: "AI Builders Lab", updatedAt: "2026-09-25" },
 export const MATERIALS = [
 ];
+
+// 교육 커리큘럼: builderslab.ai-hub-os.com 의 과정 안내를 옮긴 내용입니다.
+export const CURRICULUM = {
+  contact: "https://open.kakao.com/me/aibuilderslab",
+  info: ["기본 3시간 20,000원", "그 외 시간 별도 협의", "최대 3명", "동탄", "개인 노트북 지참"],
+  setup: {
+    tag: "00 · [기본 설치] 선행 과정",
+    title: "Hermes & LLM Wiki",
+    summary: "제작에 앞서, 내 노트북에 AI를 사용할 환경부터 준비합니다.",
+    scope: "설치만 하는 교육입니다. 공식 경로로 Hermes와 LLM Wiki를 설치하고 기본 화면·실행 상태를 확인합니다.",
+    exclude: "프로젝트 제작과 텔레그램 연결, Gateway, 자동화는 포함하지 않습니다.",
+    steps: [
+      { title: "00 수업 전, 환경 점검", meta: "노트북 · 계정 · 설치 권한", body: "운영체제, 저장 공간, 인터넷과 관리자 권한을 확인합니다. 회사 관리 기기이거나 설치가 어렵다면 수업 전 개인 카카오로 알려주세요." },
+      { title: "01 Hermes 설치와 첫 실행", meta: "공식 설치 · 기본 화면 · 샘플 대화", body: "공식 설치 경로를 확인하고 Hermes Desktop App을 설치합니다. 메뉴와 입력창을 살펴보고 개인정보가 없는 샘플로 기본 대화를 실행합니다." },
+      { title: "02 LLM Wiki와 샘플 노트", meta: "기본 폴더 · 저장과 열기 · 다시 실행", body: "LLM Wiki 기본 폴더와 Obsidian Vault를 만들고 샘플 노트를 저장해봅니다. 교육생이 직접 같은 순서를 반복하고 다시 실행할 체크리스트를 남깁니다." },
+    ],
+  },
+  courses: [
+    { no: "01 · WEBSITE", tool: "Codex", title: "나만의 홈페이지", summary: "나의 소개, 포트폴리오, 서비스를 한 페이지에. PC와 휴대폰에서 확인하고 웹에 공개합니다.", result: "반응형 홈페이지 + 공개 URL" },
+    { no: "02 · DASHBOARD", tool: "Codex", title: "나만의 대시보드", summary: "복잡한 데이터를 보기 쉬운 숫자와 차트로. 필터와 계산 결과를 직접 확인합니다.", result: "데이터 대시보드 + 공개 URL" },
+    { no: "03 · GAME", tool: "Codex", title: "나만의 게임", summary: "내가 정한 규칙이 실제 플레이가 되도록. 점수와 실패 조건, 모바일 조작을 설계합니다.", result: "플레이 가능한 웹 게임 + 공개 URL" },
+    { no: "04 · REPORT", tool: "AI Research", title: "나만의 레포트", summary: "조사한 내용이 믿을 수 있는 한 페이지가 되도록. 사실과 해석을 나누고 출처를 검수합니다.", result: "근거가 연결된 웹 레포트 + 공개 URL" },
+  ],
+  note: "제작 범위는 수업 전에 함께 정하며, 실제 자료는 공개 가능 여부를 먼저 확인합니다. 취소·환불·노쇼 기준과 정확한 공간은 신청 전 개인 카카오로 확인합니다.",
+};

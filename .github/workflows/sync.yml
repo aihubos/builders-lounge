@@ -1,4 +1,4 @@
-name: calendar
+name: sync
 
 on:
   schedule:
@@ -17,11 +17,15 @@ jobs:
         with:
           node-version: 22
       - run: node scripts/calendar.mjs
-      - name: 바뀐 일정만 저장
+      - run: node scripts/newsletter.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: 바뀐 일정·뉴스레터만 저장
         run: |
-          git diff --quiet calendar.json && exit 0
+          git diff --quiet calendar.json newsletter.json && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add calendar.json
-          git commit -m "chore: update calendar"
+          git add calendar.json newsletter.json
+          git commit -m "chore: update calendar and newsletter"
           git push
+

@@ -226,21 +226,44 @@ textarea.field { resize: vertical; line-height: 1.6; }
   .side { transition: none; }
 }
 
-/* 상단 바로가기: 당근 모임 · 1:1 카카오톡 · 카카오 단체방 */
-.quick-links { display: flex; gap: 6px; }
-.ql { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 12px; border: 1px solid var(--line); border-radius: 17px; background: #fff; font-size: 13px; font-weight: 700; white-space: nowrap; }
-.ql img { width: auto; height: 18px; border-radius: 4px; }
+/* 상단 바로가기: 당근모임 · 1:1 · 단체방 (버튼 폭과 아이콘 폭을 모두 같게) */
+.quick-links { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+.ql { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 32px; padding: 0 8px; border: 1px solid var(--line); border-radius: 17px; background: #fff; font-size: 13px; font-weight: 700; white-space: nowrap; }
+.ql img { width: 20px; height: 16px; object-fit: contain; }
+.ql-daangn img { width: 40px; height: 20px; }
 .ql-daangn { border-color: #ff6f0f; color: #e55c00; }
 .ql-kakao { border-color: #fee500; background: #fee500; color: #191919; }
 .ql:hover { filter: brightness(.95); }
 .ql-daangn:hover { color: #e55c00; }
 .ql-kakao:hover { color: #191919; }
+
+/* 교육 커리큘럼 */
+.course-info { margin: 10px 0 0; padding: 10px 12px; border-radius: 4px; background: var(--soft); font-size: 13px; }
+.course-block { margin-top: 26px; }
+.course-block h2 { display: grid; gap: 2px; margin: 0 0 8px; font-size: 17px; }
+.course-block > p { margin: 0 0 6px; }
+.course-steps { margin: 12px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.course-steps li { padding: 9px 4px; border-bottom: 1px solid var(--line); }
+.course-steps li span { margin-left: 6px; color: var(--sub); font-size: 12px; }
+.course-steps li p { margin: 2px 0 0; color: var(--sub); font-size: 13px; }
+.row-course { grid-template-columns: 130px minmax(0, 1fr) 230px; align-items: start; }
+.row-course .c-cat { text-align: left; }
+.row-course .c-title { white-space: normal; font-weight: 700; }
+.row-course .c-title small { display: block; margin-top: 2px; color: var(--sub); font-size: 13px; font-weight: 400; }
+.row-course .c-author { color: var(--text); text-align: left; white-space: normal; }
+.course-note { margin-top: 10px; }
 @media (max-width: 1199px) {
-  .quick-links { flex-direction: column; gap: 4px; }
-  .ql { height: 26px; padding: 0 10px; font-size: 12px; }
-  .ql img { height: 14px; }
+  .quick-links { grid-auto-flow: row; gap: 4px; }
+  .ql { height: 26px; padding: 0 8px; font-size: 12px; }
+  .ql-daangn img { height: 16px; }
 }
 @media (max-width: 767px) {
-  .quick-links { flex-direction: row; }
-  .ql { flex: 1; height: 32px; padding: 0 6px; }
+  .quick-links { grid-auto-flow: column; grid-auto-columns: 76px; justify-content: start; }
+  .ql { height: 32px; padding: 0 6px; }
+  .row-course { grid-template-columns: auto auto auto minmax(0, 1fr); }
+  .row-course .c-author { grid-area: author; }
 }
+
+
+/* 뉴스레터 카드 이미지 */
+.card-img { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto 12px; border: 1px solid var(--line); border-radius: 8px; }

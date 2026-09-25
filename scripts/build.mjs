@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 const root = process.cwd();
 const out = resolve(root, "dist/client");
-const files = ["index.html", "styles.css", "app.js", "data.js", "calendar.json", "robots.txt", "sitemap.xml", ".nojekyll", "THIRD_PARTY_NOTICES.md", "assets"];
+const files = ["index.html", "styles.css", "app.js", "data.js", "calendar.json", "newsletter.json", "robots.txt", "sitemap.xml", ".nojekyll", "THIRD_PARTY_NOTICES.md", "assets"];
 
 for (const file of files) await access(resolve(root, file));
 const html = await readFile(resolve(root, "index.html"), "utf8");
