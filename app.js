@@ -670,3 +670,18 @@ renderAccount();
 loadRecent();
 countVisit();
 render();
+
+/* 처음 들어올 때 소개 영상. 같은 탭에서는 한 번만, 누르면 닫힘. */
+const intro = document.querySelector("[data-intro]");
+if (intro && !window.matchMedia("(prefers-reduced-motion: reduce)").matches && !sessionStorage.getItem("builders-lounge:intro")) {
+  const video = intro.querySelector("video");
+  intro.hidden = false;
+  video.play().catch(() => {});
+  const closeIntro = () => {
+    video.pause();
+    intro.remove();
+    sessionStorage.setItem("builders-lounge:intro", "1");
+  };
+  intro.addEventListener("click", closeIntro);
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && intro.isConnected) closeIntro(); });
+}

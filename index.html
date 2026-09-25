@@ -16,8 +16,8 @@
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
     <link rel="preconnect" href="https://reportmode-request-board.report-request-board.workers.dev" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=20260925-qa" />
-    <script type="module" src="app.js?v=20260925-qa"></script>
+    <link rel="stylesheet" href="styles.css?v=20260926-intro" />
+    <script type="module" src="app.js?v=20260926-intro"></script>
   </head>
   <body>
     <a class="skip" href="#main" data-skip>본문 바로가기</a>
@@ -103,6 +103,14 @@
     </dialog>
 
     <div class="visually-hidden" role="status" aria-live="polite" data-live></div>
+
+    <button class="intro" type="button" data-intro hidden aria-label="소개 영상 닫기">
+      <video playsinline autoplay muted>
+        <source src="assets/intro-tall.mp4" type="video/mp4" media="(max-width: 767px)" />
+        <source src="assets/intro-wide.mp4" type="video/mp4" />
+      </video>
+      <span>누르면 닫힙니다</span>
+    </button>
 
     <template id="policy-guidelines" data-title="커뮤니티 운영정책">
       <article class="policy">

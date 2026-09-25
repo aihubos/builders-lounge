@@ -177,6 +177,12 @@ textarea.field { resize: vertical; line-height: 1.6; }
 .consent a { color: var(--blue); text-decoration: underline; }
 .google { min-height: 44px; }
 
+/* 첫 화면 소개 영상: 누르면 닫힘 */
+.intro { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 0; border: 0; background: #000; cursor: pointer; }
+.intro[hidden] { display: none; }
+.intro video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+.intro span { position: absolute; right: 16px; bottom: 16px; padding: 6px 10px; border-radius: 14px; background: rgba(0, 0, 0, .55); color: #fff; font-size: 13px; }
+
 /* 중간 폭: 오른쪽 칸은 본문 위 한 줄(로그인·검색)로 */
 @media (max-width: 1199px) {
   .wrap { grid-template-columns: 180px minmax(0, 1fr); grid-template-areas: "side right" "side main"; grid-template-rows: auto 1fr; column-gap: 16px; row-gap: 12px; }
