@@ -267,3 +267,19 @@ textarea.field { resize: vertical; line-height: 1.6; }
 
 /* 뉴스레터 카드 이미지 */
 .card-img { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto 12px; border: 1px solid var(--line); border-radius: 8px; }
+
+/* 수업 배너: 누구나 쇼츠·롱폼 유튜버 */
+.promo { display: grid; grid-template-columns: minmax(0, 1fr) 230px; align-items: center; gap: 12px; margin-bottom: 22px; padding-left: 26px; overflow: hidden; border-radius: 12px; background: #e6f2fe; }
+.promo-copy { padding: 18px 0; }
+.promo-kicker { margin: 0; color: var(--blue); font-size: 12px; font-weight: 800; letter-spacing: .04em; }
+.promo h2 { margin: 4px 0 6px; color: #0b2a5b; font-size: 23px; line-height: 1.35; }
+.promo-sub { margin: 0 0 12px; color: #35507a; font-size: 13px; }
+.promo-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.promo img { display: block; width: 230px; height: auto; }
+@media (max-width: 767px) {
+  .promo { grid-template-columns: minmax(0, 1fr) 112px; gap: 6px; padding-left: 16px; }
+  .promo h2 { font-size: 17px; }
+  .promo-sub { display: none; }
+  .promo img { width: 112px; }
+}
+

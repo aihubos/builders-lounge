@@ -191,7 +191,23 @@ export const VIDEOS = published(videos);
 // 교육자료: 교재 링크를 여기에 추가하면 왼쪽 메뉴 '교육자료'에 바로 나타납니다. 주소는 https:// 로 시작해야 합니다.
 // 예) { title: "AI 에이전트 입문 교재", url: "https://...", category: "입문", author: "AI Builders Lab", updatedAt: "2026-09-25" },
 export const MATERIALS = [
+  { category: "자료실", title: "교육 자료실 전체 보기", url: "https://jeremy.ai-hub-os.com/textbooks/", author: "AI Builders Lab" },
+  { category: "교재", title: "나의 첫 홈페이지 · 수업 교재", url: "https://jeremy.ai-hub-os.com/textbooks/courses/homepage/index.html", author: "AI Builders Lab" },
+  { category: "실습", title: "나의 첫 홈페이지 · 실습 기록지와 시작 파일", url: "https://jeremy.ai-hub-os.com/textbooks/courses/homepage/practice.html", author: "AI Builders Lab" },
+  { category: "PDF", title: "나의 첫 홈페이지 · 수강생 교재 (A4)", url: "https://jeremy.ai-hub-os.com/textbooks/exports/homepage-handbook-a4.pdf", author: "AI Builders Lab" },
+  { category: "PDF", title: "나의 첫 홈페이지 · 발표 슬라이드 (16:9)", url: "https://jeremy.ai-hub-os.com/textbooks/exports/homepage-slides-16x9.pdf", author: "AI Builders Lab" },
+  { category: "PPT", title: "나의 첫 홈페이지 · 편집 가능한 PPT", url: "https://jeremy.ai-hub-os.com/textbooks/exports/homepage-editable.pptx", author: "AI Builders Lab" },
+  { category: "ZIP", title: "나의 첫 홈페이지 · 수강생 전체 묶음", url: "https://jeremy.ai-hub-os.com/textbooks/exports/homepage-student-kit.zip", author: "AI Builders Lab" },
+  { category: "과정 설계", title: "교육 과정 설계 (00~04)", url: "https://jeremy.ai-hub-os.com/textbooks/curriculum/index.html", author: "AI Builders Lab" },
+  { category: "학습 게임", title: "키라짱과 픽셀의 빌더스 리그 (7단계 · 220문제)", url: "https://jeremy.ai-hub-os.com/textbooks/games/builders-league/index.html", author: "AI Builders Lab" },
+  { category: "개념 교재", title: "빌더스 리그 개념 교재 · PPT · PDF", url: "https://jeremy.ai-hub-os.com/textbooks/games/builders-league/briefing.html", author: "AI Builders Lab" },
+  { category: "PPT", title: "Codex로 나만의 홈페이지 만들기", url: "https://jeremy.ai-hub-os.com/assets/materials/codex-homepage-3hour-v1.pptx", author: "AI Builders Lab" },
+  { category: "PPT", title: "Codex로 나만의 대시보드 만들기", url: "https://jeremy.ai-hub-os.com/assets/materials/codex-dashboard-3hour-v1.pptx", author: "AI Builders Lab" },
+  { category: "PPT", title: "Codex로 나만의 게임 만들기", url: "https://jeremy.ai-hub-os.com/assets/materials/codex-game-3hour-v1.pptx", author: "AI Builders Lab" },
+  { category: "PPT", title: "AI로 나만의 레포트 만들기", url: "https://jeremy.ai-hub-os.com/assets/materials/ai-report-3hour-v1.pptx", author: "AI Builders Lab" },
+  { category: "PPT", title: "AI 에이전트 셀프설치 활용 가이드", url: "https://jeremy.ai-hub-os.com/assets/materials/ai-agent-self-install-guide-v1.pptx", author: "AI Builders Lab" },
 ];
+
 
 // 교육 커리큘럼: builderslab.ai-hub-os.com 의 과정 안내를 옮긴 내용입니다.
 export const CURRICULUM = {
