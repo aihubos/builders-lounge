@@ -34,9 +34,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* 상단: 왼쪽 로고(고정) + 시계·다음 일정 (innox 상단 바 참고) */
 .top { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid var(--line); }
 .top-inner, .wrap, .foot-inner { width: 100%; max-width: 1320px; margin: 0 auto; padding: 0 16px; }
-.top-inner { display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 28px; min-height: var(--header); }
+.top-inner { display: grid; grid-template-columns: 220px minmax(0, 1fr) auto; align-items: center; gap: 28px; min-height: var(--header); }
 .brand { display: flex; align-items: center; gap: 10px; }
-.logo img { display: block; width: 218px; height: auto; mix-blend-mode: multiply; } /* 예전 사이트와 같은 표시 크기 218×73 */
+.logo img { display: block; width: 218px; height: auto; mix-blend-mode: multiply; filter: brightness(1.01); } /* 예전 사이트와 같은 표시 크기 218×73 */
 .menu-btn { display: none; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 18px; cursor: pointer; }
 .schedule-bar { display: flex; align-items: center; gap: 16px; min-width: 0; padding: 8px 16px; border-radius: 12px; background: #1554b5; color: #fff; }
 .clock { display: grid; flex-shrink: 0; padding-right: 16px; border-right: 1px solid rgba(255, 255, 255, .3); line-height: 1.15; }
@@ -224,4 +224,23 @@ textarea.field { resize: vertical; line-height: 1.6; }
 
 @media (prefers-reduced-motion: reduce) {
   .side { transition: none; }
+}
+
+/* 상단 바로가기: 당근 모임 · 1:1 카카오톡 · 카카오 단체방 */
+.quick-links { display: flex; gap: 6px; }
+.ql { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 12px; border: 1px solid var(--line); border-radius: 17px; background: #fff; font-size: 13px; font-weight: 700; white-space: nowrap; }
+.ql img { width: auto; height: 18px; border-radius: 4px; }
+.ql-daangn { border-color: #ff6f0f; color: #e55c00; }
+.ql-kakao { border-color: #fee500; background: #fee500; color: #191919; }
+.ql:hover { filter: brightness(.95); }
+.ql-daangn:hover { color: #e55c00; }
+.ql-kakao:hover { color: #191919; }
+@media (max-width: 1199px) {
+  .quick-links { flex-direction: column; gap: 4px; }
+  .ql { height: 26px; padding: 0 10px; font-size: 12px; }
+  .ql img { height: 14px; }
+}
+@media (max-width: 767px) {
+  .quick-links { flex-direction: row; }
+  .ql { flex: 1; height: 32px; padding: 0 6px; }
 }
