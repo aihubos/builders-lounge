@@ -212,7 +212,7 @@ export const MATERIALS = [
 // 교육 커리큘럼: builderslab.ai-hub-os.com 의 과정 안내를 옮긴 내용입니다.
 export const CURRICULUM = {
   contact: "https://open.kakao.com/me/aibuilderslab",
-  info: ["기본 3시간 20,000원", "그 외 시간 별도 협의", "최대 3명", "동탄", "개인 노트북 지참"],
+  info: ["기본 3시간", "그 외 시간 별도 협의", "최대 3명", "동탄", "개인 노트북 지참"],
   setup: {
     tag: "00 · [기본 설치] 선행 과정",
     title: "Hermes & LLM Wiki",
