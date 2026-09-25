@@ -1,4 +1,4 @@
-import { CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
+import { CLASSROOM, CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
 
 const API = window.location.port === "8787"
   ? "http://127.0.0.1:8787"
@@ -481,7 +481,11 @@ function renderCurriculum() {
     + '<p class="hint">Hermes와 LLM Wiki가 설치되어 있어야 진행할 수 있습니다. 만들고 싶은 결과물 하나를 선택하세요.</p>'
     + '<div class="list"><div class="row row-course row-head" aria-hidden="true"><span>과정</span><span>내용</span><span>남는 결과</span></div>'
     + c.courses.map((course) => '<div class="row row-course"><span class="c-cat">' + esc(course.no) + "<br>" + esc(course.tool) + '</span><span class="c-title">' + esc(course.title) + "<small>" + esc(course.summary) + '</small></span><span class="c-author">' + esc(course.result) + "</span></div>").join("")
-    + '</div><p class="hint course-note">' + esc(c.note) + '</p><p class="actions">' + contact + '<a class="btn-line" href="https://builderslab.ai-hub-os.com/#courses" target="_blank" rel="noopener">Builders Lab 과정 안내 원문 ↗</a></p></section>';
+    + '</div><p class="hint course-note">' + esc(c.note) + '</p><p class="actions">' + contact + '<a class="btn-line" href="https://builderslab.ai-hub-os.com/#courses" target="_blank" rel="noopener">Builders Lab 과정 안내 원문 ↗</a></p></section>'
+    + '<section class="course-block"><h2><span class="cat">배움터</span>혼자 따라 하는 6개 과정</h2>'
+    + '<p class="hint">현장 수업과 별개로, 순서대로 열어 볼 수 있는 실습 교실입니다.</p><div class="list">'
+    + CLASSROOM.map((item) => '<a class="row row-reading" href="' + esc(item.url) + '" target="_blank" rel="noopener"><span class="c-cat">' + esc(item.no) + '</span><span class="c-title">' + esc(item.title) + ' ↗</span><span class="c-author">' + esc(item.outcome) + "</span></a>").join("")
+    + '</div><p class="actions"><a class="btn-line" href="https://aihubos.github.io/builderslab-curriculum/" target="_blank" rel="noopener">배움터 전체 보기 ↗</a></p></section>';
 }
 
 
@@ -505,12 +509,14 @@ async function countVisit() {
   const local = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname); // 미리보기는 기록하지 않고 읽기만 합니다.
   let data = null;
   try {
-    data = local
-      ? await api("/visits?site=" + site)
-      : await api("/visits", { method: "POST", body: JSON.stringify({ siteId: site, visitorId: visitorId() }) });
+    if (!local && !sessionStorage.getItem("builders-lounge:counted")) {
+      data = await api("/visits", { method: "POST", body: JSON.stringify({ siteId: site, visitorId: visitorId() }) });
+      sessionStorage.setItem("builders-lounge:counted", "1"); // 이 탭에서는 한 번만 기록합니다.
+    }
   } catch {
-    try { data = await api("/visits?site=" + site); } catch { /* 집계를 못 불러와도 나머지 화면은 그대로 씁니다. */ }
+    /* 기록에 실패하면 아래에서 숫자만 다시 읽습니다. */
   }
+  if (!data) { try { data = await api("/visits?site=" + site); } catch { /* 집계를 못 불러와도 나머지 화면은 그대로 씁니다. */ } }
   const num = (value) => Number(value || 0).toLocaleString("ko-KR");
   document.querySelectorAll("[data-visit-today]").forEach((node) => { node.textContent = data ? num(data.today) : "-"; });
   document.querySelectorAll("[data-visit-total]").forEach((node) => { node.textContent = data ? num(data.total) : "-"; });
@@ -548,8 +554,9 @@ document.addEventListener("click", async (event) => {
     menuButton.setAttribute("aria-expanded", String(open));
     return;
   }
-  if (document.body.classList.contains("menu-open") && !target.closest(".side")) {
+  if (document.body.classList.contains("menu-open") && !target.closest(".side") && !menuButton) {
     document.body.classList.remove("menu-open");
+    document.querySelector("[data-menu]").setAttribute("aria-expanded", "false");
     return;
   }
   const link = target.closest("a[href]");
@@ -640,6 +647,12 @@ document.addEventListener("submit", async (event) => {
 
 window.addEventListener("popstate", () => render());
 window.addEventListener("hashchange", () => render());
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && document.body.classList.contains("menu-open")) {
+    document.body.classList.remove("menu-open");
+    document.querySelector("[data-menu]").setAttribute("aria-expanded", "false");
+  }
+});
 fetch("calendar.json", { cache: "no-cache" })
   .then((response) => (response.ok ? response.json() : Promise.reject(new Error("calendar"))))
   .then((data) => { calendarEvents = Array.isArray(data.events) ? data.events : []; })

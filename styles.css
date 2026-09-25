@@ -179,10 +179,10 @@ textarea.field { resize: vertical; line-height: 1.6; }
 
 /* 중간 폭: 오른쪽 칸은 본문 위 한 줄(로그인·검색)로 */
 @media (max-width: 1199px) {
-  .wrap { grid-template-columns: 220px minmax(0, 1fr); grid-template-areas: "side right" "side main"; grid-template-rows: auto 1fr; row-gap: 12px; }
+  .wrap { grid-template-columns: 180px minmax(0, 1fr); grid-template-areas: "side right" "side main"; grid-template-rows: auto 1fr; column-gap: 16px; row-gap: 12px; }
   .side { grid-area: side; }
   .content { grid-area: main; }
-  .right { grid-area: right; position: static; display: flex; align-items: center; gap: 10px; }
+  .right { grid-area: right; position: static; display: flex; align-items: center; gap: 10px; min-width: 0; }
   .right .search { flex: 1; }
   .account-box { display: flex; align-items: center; gap: 8px; padding: 0; border: 0; }
   .account-box p { margin: 0; white-space: nowrap; }
@@ -206,9 +206,9 @@ textarea.field { resize: vertical; line-height: 1.6; }
   .wrap { grid-template-columns: minmax(0, 1fr); grid-template-areas: "right" "main"; grid-template-rows: auto; padding-top: 12px; }
   .side { grid-area: auto; }
   .right { flex-wrap: wrap; }
-  .side { position: fixed; top: 0; bottom: 0; left: 0; z-index: 25; width: 240px; padding: 16px 10px; overflow-y: auto; background: #fff; box-shadow: 2px 0 12px rgba(0, 0, 0, .12); transform: translateX(-100%); visibility: hidden; transition: transform .2s ease, visibility .2s; }
+  .side { position: fixed; top: 64px; bottom: 0; left: 0; z-index: 25; width: 240px; padding: 16px 10px; overflow-y: auto; background: #fff; box-shadow: 2px 0 12px rgba(0, 0, 0, .12); transform: translateX(-100%); visibility: hidden; transition: transform .2s ease, visibility .2s; }
   body.menu-open .side { transform: none; visibility: visible; }
-  body.menu-open::after { content: ""; position: fixed; inset: 0; z-index: 20; background: rgba(0, 0, 0, .3); }
+  body.menu-open::after { content: ""; position: fixed; inset: 64px 0 0; z-index: 20; background: rgba(0, 0, 0, .3); }
   .row, .row-reading, .row-calendar { grid-template-columns: auto auto auto minmax(0, 1fr); grid-template-areas: "title title title title" "cat author views date"; gap: 2px 8px; padding: 10px 2px; }
   .row-head { display: none; }
   .c-title { grid-area: title; white-space: normal; }

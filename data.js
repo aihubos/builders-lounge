@@ -152,8 +152,8 @@ const prompts = [
     expected: "원문의 의미·뉘앙스·용어가 검토 가능한 형태로 남습니다.",
     copyText: "다음 문장을 한국어 업무 문서로 번역해 주세요. 원문 의미를 훼손하지 않되 한국 독자가 자연스럽게 읽도록 다듬습니다. 고유명사와 기술 용어는 원문을 괄호로 병기하고, 모호한 표현은 ‘번역 메모’로 따로 표시해 주세요. 마지막에 핵심 용어 5개와 권장 번역을 표로 정리해 주세요.",
     author: "AI Builders Lab 운영팀",
-    sourceLabel: "LLM Wiki 학습 자료",
-    sourceUrl: "https://github.com/aihubos/llmwiki",
+    sourceLabel: "배움터 · 지식 정리",
+    sourceUrl: "https://aihubos.github.io/builderslab-curriculum/wiki.html",
     status: "published",
   },
   {
@@ -167,8 +167,8 @@ const prompts = [
     expected: "자동화가 실행되더라도 사람이 마지막으로 확인할 지점이 분명해집니다.",
     copyText: "다음 자동화 아이디어를 검토해 주세요.\n1. 트리거와 필요한 권한\n2. 입력 데이터와 개인정보 위험\n3. 성공·실패·재시도 조건\n4. Slack에 보낼 메시지 예시\n5. 사람이 승인해야 하는 단계\n\n실제로 실행하거나 비밀값을 요청하지 말고, 먼저 안전한 설계와 테스트 체크리스트만 작성해 주세요.",
     author: "AI Builders Lab 운영팀",
-    sourceLabel: "OpenClaw 운영 자료",
-    sourceUrl: "https://github.com/aihubos/openclaw",
+    sourceLabel: "배움터 · AI 비서",
+    sourceUrl: "https://aihubos.github.io/builderslab-curriculum/hermes.html",
     status: "published",
   },
 ];
@@ -233,3 +233,13 @@ export const CURRICULUM = {
   ],
   note: "제작 범위는 수업 전에 함께 정하며, 실제 자료는 공개 가능 여부를 먼저 확인합니다. 취소·환불·노쇼 기준과 정확한 공간은 신청 전 개인 카카오로 확인합니다.",
 };
+
+// 배움터: 현장 실습 교실(builderslab-curriculum)의 6개 과정. 제목과 결과만 옮겼습니다.
+export const CLASSROOM = [
+  { no: "01", title: "Codex 첫걸음과 첫 자동화", outcome: "메모를 정해진 형식으로 정리", url: "https://aihubos.github.io/builderslab-curriculum/start.html" },
+  { no: "02", title: "문서·자료·반복 업무 다루기", outcome: "다시 쓰는 요청문과 업무 템플릿", url: "https://aihubos.github.io/builderslab-curriculum/workflow.html" },
+  { no: "03", title: "LLM Wiki로 나의 자료 정리", outcome: "원문·요약·출처가 연결된 지식 모음", url: "https://aihubos.github.io/builderslab-curriculum/wiki.html" },
+  { no: "04", title: "Hermes로 나만의 AI 비서", outcome: "한 가지 일을 하는 비서", url: "https://aihubos.github.io/builderslab-curriculum/hermes.html" },
+  { no: "05", title: "Codex로 나만의 홈페이지", outcome: "휴대폰에서도 읽히는 소개 페이지", url: "https://aihubos.github.io/builderslab-curriculum/web.html" },
+  { no: "06", title: "Codex로 작은 앱", outcome: "입력·처리·결과가 있는 할 일 앱", url: "https://aihubos.github.io/builderslab-curriculum/app.html" },
+];
