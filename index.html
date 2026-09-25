@@ -16,8 +16,8 @@
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
     <link rel="preconnect" href="https://reportmode-request-board.report-request-board.workers.dev" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=20260925-promo" />
-    <script type="module" src="app.js?v=20260925-promo"></script>
+    <link rel="stylesheet" href="styles.css?v=20260925-telegram" />
+    <script type="module" src="app.js?v=20260925-telegram"></script>
   </head>
   <body>
     <a class="skip" href="#main" data-skip>본문 바로가기</a>
@@ -42,8 +42,8 @@
           <a class="ql ql-daangn" href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener noreferrer" aria-label="당근모임" title="당근모임"><img src="assets/daangn-logo-204.webp" width="40" height="20" alt="" /></a>
           <a class="ql ql-kakao" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer" aria-label="1:1 카카오톡 상담" title="1:1 카카오톡 상담"><img src="assets/kakao-openchat-icon-84.webp" width="28" height="16" alt="" />1:1</a>
           <a class="ql ql-kakao" href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener noreferrer" aria-label="카카오 단체방" title="카카오 단체방"><img src="assets/kakao-openchat-icon-84.webp" width="28" height="16" alt="" />단체방</a>
+          <a class="ql ql-telegram" href="https://t.me/+fvLrEpQ99jplNmI9" target="_blank" rel="noopener noreferrer" aria-label="텔레그램 단체방" title="텔레그램 단체방"><img src="assets/telegram-logo.svg" width="28" height="16" alt="" />단체방</a>
         </nav>
-
       </div>
     </header>
 
@@ -69,6 +69,10 @@
           <h2 id="recent-title">최근 글</h2>
           <div data-recent><p class="hint">불러오는 중입니다.</p></div>
         </section>
+        <section class="box visits" aria-labelledby="visits-title">
+          <h2 id="visits-title">방문자</h2>
+          <dl class="visit-stats"><div><dt>오늘</dt><dd data-visit-today>-</dd></div><div><dt>전체</dt><dd data-visit-total>-</dd></div></dl>
+        </section>
       </aside>
     </div>
 
@@ -79,6 +83,7 @@
         <a href="#privacy">개인정보 처리 안내</a>
         <a href="#terms">이용약관</a>
         <span>문의 hello@ai-hub-os.com</span>
+        <span>방문자 오늘 <b data-visit-today>-</b> · 전체 <b data-visit-total>-</b></span>
         <span>© AI Builders Lab</span>
       </div>
     </footer>

@@ -498,6 +498,24 @@ async function loadRecent() {
 }
 
 
+/* ---------- 방문자 집계 (Report Hub와 같은 서버 /visits, 예전 라운지 기록에 이어서 씀) ---------- */
+
+async function countVisit() {
+  const site = "builders-lounge";
+  const local = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname); // 미리보기는 기록하지 않고 읽기만 합니다.
+  let data = null;
+  try {
+    data = local
+      ? await api("/visits?site=" + site)
+      : await api("/visits", { method: "POST", body: JSON.stringify({ siteId: site, visitorId: visitorId() }) });
+  } catch {
+    try { data = await api("/visits?site=" + site); } catch { /* 집계를 못 불러와도 나머지 화면은 그대로 씁니다. */ }
+  }
+  const num = (value) => Number(value || 0).toLocaleString("ko-KR");
+  document.querySelectorAll("[data-visit-today]").forEach((node) => { node.textContent = data ? num(data.today) : "-"; });
+  document.querySelectorAll("[data-visit-total]").forEach((node) => { node.textContent = data ? num(data.total) : "-"; });
+}
+
 /* ---------- 이벤트 ---------- */
 
 async function copyText(text, button) {
@@ -637,4 +655,5 @@ setInterval(tickBar, 1000);
 tickBar();
 renderAccount();
 loadRecent();
+countVisit();
 render();
