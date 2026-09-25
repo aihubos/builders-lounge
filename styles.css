@@ -227,7 +227,7 @@ textarea.field { resize: vertical; line-height: 1.6; }
 }
 
 /* 상단 바로가기: 당근모임 · 1:1 · 단체방 (버튼 폭과 아이콘 폭을 모두 같게) */
-.quick-links { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+.quick-links { display: grid; grid-template-columns: repeat(2, 76px); gap: 6px; }
 .ql { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 32px; padding: 0 8px; border: 1px solid var(--line); border-radius: 17px; background: #fff; font-size: 13px; font-weight: 700; white-space: nowrap; }
 .ql img { width: 20px; height: 16px; object-fit: contain; }
 .ql-daangn img { width: 40px; height: 20px; }
@@ -258,7 +258,7 @@ textarea.field { resize: vertical; line-height: 1.6; }
   .ql-daangn img { height: 16px; }
 }
 @media (max-width: 767px) {
-  .quick-links { grid-auto-flow: column; grid-auto-columns: 76px; justify-content: start; }
+  .quick-links { justify-content: start; }
   .ql { height: 32px; padding: 0 6px; }
   .row-course { grid-template-columns: auto auto auto minmax(0, 1fr); }
   .row-course .c-author { grid-area: author; }
@@ -269,18 +269,18 @@ textarea.field { resize: vertical; line-height: 1.6; }
 .card-img { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto 12px; border: 1px solid var(--line); border-radius: 8px; }
 
 /* 수업 배너: 누구나 쇼츠·롱폼 유튜버 */
-.promo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(200px, 42%); align-items: center; gap: 12px; margin-bottom: 22px; padding: 16px 16px 16px 24px; overflow: hidden; border: 1px solid #d5eafa; border-radius: 16px; background: #e3f3ff; }
-.promo-copy { padding: 18px 0; }
+.promo { display: grid; grid-template-columns: minmax(0, 1fr) 210px; align-items: center; gap: 12px; margin-bottom: 22px; padding: 10px 16px 10px 24px; overflow: hidden; border: 1px solid #d5eafa; border-radius: 16px; background: #e3f3ff; }
+.promo-copy { padding: 8px 0; }
 .promo-kicker { margin: 0; color: var(--blue); font-size: 12px; font-weight: 800; letter-spacing: .04em; }
 .promo h2 { margin: 4px 0 6px; color: #0b2a5b; font-size: 23px; line-height: 1.35; }
 .promo-sub { margin: 0 0 12px; color: #35507a; font-size: 13px; }
 .promo-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
 .promo img { display: block; width: 100%; height: auto; border-radius: 12px; }
 @media (max-width: 767px) {
-  .promo { grid-template-columns: 1fr; gap: 12px; padding: 20px; }
+  .promo { grid-template-columns: 1fr; gap: 4px; padding: 16px; }
   .promo-copy { padding: 0; }
   .promo h2 { font-size: 21px; word-break: keep-all; }
-  .promo img { width: 100%; max-width: 280px; justify-self: center; }
+  .promo img { width: 100%; max-width: 160px; justify-self: center; }
 }
 
 
@@ -296,9 +296,3 @@ textarea.field { resize: vertical; line-height: 1.6; }
 /* 텔레그램 단체방 버튼 */
 .ql-telegram { border-color: #26a5e4; color: #1a8ccc; }
 .ql-telegram:hover { color: #1a8ccc; }
-@media (max-width: 1199px) {
-  .quick-links { grid-template-columns: repeat(2, 1fr); grid-auto-flow: row; } /* 버튼 4개를 2×2로 */
-}
-@media (max-width: 767px) {
-  .quick-links { grid-template-columns: none; grid-auto-flow: column; }
-}
