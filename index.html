@@ -16,34 +16,28 @@
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
     <link rel="preconnect" href="https://reportmode-request-board.report-request-board.workers.dev" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=20260925-clien" />
-    <script type="module" src="app.js?v=20260925-clien"></script>
+    <link rel="stylesheet" href="styles.css?v=20260925-3col" />
+    <script type="module" src="app.js?v=20260925-3col"></script>
   </head>
   <body>
     <a class="skip" href="#main" data-skip>본문 바로가기</a>
 
-    <section class="schedule-bar" aria-label="시계와 다가오는 일정">
-      <div class="schedule-inner">
-        <div class="clock"><strong data-clock>--:--:--</strong><span data-today></span></div>
-        <a class="ev" href="#calendar" data-ev><span class="ev-label">다음 일정</span><span class="ev-body"></span></a>
-        <a class="ev" href="#calendar" data-ev><span class="ev-label">다다음 일정</span><span class="ev-body"></span></a>
-      </div>
-    </section>
-
     <header class="top">
       <div class="top-inner">
-        <button class="menu-btn" type="button" aria-label="메뉴 열기" aria-controls="side" aria-expanded="false" data-menu>☰</button>
-        <a class="logo" href="#board" aria-label="Builders Lounge 자유게시판으로 이동">
-          <picture>
-            <source srcset="assets/builders-lounge-logo.webp" type="image/webp" />
-            <img src="assets/builders-lounge-logo.png" width="218" height="73" alt="Builders Lounge" />
-          </picture>
-        </a>
-        <form class="search" role="search" data-search>
-          <input type="search" name="q" maxlength="120" placeholder="게시판 검색" aria-label="게시판 검색" />
-          <button type="submit">검색</button>
-        </form>
-        <div class="account" data-account></div>
+        <div class="brand">
+          <button class="menu-btn" type="button" aria-label="메뉴 열기" aria-controls="side" aria-expanded="false" data-menu>☰</button>
+          <a class="logo" href="#board" aria-label="Builders Lounge 자유게시판으로 이동">
+            <picture>
+              <source srcset="assets/builders-lounge-logo.webp" type="image/webp" />
+              <img src="assets/builders-lounge-logo.png" width="218" height="73" alt="Builders Lounge" />
+            </picture>
+          </a>
+        </div>
+        <section class="schedule-bar" aria-label="시계와 다음 일정">
+          <div class="clock"><strong data-clock>--:--:--</strong><span data-today></span></div>
+          <a class="ev" href="#calendar" data-ev><span class="ev-label">다음 일정</span><span class="ev-body"></span></a>
+          <a class="ev-more" href="#calendar">전체 일정 →</a>
+        </section>
       </div>
     </header>
 
@@ -53,12 +47,25 @@
         <a href="#board" data-nav="board">자유게시판</a>
         <a href="#calendar" data-nav="calendar">일정</a>
         <p class="side-title">읽을거리</p>
+        <a href="#materials" data-nav="materials">교육자료</a>
         <a href="#prompts" data-nav="prompts">프롬프트</a>
         <a href="#newsletter" data-nav="newsletter">뉴스레터</a>
         <a href="#videos" data-nav="videos">영상</a>
       </nav>
       <main class="content" id="main" tabindex="-1"></main>
+      <aside class="right" aria-label="로그인과 검색">
+        <section class="box account-box" data-account></section>
+        <form class="search" role="search" data-search>
+          <input type="search" name="q" maxlength="120" placeholder="게시판 검색" aria-label="게시판 검색" />
+          <button type="submit">검색</button>
+        </form>
+        <section class="box recent" aria-labelledby="recent-title">
+          <h2 id="recent-title">최근 글</h2>
+          <div data-recent><p class="hint">불러오는 중입니다.</p></div>
+        </section>
+      </aside>
     </div>
+
 
     <footer class="foot">
       <div class="foot-inner">

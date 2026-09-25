@@ -1,4 +1,4 @@
-import { NEWSLETTERS, PROMPTS, VIDEOS } from "./data.js";
+import { MATERIALS, NEWSLETTERS, PROMPTS, VIDEOS } from "./data.js";
 
 const API = window.location.port === "8787"
   ? "http://127.0.0.1:8787"
@@ -95,9 +95,10 @@ async function api(path, options = {}) {
 
 function renderAccount() {
   document.querySelector("[data-account]").innerHTML = auth.user
-    ? '<span class="account-name">' + esc(auth.user.name || "빌더") + '님</span><button class="link" type="button" data-logout>로그아웃</button>'
-    : '<button class="btn" type="button" data-login>로그인</button>';
+    ? '<p><strong>' + esc(auth.user.name || "빌더") + '</strong>님</p><div class="account-actions"><a class="btn" href="#write">글쓰기</a><button class="btn-line" type="button" data-logout>로그아웃</button></div>'
+    : '<p class="account-hint">로그인하면 글과 댓글을 쓸 수 있어요.</p><button class="btn btn-block" type="button" data-login>Google 로그인</button>';
 }
+
 
 function logout(message = "로그아웃했습니다.") {
   clearTimeout(auth.timer);
@@ -200,6 +201,7 @@ function render(force = false) {
   if (name === "board") return renderBoard();
   if (name === "write") return renderWrite();
   if (name === "calendar") return renderCalendar();
+  if (name === "materials") return renderMaterials();
   if (READINGS[name]) return id ? renderReading(name, id) : renderReadingList(name);
   if (POLICIES.includes(name)) return renderPolicy(name);
   window.history.replaceState(null, "", window.location.pathname + "#board"); // 없어진 메뉴 주소는 자유게시판으로 보냅니다.
@@ -412,18 +414,17 @@ function eventSummary(event) {
 function tickBar() {
   const now = new Date();
   document.querySelector("[data-clock]").textContent = now.toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" });
-  const events = upcomingEvents(2);
-  const slots = [0, 1].map((index) => {
-    if (calendarEvents === null) return index ? "" : '<span class="ev-title">일정을 불러오는 중</span>';
-    if (calendarEvents === "error") return index ? "" : '<span class="ev-title">일정을 불러오지 못했습니다</span>';
-    return events[index] ? eventSummary(events[index]) : '<span class="ev-title">' + (index ? "-" : "예정된 일정 없음") + "</span>";
-  });
+  const next = upcomingEvents(1)[0];
+  const slot = calendarEvents === null ? '<span class="ev-title">일정을 불러오는 중</span>'
+    : calendarEvents === "error" ? '<span class="ev-title">일정을 불러오지 못했습니다</span>'
+    : next ? eventSummary(next) : '<span class="ev-title">예정된 일정 없음</span>';
   const today = now.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "long", day: "numeric", weekday: "long" });
-  if (today + slots.join("|") === barCache) return; // 바뀐 게 있을 때만 다시 그립니다.
-  barCache = today + slots.join("|");
+  if (today + slot === barCache) return; // 바뀐 게 있을 때만 다시 그립니다.
+  barCache = today + slot;
   document.querySelector("[data-today]").textContent = today;
-  document.querySelectorAll("[data-ev] .ev-body").forEach((node, index) => { node.innerHTML = slots[index]; });
+  document.querySelector("[data-ev] .ev-body").innerHTML = slot;
 }
+
 
 function renderCalendar() {
   setTitle("일정");
@@ -440,6 +441,29 @@ function renderCalendar() {
     + '<div class="list">' + list + "</div>"
     + '<p class="hint calendar-hint">구글 캘린더에서 바꾼 일정은 위 목록과 상단 바에 반영되기까지 최대 1시간쯤 걸립니다. 아래 달력은 바로 반영됩니다.</p>'
     + '<iframe class="calendar-frame" src="' + esc(CALENDAR_EMBED + "&mode=" + mode) + '" title="AI Builders Lab 구글 캘린더" loading="lazy"></iframe>';
+}
+
+
+/* ---------- 교육자료·최근 글 ---------- */
+
+function renderMaterials() {
+  setTitle("교육자료");
+  const rows = MATERIALS.filter((item) => /^https:\/\//.test(item.url || "")).map((item) => '<a class="row row-reading" href="' + esc(item.url) + '" target="_blank" rel="noopener"><span class="c-cat">' + esc(item.category || "교재")
+    + '</span><span class="c-title">' + esc(item.title) + ' ↗</span><span class="c-author">' + esc(item.author || "") + '</span><span class="c-date">' + esc(item.updatedAt || "") + "</span></a>").join("");
+  main.innerHTML = '<div class="head"><h1>교육자료</h1><span class="count">' + (rows ? MATERIALS.length + "개" : "") + "</span></div>"
+    + '<div class="list">' + (rows || '<p class="empty">교육자료를 준비 중입니다.</p>') + "</div>";
+}
+
+async function loadRecent() {
+  const box = document.querySelector("[data-recent]");
+  try {
+    const posts = (await api("/board/posts?" + new URLSearchParams({ page: 1, pageSize: 5, category: "all", sort: "latest", q: "" }))).posts || [];
+    box.innerHTML = posts.length
+      ? posts.map((post) => '<a href="?post=' + enc(post.id) + '#board"><span>' + esc(post.title) + "</span><time>" + shortDate(post.created_at) + "</time></a>").join("")
+      : '<p class="hint">아직 글이 없습니다.</p>';
+  } catch {
+    box.innerHTML = '<p class="hint">최근 글을 불러오지 못했습니다.</p>';
+  }
 }
 
 
@@ -504,7 +528,7 @@ document.addEventListener("click", async (event) => {
   }
   const postId = main.querySelector("[data-post-id]")?.dataset.postId;
   if (target.closest("[data-delete-post]")) {
-    if (await removeItem("/board/posts/" + enc(postId), "이 글을 삭제할까요? 되돌릴 수 없습니다.")) go(window.location.pathname + "#board");
+    if (await removeItem("/board/posts/" + enc(postId), "이 글을 삭제할까요? 되돌릴 수 없습니다.")) { loadRecent(); go(window.location.pathname + "#board"); }
     return;
   }
   const comment = target.closest("[data-comment-id]");
@@ -545,6 +569,7 @@ document.addEventListener("submit", async (event) => {
       const id = form.dataset.id;
       const payload = { category: form.elements.category.value, title: form.elements.title.value.trim(), content: form.elements.content.value };
       const data = await api(id ? "/board/posts/" + enc(id) : "/board/posts", { method: id ? "PATCH" : "POST", body: JSON.stringify(payload) });
+      loadRecent();
       go(window.location.pathname + "?post=" + enc(data.post?.id || id) + "#board");
       return;
     }
@@ -574,4 +599,5 @@ fetch("calendar.json", { cache: "no-cache" })
 setInterval(tickBar, 1000);
 tickBar();
 renderAccount();
+loadRecent();
 render();

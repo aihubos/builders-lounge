@@ -234,3 +234,8 @@ const published = (items) => items.filter((item) => item.status === "published")
 export const PROMPTS = published(prompts);
 export const NEWSLETTERS = published(newsletters).sort((a, b) => String(b.publishedAt || "").localeCompare(String(a.publishedAt || "")));
 export const VIDEOS = published(videos);
+
+// 교육자료: 교재 링크를 여기에 추가하면 왼쪽 메뉴 '교육자료'에 바로 나타납니다. 주소는 https:// 로 시작해야 합니다.
+// 예) { title: "AI 에이전트 입문 교재", url: "https://...", category: "입문", author: "AI Builders Lab", updatedAt: "2026-09-25" },
+export const MATERIALS = [
+];
