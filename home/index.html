@@ -56,6 +56,34 @@
     </header>
 
     <main id="main">
+      <section class="reel" aria-label="AI 빌더스 랩 크리에이터 수업 영상">
+        <video class="reel-video" id="reel-video" autoplay muted loop playsinline preload="metadata" aria-label="누구나 쇼츠·롱폼 유튜버가 될 수 있는 크리에이터 수업 소개 영상">
+          <source src="../assets/intro-tall.mp4" type="video/mp4" media="(max-width: 767px)">
+          <source src="../assets/intro-wide.mp4" type="video/mp4">
+        </video>
+        <div class="reel-actions">
+          <a class="button button-primary reel-cta" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">교육 문의</a>
+          <button class="sound-toggle" type="button" aria-controls="reel-video" aria-pressed="false" data-sound-toggle>🔇 소리 켜기</button>
+        </div>
+      </section>
+
+      <section class="kira content-section" aria-labelledby="kira-title">
+        <div class="content-shell kira-grid">
+          <div class="kira-copy">
+            <p class="section-kicker">AI 빌더스 랩 키라쨩</p>
+            <h2 id="kira-title">AI로 만든 캐릭터가<br>직접 쇼츠를 소개합니다.</h2>
+            <p>기획부터 캐릭터, 애니메이션까지 AI와 함께 만든 쇼츠입니다. 수업에서는 이런 영상을 직접 만들어 봅니다.</p>
+            <a class="button button-primary" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">교육 문의</a>
+          </div>
+          <figure class="kira-media">
+            <video id="kira-video" autoplay muted loop playsinline preload="metadata" poster="assets/kira-shorts-poster.jpg" aria-label="키라쨩 AI 애니메이션 쇼츠">
+              <source src="assets/kira-shorts.mp4" type="video/mp4">
+            </video>
+            <button class="sound-toggle" type="button" aria-controls="kira-video" aria-pressed="false" data-sound-toggle>🔇 소리 켜기</button>
+          </figure>
+        </div>
+      </section>
+
       <section class="hero scene-track" id="top" data-scene="hero" aria-labelledby="hero-title">
         <div class="scene-sticky hero-stage">
           <figure class="hero-brand" data-hero-brand>
@@ -454,6 +482,23 @@
       </div>
       <p class="footer-motto">배우고, 나누고, 성장한다.</p>
     </footer>
+    <script>
+      // 모든 영상은 무음으로 시작하고, 소리는 한 번에 한 영상만 켭니다.
+      const soundButtons = [...document.querySelectorAll('[data-sound-toggle]')];
+      const setSound = (button, on) => {
+        button.setAttribute('aria-pressed', String(on));
+        button.textContent = on ? '🔊 소리 끄기' : '🔇 소리 켜기';
+      };
+      soundButtons.forEach((button) => button.addEventListener('click', () => {
+        const video = document.getElementById(button.getAttribute('aria-controls'));
+        const turnOn = video.muted;
+        soundButtons.forEach((other) => { document.getElementById(other.getAttribute('aria-controls')).muted = true; setSound(other, false); });
+        if (!turnOn) return;
+        video.muted = false;
+        video.play().catch(() => {});
+        setSound(button, true);
+      }));
+    </script>
     <script>
       // 라운지 방문자 집계(게시판과 같은 기록). 같은 탭에서는 한 번만 셉니다.
       try {

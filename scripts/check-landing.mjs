@@ -13,4 +13,8 @@ assert.ok(!/30,000|30000|#pricing/.test(home), '소개 페이지에 금액이 �
 for (const asset of home.matchAll(/(?:src|srcset|href)="(assets\/[^" ]+)"/g)) {
   assert.ok(existsSync(new URL('../home/' + asset[1], import.meta.url)), asset[1] + ' 파일이 없습니다.');
 }
+for (const video of ['../assets/intro-wide.mp4', '../assets/intro-tall.mp4', 'assets/kira-shorts.mp4']) {
+  assert.ok(home.includes(video) && existsSync(new URL('../home/' + video, import.meta.url)), video + ' 영상이 없습니다.');
+}
+assert.equal((home.match(/<video[^>]*\bmuted\b/g) || []).length, (home.match(/<video/g) || []).length, '모든 영상은 무음으로 시작해야 합니다.');
 console.log('Home redirect, price removal, and home assets passed.');

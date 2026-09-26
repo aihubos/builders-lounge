@@ -3613,3 +3613,27 @@ html:not(.js) .workshop-progress {
     object-fit: cover;
   }
 }
+
+/* 첫 화면 영상(PC 가로·모바일 세로) + 교육 문의 */
+.reel { position: relative; margin-top: var(--header-height); background: #000; }
+.reel-video { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: calc(100svh - var(--header-height)); object-fit: cover; background: #000; }
+.reel-actions { position: absolute; left: 50%; bottom: clamp(20px, 5vw, 48px); display: flex; gap: var(--space-3); transform: translateX(-50%); }
+.reel-cta { min-width: 160px; box-shadow: 0 10px 30px rgba(0, 0, 0, .3); }
+.sound-toggle { display: inline-flex; align-items: center; min-height: 48px; padding: 0 var(--space-5); border: 1px solid rgba(255, 255, 255, .55); border-radius: 999px; background: rgba(9, 16, 28, .62); color: #fff; font: inherit; font-size: var(--type-label); cursor: pointer; backdrop-filter: blur(8px); }
+.sound-toggle:hover { background: rgba(9, 16, 28, .8); }
+.sound-toggle[aria-pressed="true"] { border-color: var(--color-primary); background: var(--color-primary); }
+
+/* 키라쨩 쇼츠 */
+.kira-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 380px); align-items: center; gap: clamp(32px, 6vw, 96px); }
+.kira-copy h2 { margin: var(--space-3) 0 var(--space-5); font-size: var(--type-section); line-height: 1.15; letter-spacing: -.04em; }
+.kira-copy p:not(.section-kicker) { margin: 0 0 var(--space-8); color: var(--color-muted); font-size: var(--type-body-lg); }
+.kira-media { position: relative; margin: 0; }
+.kira-media video { display: block; width: 100%; aspect-ratio: 9 / 16; border-radius: 28px; object-fit: cover; background: #000; box-shadow: 0 24px 60px rgba(23, 32, 51, .18); }
+.kira-media .sound-toggle { position: absolute; right: var(--space-4); bottom: var(--space-4); }
+@media (max-width: 767px) {
+  .reel-video { aspect-ratio: 9 / 16; }
+  .reel-actions { width: calc(100% - 40px); justify-content: center; }
+  .reel-actions > * { flex: 1; justify-content: center; }
+  .kira-grid { grid-template-columns: 1fr; }
+  .kira-media { width: min(100%, 360px); justify-self: center; }
+}
