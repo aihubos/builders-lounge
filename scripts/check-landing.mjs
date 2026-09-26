@@ -1,14 +1,16 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { runInNewContext } from 'node:vm';
+import { existsSync, readFileSync } from 'node:fs';
 
-const source = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
-const routeCode = source.slice(source.indexOf('function route()'), source.indexOf('function go('));
-for (const [hash, search, expected] of [['', '', 'home'], ['', '?post=example', 'board'], ['#board', '', 'board'], ['#home/story', '', 'home'], ['#prompts/example', '', 'prompts']]) {
-  assert.equal(runInNewContext(routeCode + '; route().name', { window: { location: { hash, search } } }), expected);
-}
+// 첫 방문은 소개 페이지(home/)로, 게시판·공유 주소는 그대로 게시판으로 가는지 확인합니다.
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-assert.ok(html.includes('id="landing-page"'));
-assert.ok(html.includes('assets/intro-tall.mp4') && html.includes('assets/intro-wide.mp4'));
-assert.ok(!html.includes('data-intro'));
-console.log('Landing routes and responsive video markup passed.');
+const rule = html.match(/if \((.*)\) location\.replace\("home\/"\)/)[1];
+const goesHome = (search, hash) => new Function('location', 'return ' + rule)({ search, hash });
+for (const [search, hash, expected] of [['', '', true], ['', '#home', true], ['?post=abc', '#board', false], ['', '#board', false], ['', '#prompts/x', false], ['?q=ai', '', false]]) {
+  assert.equal(goesHome(search, hash), expected, search + hash);
+}
+const home = readFileSync(new URL('../home/index.html', import.meta.url), 'utf8');
+assert.ok(!/30,000|30000|#pricing/.test(home), '소개 페이지에 금액이 남아 있습니다.');
+for (const asset of home.matchAll(/(?:src|srcset|href)="(assets\/[^" ]+)"/g)) {
+  assert.ok(existsSync(new URL('../home/' + asset[1], import.meta.url)), asset[1] + ' 파일이 없습니다.');
+}
+console.log('Home redirect, price removal, and home assets passed.');

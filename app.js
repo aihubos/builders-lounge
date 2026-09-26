@@ -182,7 +182,7 @@ async function acceptCredential(credential) {
 
 function route() {
   const [name = "", id = ""] = window.location.hash.slice(1).split("/");
-  try { return { name: name || (window.location.search ? "board" : "home"), id: decodeURIComponent(id) }; } catch { return { name, id: "" }; }
+  try { return { name: name || "board", id: decodeURIComponent(id) }; } catch { return { name, id: "" }; }
 }
 
 function go(url) {
@@ -198,14 +198,12 @@ function render(force = false) {
   document.body.classList.remove("menu-open");
   document.querySelector("[data-menu]").setAttribute("aria-expanded", "false");
   const { name, id } = route();
-  document.body.classList.toggle("landing", name === "home");
   const section = name === "write" ? "board" : name;
   document.querySelectorAll("[data-nav]").forEach((link) => {
     if (link.dataset.nav === section) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
   if (moved) window.scrollTo(0, 0);
-  if (name === "home") return renderHome(id);
   if (name === "board") return renderBoard();
   if (name === "write") return renderWrite();
   if (name === "calendar") return renderCalendar();
@@ -216,21 +214,6 @@ function render(force = false) {
   window.history.replaceState(null, "", window.location.pathname + "#board"); // 없어진 메뉴 주소는 자유게시판으로 보냅니다.
   lastHref = window.location.href;
   return renderBoard();
-}
-
-function renderHome(anchor) {
-  setTitle("배우고, 나누고, 성장한다");
-  main.innerHTML = document.querySelector("#landing-page").innerHTML;
-  barCache = "";
-  tickBar();
-  const video = main.querySelector("[data-hero-video]");
-  const button = main.querySelector("[data-video-toggle]");
-  const update = () => { button.textContent = video.paused ? "영상 재생" : "영상 일시정지"; };
-  video.addEventListener("play", update);
-  video.addEventListener("pause", update);
-  button.addEventListener("click", () => video.paused ? video.play().catch(update) : video.pause());
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) video.play().catch(update);
-  if (anchor === "story") main.querySelector("#story").scrollIntoView();
 }
 
 /* ---------- 자유게시판 ---------- */
@@ -454,8 +437,6 @@ function tickBar() {
   barCache = today + slot;
   document.querySelector("[data-today]").textContent = today;
   document.querySelector("[data-ev] .ev-body").innerHTML = slot;
-  const landingEvent = document.querySelector("[data-landing-event]");
-  if (landingEvent) landingEvent.innerHTML = slot + '<span>전체 일정 보기 →</span>';
 }
 
 
@@ -581,13 +562,6 @@ document.addEventListener("click", async (event) => {
   }
   const link = target.closest("a[href]");
   if (link) {
-    if (link.dataset.scroll && route().name === "home") {
-      event.preventDefault();
-      const section = main.querySelector("#story");
-      section.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
-      section.focus({ preventScroll: true });
-      return;
-    }
     if (link.hasAttribute("data-skip")) { event.preventDefault(); main.focus(); return; }
     const href = link.getAttribute("href");
     const url = new URL(link.href);

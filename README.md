@@ -1,6 +1,6 @@
 # Builders Lounge
 
-AI Builders Lab 모임 소개와 커뮤니티입니다. 첫 화면은 영상 → 슬로건 → 모임 활동 → 자료 → 참여 안내로 이어집니다. 게시판은 기존 3단 글 목록을 유지합니다.
+AI Builders Lab 모임 소개와 커뮤니티입니다. 첫 화면은 `home/` 소개 페이지(jeremy.ai-hub-os.com 디자인 기반, 가격 대신 라운지 참여 카드)이고, 게시판은 기존 3단 글 목록을 유지합니다.
 
 - 공개 주소: https://aihubos.github.io/builders-lounge/
 - 3단 구조: 왼쪽 메뉴 · 가운데 본문 · 오른쪽 로그인·검색·최근 글
@@ -28,7 +28,7 @@ npm run dev       # http://127.0.0.1:4173
 npm run calendar    # calendar.json 바로 갱신
 npm run newsletter  # newsletter.json 바로 갱신
 npm run build  # 문법 확인 후 dist/client 생성
-node scripts/check-landing.mjs # 홈·기존 게시글 주소와 영상 연결 확인
+node scripts/check-landing.mjs # 소개 페이지 이동·게시글 주소·금액 삭제 확인
 ```
 
 GitHub Pages는 `main` 브랜치 루트 파일을 그대로 공개합니다. API 키·로그인 토큰·비밀번호는 저장소에 넣지 않습니다.
