@@ -26,7 +26,7 @@ const READINGS = {
 const PROMO = '<section class="promo" aria-label="수업 안내"><div class="promo-copy"><p class="promo-kicker">AI BUILDERS LAB 수업</p>'
   + '<h2>수업을 들으면 누구나<br>쇼츠·롱폼 유튜버가 될 수 있어요</h2>'
   + '<p class="promo-sub">AI와 함께라면 첫 영상도 어렵지 않아요. 수업에서 함께 시작해요.</p>'
-  + '<p class="promo-actions"><a class="btn" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">수업 상담하기 ↗</a><a class="btn-line" href="#curriculum">커리큘럼 보기</a></p></div>'
+  + '<p class="promo-actions"><a class="btn" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">교육문의 ↗</a><a class="btn-line" href="#curriculum">커리큘럼 보기</a></p></div>'
   + '<img src="assets/promo-youtuber-v2.webp" width="720" height="720" alt="노트북과 촬영 장비로 쇼츠와 롱폼 영상을 만드는 키라 캐릭터"></section>';
 
 const POLICIES = ["guidelines", "privacy", "terms"];
@@ -182,7 +182,7 @@ async function acceptCredential(credential) {
 
 function route() {
   const [name = "", id = ""] = window.location.hash.slice(1).split("/");
-  try { return { name: name || "board", id: decodeURIComponent(id) }; } catch { return { name, id: "" }; }
+  try { return { name: name || (window.location.search ? "board" : "home"), id: decodeURIComponent(id) }; } catch { return { name, id: "" }; }
 }
 
 function go(url) {
@@ -198,12 +198,14 @@ function render(force = false) {
   document.body.classList.remove("menu-open");
   document.querySelector("[data-menu]").setAttribute("aria-expanded", "false");
   const { name, id } = route();
+  document.body.classList.toggle("landing", name === "home");
   const section = name === "write" ? "board" : name;
   document.querySelectorAll("[data-nav]").forEach((link) => {
     if (link.dataset.nav === section) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
   if (moved) window.scrollTo(0, 0);
+  if (name === "home") return renderHome(id);
   if (name === "board") return renderBoard();
   if (name === "write") return renderWrite();
   if (name === "calendar") return renderCalendar();
@@ -214,6 +216,21 @@ function render(force = false) {
   window.history.replaceState(null, "", window.location.pathname + "#board"); // 없어진 메뉴 주소는 자유게시판으로 보냅니다.
   lastHref = window.location.href;
   return renderBoard();
+}
+
+function renderHome(anchor) {
+  setTitle("배우고, 나누고, 성장한다");
+  main.innerHTML = document.querySelector("#landing-page").innerHTML;
+  barCache = "";
+  tickBar();
+  const video = main.querySelector("[data-hero-video]");
+  const button = main.querySelector("[data-video-toggle]");
+  const update = () => { button.textContent = video.paused ? "영상 재생" : "영상 일시정지"; };
+  video.addEventListener("play", update);
+  video.addEventListener("pause", update);
+  button.addEventListener("click", () => video.paused ? video.play().catch(update) : video.pause());
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) video.play().catch(update);
+  if (anchor === "story") main.querySelector("#story").scrollIntoView();
 }
 
 /* ---------- 자유게시판 ---------- */
@@ -413,11 +430,11 @@ function upcomingEvents(count) {
 function eventWhen(event) {
   const start = new Date(event.start);
   const now = new Date();
-  if (start <= now) return { badge: "진행 중", text: "지금 진행 중" };
   const days = Math.round((Date.parse(kst(start).slice(0, 10)) - Date.parse(kst(now).slice(0, 10))) / 86400000);
-  const badge = days === 0 ? "오늘" : days === 1 ? "내일" : "D-" + days;
+  const badge = start <= now ? "진행 중" : days === 0 ? "오늘" : days === 1 ? "내일" : "D-" + days;
   const date = start.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul", month: "long", day: "numeric", weekday: "short" });
-  return { badge, text: date + " " + (event.allDay ? "종일" : kst(start).slice(11, 16)) };
+  const end = validDate(event.end);
+  return { badge, text: date + " " + (event.allDay ? "종일" : kst(start).slice(11, 16) + (end ? "–" + (kst(end).slice(0, 10) !== kst(start).slice(0, 10) ? kst(end).slice(5, 10) + " " : "") + kst(end).slice(11, 16) : "")) };
 }
 
 function eventSummary(event) {
@@ -437,6 +454,8 @@ function tickBar() {
   barCache = today + slot;
   document.querySelector("[data-today]").textContent = today;
   document.querySelector("[data-ev] .ev-body").innerHTML = slot;
+  const landingEvent = document.querySelector("[data-landing-event]");
+  if (landingEvent) landingEvent.innerHTML = slot + '<span>전체 일정 보기 →</span>';
 }
 
 
@@ -491,6 +510,7 @@ function renderCurriculum() {
 
 async function loadRecent() {
   const box = document.querySelector("[data-recent]");
+  if (!box) return;
   try {
     const posts = (await api("/board/posts?" + new URLSearchParams({ page: 1, pageSize: 5, category: "all", sort: "latest", q: "" }))).posts || [];
     box.innerHTML = posts.length
@@ -561,6 +581,13 @@ document.addEventListener("click", async (event) => {
   }
   const link = target.closest("a[href]");
   if (link) {
+    if (link.dataset.scroll && route().name === "home") {
+      event.preventDefault();
+      const section = main.querySelector("#story");
+      section.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+      section.focus({ preventScroll: true });
+      return;
+    }
     if (link.hasAttribute("data-skip")) { event.preventDefault(); main.focus(); return; }
     const href = link.getAttribute("href");
     const url = new URL(link.href);
@@ -670,18 +697,3 @@ renderAccount();
 loadRecent();
 countVisit();
 render();
-
-/* 처음 들어올 때 소개 영상. 같은 탭에서는 한 번만, 누르면 닫힘. */
-const intro = document.querySelector("[data-intro]");
-if (intro && !window.matchMedia("(prefers-reduced-motion: reduce)").matches && !sessionStorage.getItem("builders-lounge:intro")) {
-  const video = intro.querySelector("video");
-  intro.hidden = false;
-  video.play().catch(() => {});
-  const closeIntro = () => {
-    video.pause();
-    intro.remove();
-    sessionStorage.setItem("builders-lounge:intro", "1");
-  };
-  intro.addEventListener("click", closeIntro);
-  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && intro.isConnected) closeIntro(); });
-}
