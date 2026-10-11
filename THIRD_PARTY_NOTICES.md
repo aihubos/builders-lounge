@@ -36,3 +36,6 @@ Logos are used to identify the listed brands; all trademark rights remain with t
 
 ### User-provided original previews (2026-10-11)
 24 preview HTML documents and their accompanying card descriptions were extracted from the user-provided `oppadu-brand-lookbook.zip` without rewriting their contents. The user states they obtained permission. The archive contains the rendered gallery and styles, but no full brand-detail documents or detail data. These supplied previews are distinct from Builders Lounge's independently authored component and style suggestions.
+
+### Complete user-provided lookbook (2026-10-11)
+`lookbook-source/` includes the 284 detail records, original presentation script, CSS and font assets from `oppadu-brand-lookbook-full.zip`, supplied by the user with stated permission. Brand detail content and presentation are retained. Integration changes are limited to local asset paths, parent-page routing, and disabling the original site's view/download telemetry in this local package. Original WordPress account/navigation scripts are not executed. The package's provided member configuration is used for its locally supplied copy/download functionality; it does not authenticate with the original website.

@@ -1,0 +1,47 @@
+/*
+ * 오빠두 기본 CSS — GP 동적 CSS(사용자 정의하기 값) 부분. base.css 와 짝이다(생성기가 함께 만든다).
+ * functions.php 가 wp_enqueue_scripts 우선순위 20 에서 싣고 자식 style.css 를 그 뒤로 옮긴다 — GP Premium 과 같은 순서.
+ * ⚠️ 1차 원칙은 「화면 그대로」 — 값을 여기서 바꾸지 말 것.
+ */
+body{background-color:#ffffff;color:#333333;}
+a{color:#1361a0;}
+a:hover,a:focus,a:active{color:#1361a0;}
+body .grid-container{max-width:1300px;}
+.wp-block-group__inner-container{max-width:1300px;margin-left:auto;margin-right:auto;}
+body,button,input,select,textarea{font-family:"Pretendard";font-weight:400;font-size:14px;}
+body{line-height:1.85;}
+.entry-content > [class*="wp-block-"]:not(:last-child):not(.wp-block-heading){margin-bottom:1.5em;}
+h1{font-weight:500;font-size:29px;line-height:1.5em;}
+h2{font-weight:500;font-size:25px;line-height:1.4em;}
+h3{font-weight:500;font-size:23px;line-height:1.4em;}
+h4{font-size:20px;line-height:1.4em;}
+h5{font-size:17px;line-height:1.4em;}
+h6{font-size:16px;line-height:1.4em;}
+@media (max-width:768px){
+	h1{font-size:29px;}
+	h2{font-size:24px;}
+	h3{font-size:22px;}
+	h4{font-size:20px;}
+	h5{font-size:17px;}
+}
+.separate-containers .inside-article,.separate-containers .comments-area{background-color:#ffffff;}
+.entry-meta{color:#595959;}
+.entry-meta a{color:#595959;}
+.site-info{color:#ffffff;background-color:#222222;}
+.site-info a{color:#ffffff;}
+.site-info a:hover{color:#606060;}
+input[type="text"],input[type="email"],input[type="url"],input[type="password"],input[type="search"],input[type="tel"],input[type="number"],textarea,select{color:#666666;background-color:#fafafa;border-color:#cccccc;}
+input[type="text"]:focus,input[type="email"]:focus,input[type="url"]:focus,input[type="password"]:focus,input[type="search"]:focus,input[type="tel"]:focus,input[type="number"]:focus,textarea:focus,select:focus{color:#666666;background-color:#ffffff;border-color:#bfbfbf;}
+.separate-containers .inside-article,.separate-containers .comments-area{padding:0px 30px 15px 30px;}
+.site-main .wp-block-group__inner-container{padding:0px 30px 15px 30px;}
+.entry-content .alignwide,body:not(.no-sidebar) .entry-content .alignfull{margin-left:-30px;width:calc(100% + 60px);max-width:calc(100% + 60px);}
+.separate-containers .site-main > *{margin-bottom:0px;}
+.separate-containers .site-main{margin:0px;}
+.separate-containers .page-header-image,.separate-containers .page-header-contained,.separate-containers .page-header-image-single,.separate-containers .page-header-content-single{margin-top:0px;}
+.site-info{padding:0px;}
+@media (max-width:768px){
+	.separate-containers .inside-article,.separate-containers .comments-area{padding:30px;}
+	.site-main .wp-block-group__inner-container{padding:30px;}
+	.site-info{padding-right:10px;padding-left:10px;}
+	.entry-content .alignwide,body:not(.no-sidebar) .entry-content .alignfull{margin-left:-30px;width:calc(100% + 60px);max-width:calc(100% + 60px);}
+}

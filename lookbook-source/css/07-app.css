@@ -1,0 +1,1220 @@
+/* =========================================================
+   Design Systems Gallery — neutral host
+   카드 안의 brand hero가 주인공. 호스트는 차분한 grayscale.
+========================================================= */
+
+/* ⭐ .aihx .otl 에도 같은 토큰을 다시 건다 — AI 활용 틀(맨 아래 .aihx 절) 안에서는 틀(.aih)에 사이트 테마 토큰이 걸리는데,
+      이름이 겹치는 토큰(--text-primary·--radius-*·--shadow-* 등)이 상속으로 본문까지 물들지 않게 셸(.otl)에서 끊는다.
+   ⭐ 워드프레스 판(html.dsg-wp — tools/design-systems-site.php)에는 :root 로 걸지 않는다. 같은 문서에 사이트 머리글·바닥글이 있어
+      :root 에 걸면 테마 토큰(css/tokens.css)을 덮어 그쪽 색·둥글기까지 바뀐다 — 셸(.otl) 안에만. */
+:root:not(.dsg-wp),
+.aihx .otl {
+  /* Palette — slate */
+  --bg-base: #ffffff;
+  --bg-subtle: #f8fafc;
+  --bg-elevated: #ffffff;
+  --bg-overlay: rgba(15, 23, 42, 0.45);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+
+  --border-default: #e2e8f0;
+  --border-subtle: #f1f5f9;
+  --border-strong: #cbd5e1;
+  --border-focus: #0f172a;
+
+  --accent: #0f172a;
+  --accent-hover: #1e293b;
+  --accent-bg: #f1f5f9;
+
+  /* Spacing */
+  --space-2: 4px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 48px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.16);
+
+  /* Z-index */
+  --z-topbar: 50;
+  --z-drawer: 100;
+  --z-scrim: 90;
+
+  /* Layout */
+  /* 고정 크롬의 높이. 2026-09-16 에 44px 툴 셸 바를 도구 밴드로 바꿨는데,
+     밴드는 스크롤과 함께 올라가므로 **고정된 것이 없다** → 0. sidebar sticky 오프셋이 이 값을 본다. */
+  --topbar-h: 0px;
+  --sidebar-w: 280px;
+  --content-max: 1600px;
+  --detail-max: 960px;
+
+  --transition: 0.18s ease;
+}
+
+/* 아래 문서 전체 규칙(*·html·body·a·button)은 정적 문서(index.html · brand/*.html)만 — 워드프레스 판은 바로 아래 절이 셸(.otl) 안에만 건다.
+   :where() 로 감싸 명시도는 예전(* · 요소 하나) 그대로다. */
+:where(:root:not(.dsg-wp)) *,
+:where(.dsg-wp .otl),
+:where(.dsg-wp .otl) * { box-sizing: border-box; }
+:where(:root:not(.dsg-wp)) [hidden],
+:where(.dsg-wp .otl) [hidden] { display: none !important; }   /* author rules can override UA [hidden] */
+:where(:root:not(.dsg-wp)),
+:where(:root:not(.dsg-wp)) body { height: 100%; }
+:where(:root:not(.dsg-wp)) body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Pretendard', 'Apple SD Gothic Neo', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========= 워드프레스 판(html.dsg-wp) — 셸(.otl) 안 바탕 =========
+ * 같은 문서에 사이트 테마 CSS 가 실린다. 테마는 요소에 직접 값을 건다(oppadu/css/base.css · base-dynamic.css · generatepress_child/style.css):
+ *   body 줄 간격 1.85 · h1~h3 크기와 줄 간격 1.2em · p·ul 아래 여백 · button 회색 바탕·흰 글자·10px 20px · a 밑줄과 파란 글자 ·
+ *   input[type=search]·select 회색 칸과 :focus 흰 바탕.
+ * 정적 판은 그런 규칙이 없는 문서라 이 파일의 클래스 규칙이 브라우저 기본값 위에 서 있다 → 셸 안에서만 테마 요소 규칙을 브라우저 기본값으로 되돌린다.
+ * 명시도: :where() 로 감싼 요소 하나(0,0,1) = 테마 요소 규칙과 같고 이 파일이 뒤에 실려 이긴다. 이 파일의 클래스 규칙(0,1,0)에는 진다.
+ * ⚠️ 「뒤에 실려」가 전제다 — 테마 동적 CSS(oppadu/css/base-dynamic.css: h1~h6 크기·줄 간격 등)는 wp_enqueue_scripts 19 에 실리므로
+ *    템플릿이 이 파일을 그 뒤(30)에 넣는다(tools/design-systems-site.php). 글자 크기·줄 간격·색은 정적 판처럼 AI 활용 틀(.aih 13.5px·1.45)에서 물려받는다. */
+:where(.dsg-wp) .otl { -webkit-font-smoothing: antialiased; }
+:where(.dsg-wp .otl) :is(h1, h2, h3, h4, h5, h6, p, ul, ol, li, dl, dt, dd, blockquote, figure, hr, pre, code, table, caption, th, td, a, button) {
+  all: revert;
+  box-sizing: border-box;   /* revert 가 위 border-box 까지 되돌린다 */
+}
+
+:where(:root:not(.dsg-wp)) a,
+:where(.dsg-wp .otl) a { color: inherit; text-decoration: none; }
+:where(.dsg-wp .otl) a:is(:hover, :focus, :active) { color: inherit; }   /* 테마 a:hover·a:focus 의 파란 글자(0,1,1) */
+
+:where(:root:not(.dsg-wp)) button,
+:where(.dsg-wp .otl) button { font: inherit; cursor: pointer; }
+
+/* 검색칸·정렬 칸 — 테마의 input[type=search](0,1,1) · :focus(0,2,1) · select:focus(0,1,1) 가 아래 .search·.select(0,1,0)를 이긴다.
+   같은 값을 한 단계 높여 다시 적는다. 넓은 화면의 한 줄 판(.aihx 절)은 이 뒤에 있어 그대로 이긴다 — 그 판의 :focus 바탕은 파일 맨 끝. */
+:where(.dsg-wp) .otl .search,
+:where(.dsg-wp) .otl .select {
+  -webkit-appearance: auto;
+  appearance: auto;
+  max-width: none;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+:where(.dsg-wp) .otl .search:focus,
+:where(.dsg-wp) .otl .select:focus {
+  border-color: var(--border-focus);
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--accent); color: #fff;
+  padding: 8px 12px; z-index: 999;
+}
+.skip-link:focus { left: 8px; top: 8px; }
+
+/* ========= Topbar ========= */
+/*
+ * 자체 topbar 는 오빠두 툴 셸(.otl-bar)로 교체됐다 (2026-08-08).
+ * 함께 사라진 것: 로고 그라디언트(--z-topbar 는 셸 --otl-z-bar 와 같은 50 이라 그대로 둔다),
+ * `backdrop-filter: saturate() blur()` — 디자인 시스템 v3 가 blur 를 금지한다.
+ * 결과 개수(#resultCount)는 셸 바의 .otl-tool-sub 로, 필터 버튼은 .otl-toolbar 로 이사했다.
+ *
+ * ⭐ 툴바에는 모바일 전용 필터 버튼 하나뿐이라 데스크톱에선 줄 자체를 숨긴다.
+ *    (.otl .otl-toolbar 로 셸 정본의 .otl-toolbar 보다 특이도를 한 단계 높여, 로드 순서와 무관하게 이긴다)
+ */
+.otl .otl-toolbar { display: none; }
+/*
+ * ⭐ 상세 화면(#/{slug})에는 도구 밴드·툴바를 그리지 않는다 (2026-09-16 운영자 지시).
+ *    상세는 자체 h1(.detail-title)과 [← 목록] 을 갖고 있어 밴드의 제목·설명이 한 번 더 말하는 꼴이다.
+ * ⚠️ .dsg-spa 로 한정한다 — prerender.js 의 정적 브랜드 페이지도 data-view="detail" 이고
+ *    거기서는 밴드가 사이트로 나가는 유일한 문이다(그 페이지엔 이 클래스가 없다).
+ * ⚠️ 툴바 규칙은 아래 @media(max-width:880px) 의 .otl .otl-toolbar{display:flex} 를 이겨야 하므로
+ *    셀렉터를 더 길게 둔다(특이도 4 vs 2).
+ * ⭐ #main 은 평소엔 app.js 가 hidden 으로 감춘다. 이 규칙은 상세 주소로 바로 들어온 첫 그림용이다 —
+ *    index.html 맨 앞 인라인 스크립트가 data-view 를 먼저 detail 로 바꿔 둔다(2026-10-06).
+ */
+.dsg-spa[data-view="detail"] .otl-band,
+.dsg-spa[data-view="detail"] .otl .otl-toolbar,
+.dsg-spa[data-view="detail"] #main { display: none; }
+/* 숫자는 결과 개수라 폭이 흔들리면 안 된다 */
+#resultCount { font-variant-numeric: tabular-nums; }
+
+
+/* ========= Layout ========= */
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  gap: 0;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  min-height: calc(100vh - var(--topbar-h));
+}
+
+/* ========= Sidebar / Filters ========= */
+.sidebar {
+  border-right: 1px solid var(--border-default);
+  background: var(--bg-base);
+  position: sticky;
+  top: var(--topbar-h);
+  align-self: start;
+  height: calc(100vh - var(--topbar-h));
+  overflow-y: auto;
+}
+.sidebar-inner { padding: var(--space-6) var(--space-5) var(--space-8); }
+
+.filter-group { margin-bottom: var(--space-6); }
+.filter-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-3);
+}
+
+.search, .select {
+  width: 100%;
+  height: 36px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.search:focus, .select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(15,23,42,0.10);
+}
+
+.filter-options {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.facet-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-base);
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+.facet-chip:hover { border-color: var(--border-strong); color: var(--text-primary); }
+.facet-chip[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.facet-chip[aria-pressed="true"]:hover { background: var(--accent-hover); }
+.facet-chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(15,23,42,0.18);
+}
+
+/* 컬러 계열 스와치 — 색 자체가 라벨이라 이름도 개수도 쓰지 않는다(2026-09-16 운영자 지시).
+   색 견본 한 칸이 곧 선택지다. .filter-options 의 flex 를 그리드로 덮어 칸 폭을 맞춘다.
+   ⚠️ 이름표가 빠진 만큼 최소폭도 같이 줄인다 — 그대로 두면 빈 정사각형이 사이드바를 다 먹는다.
+      280px 사이드바(안쪽 248px)에서 minmax(34px) + 8px 간격 = 한 줄 6칸, 13칸이 3줄에 담긴다. */
+.filter-options--swatch {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+  gap: var(--space-3);
+}
+.facet-swatch {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.facet-swatch-color {
+  display: block;
+  width: 100%;
+  /* ⭐ 정사각형. 높이를 px 로 박으면 칸 폭이 바뀔 때마다 직사각형이 된다 */
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+  border-radius: var(--radius-sm);
+  /* 흰색·아주 밝은 견본이 흰 바탕에 묻히지 않게 하는 헤어라인 */
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+.facet-swatch-color[data-all="true"] {
+  border-style: dashed;
+  border-color: var(--border-strong);
+  background: var(--bg-subtle);
+}
+.facet-swatch:hover .facet-swatch-color { border-color: var(--border-strong); }
+/* 선택은 색 면을 덧칠하지 않고 테두리 링 한 겹으로만 표시한다.
+   안쪽 2px 은 바탕색 — 링이 견본 색에 붙어 보이지 않게 띄운다. */
+.facet-swatch[aria-pressed="true"] .facet-swatch-color {
+  box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--accent);
+}
+.facet-swatch:focus-visible { outline: none; }
+/* [펼침]·모든 색 판은 넓은 화면 거르기 줄(.aihx 절)에서만 — 서랍·정적 판은 색을 다 늘어놓는다 */
+.facet-swatch-more,
+.color-more-panel { display: none; }
+.facet-swatch:focus-visible .facet-swatch-color {
+  box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--border-focus);
+}
+
+.range-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);
+}
+.range {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.range-readout {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.btn-secondary {
+  width: 100%;
+  height: 36px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-base);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font: inherit;
+}
+.btn-secondary:hover { background: var(--bg-subtle); }
+.btn-secondary:focus-visible {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(15,23,42,0.10);
+}
+/* .btn-ghost 는 필터 버튼 전용이었고, 그 버튼이 셸 툴바의 .otl-btn 으로 옮겨가며 사문화됐다 (2026-08-08) */
+
+/* ========= Content ========= */
+.content {
+  padding: var(--space-6) var(--space-7);
+  min-width: 0;
+}
+
+/* 실시간 결과 개수 — 셸 바 부제는 어드민 '도구 상세 설명'이 쓰므로 여기로 내려왔다 */
+.result-count {
+  margin: 0 0 var(--space-4);
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.active-chips {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: var(--space-5);
+  min-height: 0;
+}
+.active-chips:empty { display: none; }
+.active-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  font-size: 12px;
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+}
+.active-chip button {
+  background: transparent; border: 0; color: var(--text-tertiary);
+  cursor: pointer; line-height: 1; padding: 0; font-size: 14px;
+}
+.active-chip button:hover { color: var(--text-primary); }
+
+/* ========= Grid ========= */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-6);
+}
+
+/* ========= Card ========= */
+.card {
+  display: flex; flex-direction: column;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  padding: 0;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+}
+.card:focus-visible {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(15,23,42,0.18);
+}
+
+.card-hero {
+  position: relative;
+  aspect-ratio: 4 / 3;     /* ~ 60% of card height for 280×360 */
+  background: var(--bg-subtle);
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-default);
+  pointer-events: none;    /* never intercept clicks meant for the card link */
+}
+.card-hero iframe {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
+  pointer-events: none;
+}
+.card-meta { pointer-events: none; }   /* a-tag receives all clicks */
+
+.card-meta {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.card-title-row {
+  display: flex; align-items: center; gap: 8px;
+}
+.card-swatch {
+  width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: 0;
+}
+.card-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.8em;   /* 2줄(1.4×2) 높이 고정 → 카드마다 사용량 위치 정렬 */
+}
+.card-badges {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  margin-top: 2px;
+}
+/* Bottom row: badges (left) + usage count (bottom-right) */
+.card-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 2px;
+}
+.card-footer .card-badges { margin-top: 0; flex: 1 1 auto; min-width: 0; }
+/* .card-usage 제거(2026-08-08) — 사용량은 집계만 하고 화면에 표시하지 않는다. */
+.badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+.badge-region { background: #f8fafc; }
+
+/* ========= Empty ========= */
+.empty {
+  text-align: center;
+  padding: var(--space-8) var(--space-6);
+  color: var(--text-secondary);
+}
+.empty-mark {
+  font-size: 32px; color: var(--text-tertiary); margin-bottom: var(--space-4);
+}
+.empty button { display: inline-block; width: auto; padding: 0 16px; margin-top: var(--space-4); }
+
+/* ========= Detail ========= */
+.detail { background: var(--bg-base); }
+.detail-inner {
+  max-width: var(--detail-max);
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-6) var(--space-8);
+}
+.back {
+  display: inline-block;
+  color: var(--text-secondary);
+  text-decoration: none;
+  margin-bottom: var(--space-6);
+  font-size: 13px;
+}
+.back:hover { color: var(--text-primary); }
+
+.detail-header {
+  position: relative;
+  margin-bottom: var(--space-7);
+}
+/* Per-page light/dark control — iOS-style segmented control with a sliding thumb */
+.detail-mode-toggle {
+  position: absolute; top: 0; right: 0;
+  display: inline-flex;
+  padding: 3px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05);
+  -webkit-user-select: none; user-select: none;
+}
+/* The white pill that glides under the active option */
+.mode-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: calc(50% - 3px);
+  height: calc(100% - 6px);
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.13), 0 1px 2px rgba(15, 23, 42, 0.10);
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.42s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+/* Thumb color follows the selected mode: light → white, dark → black */
+.detail-mode-toggle[data-mode="light"] .mode-thumb { background: #ffffff; }
+.detail-mode-toggle[data-mode="dark"]  .mode-thumb { background: var(--text-primary); }
+.detail-mode-toggle[data-mode="dark"]  .mode-thumb { transform: translate3d(100%, 0, 0); }
+.mode-btn {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  min-width: 62px;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-tertiary);
+  font: 600 12.5px/1 inherit;
+  letter-spacing: -0.01em;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.3s ease, transform 0.12s ease;
+}
+.mode-btn:hover { color: var(--text-secondary); }
+/* Active label sits on the thumb — flip its color so it reads on white vs black */
+.detail-mode-toggle[data-mode="light"] .mode-btn[aria-pressed="true"] { color: var(--text-primary); }
+.detail-mode-toggle[data-mode="dark"]  .mode-btn[aria-pressed="true"] { color: #ffffff; }
+.mode-btn:active { transform: scale(0.96); }
+.mode-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(15,23,42,0.16); }
+
+/* Single-mode static indicator (light-only / dark-only brands) — same top-right slot */
+.detail-mode-single { position: absolute; top: 0; right: 0; }
+.mode-single-pill {
+  display: inline-flex; align-items: center;
+  padding: 9px 18px;
+  border-radius: 999px;
+  font: 600 12.5px/1 inherit;
+  letter-spacing: -0.01em;
+  border: 1px solid var(--border-subtle);
+}
+.detail-mode-single[data-mode="light"] .mode-single-pill {
+  background: #ffffff; color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.10);
+}
+.detail-mode-single[data-mode="dark"] .mode-single-pill {
+  background: var(--text-primary); color: #ffffff;
+  border-color: var(--text-primary);
+}
+
+/* .dl-count 제거(2026-08-08) — 사용량은 집계만 하고 화면에 표시하지 않는다.
+   이 규칙이 margin-left:auto 로 뒤따르는 .copy-status 까지 우측으로 밀고 있었으므로,
+   제거 후 복사 상태 문구는 버튼 바로 옆에 붙는다(의도된 변화). */
+.detail-title {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-3);
+  display: flex; align-items: center; gap: 12px;
+}
+.detail-swatch {
+  width: 28px; height: 28px; border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+.detail-tagline {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin: 0 0 var(--space-5);
+}
+.detail-meta-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.detail-meta-row .badge { font-size: 11px; padding: 4px 8px; }
+
+/* Raw md panel */
+.raw-md-panel {
+  margin: var(--space-5) 0 var(--space-7);
+  padding: var(--space-5);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+.raw-md-actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+}
+.btn-copy, .btn-download {
+  width: auto;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-md);
+  font: 600 13px/1 inherit;
+  border: 1px solid var(--border-default);
+}
+.btn-copy { background: var(--bg-base); color: var(--text-primary); }
+.btn-copy:hover { background: var(--bg-subtle); }
+.btn-download { background: var(--text-primary); color: #fff; border-color: var(--text-primary); }
+.btn-download:hover { opacity: 0.9; }
+.btn-copy:focus-visible, .btn-download:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(15,23,42,0.18); }
+.btn-toggle-raw { width: auto; padding: 0 14px; height: 36px; }
+.copy-status { font-size: 12px; color: var(--text-secondary); margin-left: 4px; }
+
+/* 로그인 게이트 — 확인 중 / 비로그인 안내.
+   버튼 줄과 같은 자리를 쓰므로 높이를 맞춰 상세 화면이 튀지 않게 한다. */
+.raw-md-pending {
+  margin: 0;
+  min-height: 36px;
+  display: flex; align-items: center;
+  font-size: 13px; color: var(--text-tertiary);
+}
+.raw-md-gate {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+  min-height: 36px;
+}
+.raw-md-gate-text {
+  margin: 0;
+  font-size: 13px; color: var(--text-secondary);
+}
+.raw-md-gate-text strong { color: var(--text-primary); font-weight: 600; }
+.raw-md-gate-lock { margin-right: 4px; }
+.raw-md-gate-btn {
+  display: inline-flex; align-items: center;
+  height: 36px; padding: 0 14px;
+  font-size: 13px; font-weight: 600;
+  text-decoration: none;
+}
+.raw-md {
+  margin: var(--space-4) 0 0;
+  background: #0f172a; color: #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  max-height: 480px;
+  overflow: auto;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px; line-height: 1.5;
+  white-space: pre;
+}
+.raw-md.hidden { display: none; }
+
+.detail-trademark {
+  margin: var(--space-7) 0 0;
+  padding-top: var(--space-4);
+  border-top: thin solid var(--border-default);
+  color: var(--text-secondary);
+  font-size: smaller;
+}
+
+.detail-section {
+  margin-bottom: var(--space-7);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+}
+.detail-section:first-of-type { border-top: 0; padding-top: 0; }
+.detail-section h2 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin: 0 0 var(--space-3);
+}
+.detail-section h3 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-5);
+}
+
+.detail-section h4, .detail-section h5, .detail-section h6 {
+  margin: var(--space-5) 0 var(--space-3);
+  font-weight: 600;
+}
+.detail-section h4 { font-size: 18px; }
+.detail-section h5 { font-size: 15px; }
+
+.detail-section p, .detail-section ul, .detail-section ol {
+  margin: 0 0 var(--space-4);
+}
+.detail-section ul, .detail-section ol { padding-left: 22px; }
+.detail-section li { margin-bottom: 4px; }
+.detail-section li ul { margin-top: 4px; }
+
+.detail-section .code {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+  margin: 0 0 var(--space-4);
+}
+.detail-section code { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.92em; background: var(--bg-subtle); padding: 1px 5px; border-radius: 3px; }
+/* Reset inline-code styles when nested inside a code block (pre) */
+.detail-section pre code,
+.raw-md code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* Color swatch grid */
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  margin: 0 0 var(--space-5);
+}
+.swatch {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.swatch-color { aspect-ratio: 3/2; }
+.swatch-meta {
+  padding: 6px 8px;
+  font-size: 10.5px;
+  font-family: ui-monospace, monospace;
+  color: var(--text-secondary);
+  background: var(--bg-base);
+  border-top: 1px solid var(--border-subtle);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.swatch-meta .swatch-name { color: var(--text-primary); }
+
+/* Token visualizers */
+.token-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
+  gap: 12px;
+  margin: 0 0 var(--space-5);
+}
+.token-cell {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 16px 8px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+}
+.token-cell .token-vis {
+  width: 64px; height: 64px;
+  background: #fff;
+  border: 1px solid var(--border-default);
+}
+.token-cell .token-name {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+.token-cell .token-value {
+  font-family: ui-monospace, monospace;
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+}
+
+/* Type preview */
+.type-preview {
+  padding: var(--space-6);
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  margin: 0 0 var(--space-5);
+}
+.type-preview-display {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 var(--space-3);
+}
+.type-preview-body {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Signature demo iframe */
+.sig-demo-wrap {
+  position: relative;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin: 0 0 var(--space-4);
+}
+.sig-demo {
+  display: block;
+  width: 100%;
+  height: 480px;
+  border: 0;
+  background: #fff;
+}
+.sig-demo-actions {
+  position: absolute; top: 12px; right: 30px;
+  display: flex; gap: 6px;
+}
+.sig-demo-actions button {
+  background: rgba(15,23,42,0.85);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+}
+.sig-demo-actions button:hover { background: var(--accent); }
+
+/* ⑫ signature source — every code block collapses together under one toggle */
+.sig-code { margin: 0 0 var(--space-4); }
+.sig-code.hidden { display: none; }
+.sig-code .code { margin-bottom: var(--space-3); }
+.sig-code .code:last-child { margin-bottom: 0; }
+
+.sources-list {
+  margin: 0; padding-left: 20px;
+}
+.sources-list li { margin-bottom: 4px; }
+.sources-list a { color: var(--accent); text-decoration: none; }
+.sources-list a:hover { text-decoration: underline; }
+
+/* ========= Responsive ========= */
+.mobile-only { display: none; }
+
+@media (max-width: 880px) {
+  .mobile-only { display: inline-flex; align-items: center; gap: 6px; }
+  /* 필터 버튼이 필요한 폭에서만 툴바 줄을 켠다 */
+  .otl .otl-toolbar { display: flex; }
+  .layout { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    height: 100vh;
+    width: 320px;
+    max-width: 90vw;
+    z-index: var(--z-drawer);
+    background: var(--bg-base);
+    border-right: 1px solid var(--border-default);
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+  }
+  .sidebar[data-open="true"] { transform: translateX(0); }
+  .sidebar-inner { padding-top: calc(var(--topbar-h) + var(--space-4)); }
+  .scrim {
+    position: fixed; inset: 0; background: var(--bg-overlay);
+    z-index: var(--z-scrim);
+  }
+  .content { padding: var(--space-5) var(--space-5); }
+  .detail-inner { padding: var(--space-5) var(--space-5) var(--space-7); }
+  .detail-title { font-size: 28px; }
+  /* On narrow screens the toggle can collide with the title — flow it below the meta. */
+  .detail-mode-toggle, .detail-mode-single { position: relative; top: auto; right: auto; margin-top: var(--space-4); }
+}
+
+@media (max-width: 480px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   정적 SEO 페이지 전용 (brand/{slug}.html, brand/index.html)
+   prerender.js 가 생성한다. SPA 화면에는 이 클래스가 등장하지 않는다.
+   ───────────────────────────────────────────────────────────────────────── */
+.dsg-breadcrumb {
+  margin-bottom: var(--space-5);
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+.dsg-breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+.dsg-breadcrumb a:hover { text-decoration: underline; }
+
+.dsg-cta { margin: 0 0 var(--space-7); }
+.dsg-cta .btn-download { display: inline-block; text-decoration: none; }
+
+/* 전체 목록 허브 — 브랜드 링크는 촘촘한 다열 목록으로 둔다.
+   242개를 카드로 깔면 스크롤이 길어져 목록의 목적(빠른 도달)을 잃는다. */
+.dsg-hub-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2px var(--space-4);
+}
+.dsg-hub-list a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 4px;
+  min-width: 0;                     /* 긴 브랜드명이 그리드 칸을 밀어내지 않게 */
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 4px;
+}
+.dsg-hub-list a:hover { background: var(--bg-subtle); }
+.dsg-hub-dot {
+  flex: 0 0 auto;
+  width: 10px; height: 10px;
+  border-radius: 50%;               /* dot 은 완전 원형이 정본 용도 */
+  border: 1px solid var(--border-subtle);
+}
+/* 사이드바 하단 → 전체 목록 허브(정적 페이지 진입점) */
+.dsg-hub-link {
+  margin: var(--space-5) 0 0;
+  font-size: 13px;
+}
+.dsg-hub-link a { color: var(--text-secondary); }
+.dsg-hub-link a:hover { color: var(--text-primary); text-decoration: underline; }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   AI 활용 틀 안(.aihx) — 2026-10-09 운영자 채용(시안 2 「AI 활용 틀로 넣기」 · Recraft Community 의 위 탭 줄).
+   새 머리글 미리보기에서만 씌워진다: 머리글 REST 응답이 틀과 테마 js/ai-hub-static.js 를 보낸다(테마 inc/custom-navigation.php nav2 절).
+   틀(왼쪽 메뉴·경로·제목 띠)은 테마 css/ai-hub.css 가 맡고, 여기는 룩북 본문만 —
+   왼쪽 거르기 칸 → 본문 위 한 줄(검색 · 회색 칸 탭 · 색 견본 줄 · 눌러 펼치는 칸 · 정렬) · 카드는 그림 + 이름 + 회색 한 줄(설명은 상세에서).
+   2026-10-11 운영자: 거르기 순서 = 검색 › 라이트/다크 › 컬러 › 지역 › 폰트 › 산업(지역은 잘 안 쓴다) · 컬러는 늘 펼친 색 견본 · 카드는 흰 카드 + 넓은 간격.
+   같은 날 「여유판」(굵은 글씨는 제목 하나 · 구획은 간격 · 색 면 대신 회색 칸)을 따른다.
+   회색은 사이트 정본 무채 사다리 값(#F7F7F7·#EBEBEB·#E7E7E7·#D5D5D5·#A2A2A2·#727272·#343434·#181818) — 정적 SPA 라 테마 토큰을 못 쓴다.
+   ───────────────────────────────────────────────────────────────────────── */
+.aihx-page [data-otl-nav] { display: contents; }   /* 머리글 sticky 가 이 칸이 아니라 문서 전체를 기준으로 */
+body.aihx-page { height: auto; min-height: 100%; } /* 위 html,body{height:100%} 그대로면 화면 한 장 내려간 뒤 붙은 머리글이 body 끝에 밀려 사라진다 */
+.aihx .otl { --aihx-seg: #EBEBEB; }
+.aihx .layout { display: block; max-width: none; min-height: 0; }
+.aihx .content { padding: 0 0 48px; }
+.aihx .result-count { margin: 0 0 12px; font-size: 12.5px; color: #727272; }
+.aihx .active-chips { margin-bottom: 16px; }
+.aihx .active-chip { height: 28px; padding: 0 8px 0 10px; border: 0; border-radius: 6px; background: var(--aihx-seg); font-size: 12.5px; color: #343434; }
+
+/* 카드 — 흰 카드 한 장(그림 + 이름 + 회색 한 줄)이 그림자로 선다(2026-10-11 운영자 「브랜드 간 여백이 좁다 ·
+   바탕이 흰색이라 항목이 구분되지 않는다」 — 예전엔 테두리 없는 그림에 이름만 붙어 흰 그림끼리 이어져 보였다).
+   사이트 규칙 「흰 카드는 흰 바탕 위에서 그림자나 가는 테두리로 선다」 · 카드 둥글기 8px · 그림과 글 사이만 머리카락 선. */
+.aihx .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 24px; }
+.aihx .card { border: 0; border-radius: 8px; background: var(--surface-white, #FFFFFF); overflow: hidden; box-shadow: 0 0 0 1px rgba(0, 0, 0, .07), 0 1px 3px rgba(0, 0, 0, .06); transition: box-shadow .15s ease; }
+.aihx .card:hover { transform: none; border-color: transparent; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1), 0 6px 18px rgba(0, 0, 0, .08); }
+.aihx .card:focus-visible { border-color: transparent; box-shadow: 0 0 0 1px rgba(0, 0, 0, .07); outline: 2px solid #181818; outline-offset: 3px; }
+.aihx .card-hero { border: 0; border-bottom: 1px solid rgba(0, 0, 0, .06); border-radius: 0; }
+.aihx .card-meta { padding: 12px 14px 14px; gap: 3px; }
+.aihx .card-title-row { gap: 7px; }
+.aihx .card-swatch { width: 10px; height: 10px; border-radius: 3px; }
+.aihx .card-title { font-size: 14px; font-weight: 500; letter-spacing: -0.005em; color: #181818; }
+.aihx .card-subtitle { display: none; }
+.aihx .card-footer { margin-top: 0; }
+.aihx .card-badges { gap: 0; }
+.aihx .badge { padding: 0; border: 0; background: none; font-size: 12px; font-weight: 400; letter-spacing: 0; text-transform: none; color: #727272; }
+.aihx .badge + .badge::before { content: "·"; margin: 0 5px; color: #A2A2A2; }
+@media (hover: hover) {
+  .aihx .card:hover .card-title { text-decoration: underline; text-underline-offset: 3px; }
+}
+.aihx .dsg-hub-link { margin: 28px 0 0; font-size: 12.5px; }
+.aihx .dsg-hub-link a { color: #727272; }
+
+/* 거르기 한 줄 — 넓은 화면만(880 이하는 원래 서랍) */
+@media (min-width: 881px) {
+  .aihx .sidebar { position: static; height: auto; overflow: visible; border: 0; background: transparent; }
+  .aihx .sidebar-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 18px 0 20px; }
+  .aihx .filter-group { position: relative; margin: 0; }
+  .aihx .filter-label { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .aihx .search { width: 180px; height: 32px; padding: 0 12px; border: 0; border-radius: 6px; background: var(--aihx-seg); font-size: 12.5px; }
+  .aihx .search:focus { border: 0; box-shadow: 0 0 0 1px #181818; }
+  .aihx .aihx-sort { order: 9; margin-left: auto; }
+  .aihx .select { width: auto; height: 32px; padding: 0 8px 0 10px; border: 0; border-radius: 6px; background-color: var(--aihx-seg); font-size: 12.5px; font-weight: 500; }
+  .aihx .select:focus { border: 0; box-shadow: 0 0 0 1px #181818; }
+
+  /* 테마·지역 = 회색 칸 탭(AI 활용 첫 화면 탭과 한 벌) */
+  .aihx [data-facet="theme_view"] .filter-options,
+  .aihx [data-facet="region"] .filter-options { flex-wrap: nowrap; gap: 2px; padding: 3px; border-radius: 6px; background: var(--aihx-seg); }
+  .aihx .filter-options .facet-chip { height: 26px; padding: 0 11px; border: 0; border-radius: 4px; background: transparent; font-size: 12.5px; color: #343434; }
+  .aihx .filter-options .facet-chip:hover { border: 0; color: #181818; }
+  .aihx .filter-options .facet-chip[aria-pressed="true"],
+  .aihx .filter-options .facet-chip[aria-pressed="true"]:hover { background: #fff; box-shadow: 0 0 0 1px #D5D5D5; color: #181818; font-weight: 500; }
+
+  /* 컬러 = 줄에 늘 펼쳐 둔 색 견본(2026-10-11 운영자 「고르면 '1' 로 접히지 말고 색이 항상 보이게 · 대표 몇 개 + 펼침」).
+     회색 칸 탭과 같은 판에 「컬러」 이름 + 대표 색 + [펼침]. 대표 수·순서는 app.js COLOR_LEAD.
+     [펼침] = 줄 아래에 모든 색 판(.color-more-panel) — 줄 안에서 늘리면 1440px 폭에서 정렬 칸이 다음 줄로 밀려 목록이 내려갔다.
+     「전체」 견본은 줄에서 뺀다 — 고른 색을 다시 누르거나 [필터 초기화]·위 칩의 × 로 푼다(서랍에는 그대로 있다). */
+  .aihx .filter-group[data-facet="color_family"] { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 4px 0 11px; border-radius: 6px; background: var(--aihx-seg); }
+  .aihx .filter-group[data-facet="color_family"] .filter-label { position: static; width: auto; height: auto; overflow: visible; clip: auto; color: #343434; font-size: 12.5px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+  .aihx .filter-group[data-facet="color_family"] .filter-options { display: flex; align-items: center; gap: 5px; }
+  .aihx .filter-group[data-facet="color_family"] .facet-swatch { flex: none; width: 18px; height: 18px; }
+  .aihx .filter-group[data-facet="color_family"] .facet-swatch-color { width: 18px; height: 18px; border-radius: 4px; border-color: rgba(0, 0, 0, .1); }
+  .aihx .filter-group[data-facet="color_family"] .facet-swatch[data-value=""] { display: none; }
+  .aihx .filter-group[data-facet="color_family"] .filter-options--swatch .facet-swatch[data-extra]:not([aria-pressed="true"]) { display: none; }
+  /* 고른 색 = 바탕과 같은 회색 틈 + 검은 링 한 겹 */
+  .aihx .filter-group[data-facet="color_family"] .facet-swatch[aria-pressed="true"] .facet-swatch-color { box-shadow: 0 0 0 2px var(--aihx-seg), 0 0 0 3.5px #181818; }
+  .aihx .facet-swatch-more { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: 1px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: #727272; }
+  .aihx .facet-swatch-more:hover,
+  .aihx .facet-swatch-more[aria-expanded="true"] { background: #E0E0E0; color: #181818; }
+  .aihx .facet-swatch-more:focus-visible { outline: 2px solid #181818; outline-offset: 1px; }
+  /* 모든 색 판 — 폰트·산업 펼침 칸과 같은 흰 판(그림자 하나) */
+  .aihx .color-more-panel:not([hidden]) { display: flex; flex-wrap: nowrap; width: max-content; position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; gap: 8px; padding: 12px; border-radius: 8px; background: #fff; box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .08); }
+  .aihx .color-more-panel .facet-swatch,
+  .aihx .color-more-panel .facet-swatch-color { width: 26px; height: 26px; }
+  .aihx .color-more-panel .facet-swatch[aria-pressed="true"] .facet-swatch-color { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #181818; }
+
+  /* 폰트·산업 = 눌러 펼치는 칸(그림자 하나 · 테두리 없음) */
+  .aihx .aihx-dd { display: inline-flex; align-items: center; gap: 5px; height: 32px; padding: 0 8px 0 11px; border: 0; border-radius: 6px; background: var(--aihx-seg); color: #343434; font: inherit; font-size: 12.5px; font-weight: 500; line-height: 1; cursor: pointer; }
+  .aihx .aihx-dd:hover,
+  .aihx [data-open="true"] > .aihx-dd { background: #E7E7E7; color: #181818; }
+  .aihx .aihx-dd:focus-visible { outline: 2px solid #181818; outline-offset: 1px; }
+  .aihx .aihx-dd svg { flex: none; color: #727272; }
+  .aihx .aihx-dd-n { min-width: 16px; height: 16px; padding: 0 4px; border-radius: 4px; background: #181818; color: #fff; font-size: 10.5px; font-weight: 600; line-height: 16px; text-align: center; }
+  .aihx [data-dd] .filter-options { display: none; position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; width: max-content; max-width: 420px; padding: 10px; border-radius: 8px; background: #fff; box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .08); }
+  .aihx [data-dd][data-open="true"] .filter-options { display: flex; }
+  .aihx [data-dd] .filter-options .facet-chip { height: 28px; padding: 0 10px; border-radius: 6px; background: var(--aihx-seg); }
+  .aihx [data-dd] .filter-options .facet-chip[aria-pressed="true"],
+  .aihx [data-dd] .filter-options .facet-chip[aria-pressed="true"]:hover { background: #181818; box-shadow: none; color: #fff; }
+
+  .aihx #resetFilters { order: 8; width: auto; height: 32px; padding: 0 6px; border: 0; background: transparent; color: #727272; font-size: 12.5px; }
+  .aihx #resetFilters:hover { background: transparent; color: #181818; text-decoration: underline; }
+}
+@media (max-width: 1280px) {
+  .aihx .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 880px) {
+  .aihx .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
+  .aihx .card-meta { padding: 10px 12px 12px; }
+  .aihx .content { padding: 0 0 40px; }
+  .aihx .aihx-dd { display: none; } /* 서랍에선 원래 이름표 + 늘어놓은 칩 */
+  /* [필터] 줄 — 흰 띠·선 대신 틀의 회색 한 면(붙어 있을 때 밑 카드가 비치지 않게 같은 회색으로 칠한다) */
+  .aihx .otl .otl-toolbar { padding: 8px 0; border-bottom: 0; background: #F7F7F7; }
+}
+@media (max-width: 480px) {
+  .aihx .grid { grid-template-columns: 1fr; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   워드프레스 판 끝 몫(html.dsg-wp) — 위 .aihx 절보다 뒤에 와야 이기는 것만.
+   ───────────────────────────────────────────────────────────────────────── */
+/* 목록 끝 표시 — app.js 가 이 칸이 화면 아래 100px 안에 들어오면 세 줄을 더 붙인다(1px: 넓이가 0 이면 브라우저마다 「보임」 판정이 갈린다) */
+.grid-more { height: 1px; }
+/* 한 줄 판의 검색·정렬 칸은 :focus 에도 회색 칸 그대로 — 바탕 절의 :focus 흰 바탕은 880px 이하 서랍 몫이다 */
+@media (min-width: 881px) {
+  .dsg-wp .aihx .search:focus,
+  .dsg-wp .aihx .select:focus { background-color: var(--aihx-seg); }
+}
+/* 휴대폰 필터 서랍 — 사이트 머리줄(nav2: sticky · z-index 200 · 높이 --aih-top)이 서랍(z-index 100) 윗부분을 덮어
+   검색칸이 반쯤 가려졌다(정적 판부터 그랬다). 서랍 안 첫 칸을 머리줄 아래에서 시작한다. */
+@media (max-width: 880px) {
+  .dsg-wp .aihx .sidebar-inner { padding-top: calc(var(--aih-top, 60px) + var(--space-4)); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   상세 보기 창(.dsv) — 2026-10-11 운영자 채용 「시안 A」: 모션 스타일 상세와 같은 창 · 오른쪽 탭.
+   뼈대·수치는 모션 스타일 창(테마 tools/_motion-styles-assets/css/light.css .msl-d)을 따른다 — 위 막대 64px ·
+   오른쪽 칸 clamp(420px, 40vw, 620px) · 탭 52px · 칸 여백 28px · 900px 아래는 한 줄로 쌓고 창 전체가 스크롤.
+   창(dialog)은 셸(.otl) 안에 있어 위 「워드프레스 판」 되돌리기가 걸린다 — 요소 규칙은 클래스로 한 단계 높여 적는다.
+   회색은 사이트 정본 무채 사다리 값, 채움 단추는 사이트 브랜드 채움(--brand-action).
+   정적 브랜드 페이지(brand/*.html)에는 이 클래스가 없다.
+   ───────────────────────────────────────────────────────────────────────── */
+html.dsv-noscroll { overflow: hidden; }
+.dsv {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: var(--surface-white, #FFFFFF);
+  color: #343434;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dsv[open] { display: flex; flex-direction: column; }
+.dsv:focus { outline: none; }
+.dsv::backdrop { background: rgba(24, 24, 24, .4); }
+.dsv[aria-busy="true"] .dsv-body { opacity: .55; transition: opacity .15s ease .12s; }
+
+/* 위 막대 */
+.dsv-top { flex: none; display: flex; align-items: center; gap: 6px; height: 64px; padding: 0 16px 0 28px; border-bottom: 1px solid #E7E7E7; }
+.dsv .dsv-crumb { display: flex; align-items: baseline; gap: 10px; min-width: 0; margin: 0 auto 0 0; color: #545454; font-size: 13px; line-height: 1.4; white-space: nowrap; overflow: hidden; }
+.dsv-cat { overflow: hidden; text-overflow: ellipsis; }
+.dsv-count { flex: none; color: #727272; font-variant-numeric: tabular-nums; }
+.dsv .dsv-ib { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; padding: 0; border: 0; border-radius: 5px; background: transparent; color: #181818; cursor: pointer; }
+.dsv .dsv-ib:hover,
+.dsv .dsv-ib:focus-visible { background: #F4F4F4; }
+.dsv .dsv-ib:focus-visible { outline: 2px solid #181818; outline-offset: -2px; }
+.dsv .dsv-ib:disabled { background: transparent; color: #D5D5D5; cursor: default; }
+
+/* 몸통 — 왼쪽(웹페이지 + 이름) | 오른쪽(탭). 두 칸이 따로 스크롤 */
+.dsv-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) clamp(420px, 40vw, 620px); }
+.dsv-main { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow-y: auto; padding: 28px 28px 24px; overscroll-behavior: contain; scrollbar-width: thin; }
+.dsv-side { --dsv-pad: 28px; min-width: 0; min-height: 0; overflow-y: auto; padding: 0 var(--dsv-pad) 56px; border-left: 1px solid #E7E7E7; overscroll-behavior: contain; scrollbar-width: thin; }
+.dsv .dsv-loading { margin: 0; padding: 48px 0; color: #727272; text-align: center; }
+
+/* 왼쪽 — 웹페이지가 이름·요약·특징을 뺀 남은 높이를 다 채운다(스크롤도, 아래 빈칸도 없이 한 화면에 꼭 맞게).
+   2026-10-11 운영자 3차 「좌측 아래가 너무 비었다 → 데모는 예전처럼 높게, 특징은 그 아래 2열」
+   (2차의 고정 높이 100vh-330 은 이름·요약만 남았을 때 아래가 비었다). 화면이 낮으면 400 에서 멈추고 왼쪽이 스크롤된다.
+   코드를 펼친 동안은 app.js 가 그 순간 높이에 묶는다(buildSignatureDemo). */
+.dsv-demo { flex: 1 1 0; min-height: 400px; }
+.dsv .sig-demo-wrap { height: 100%; margin: 0; border: 0; border-radius: 8px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08); }
+.dsv .sig-demo { height: 100%; }
+.dsv .sig-code { margin: 16px 0 0; }
+.dsv-info { flex: none; max-width: 880px; margin-top: 18px; }
+.dsv .dsv-title { display: flex; align-items: center; gap: 10px; margin: 0; color: #181818; font-size: 28px; font-weight: 700; line-height: 1.3; letter-spacing: -0.02em; }
+.dsv-sw { flex: none; width: 22px; height: 22px; border-radius: 5px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08); }
+.dsv .dsv-tagline { margin: 4px 0 0; color: #727272; font-size: 16px; line-height: 1.5; text-wrap: pretty; }
+/* 특징 — 두 단(왼쪽 분류·분위기·스타일 / 오른쪽 글꼴·모양·연도). 칸이 좁으면(단 하나 260px 를 못 채우면) 한 단 */
+.dsv .dsv-facts { columns: 2 260px; column-gap: 32px; margin: 14px 0 0; padding: 0; }
+.dsv-facts > div { display: grid; grid-template-columns: 52px minmax(0, 1fr); align-items: baseline; gap: 12px; padding: 2px 0; break-inside: avoid; }
+.dsv .dsv-facts dt { margin: 0; color: #727272; font-size: 13px; font-weight: 400; line-height: 1.6; }
+.dsv .dsv-facts dd { margin: 0; color: #343434; font-size: 14px; line-height: 1.6; }
+
+/* 오른쪽 맨 끝 — 상표 문구(예전 상세 페이지처럼 출처 다음 마지막 줄) */
+.dsv .dsv-tm { margin: 28px 0 0; padding-top: 16px; border-top: 1px solid #F4F4F4; color: #727272; font-size: 12.5px; line-height: 1.5; }
+
+/* 오른쪽 탭 줄 = 탭 + 오른쪽 끝 해/달. 칸 좌우 여백까지 흰 바탕으로 덮어 아래 내용이 옆으로 비치지 않게 */
+.dsv-tabbar { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; gap: 16px; margin: 0 calc(-1 * var(--dsv-pad)); padding: 0 var(--dsv-pad); background: var(--surface-white, #FFFFFF); box-shadow: inset 0 -1px 0 #E7E7E7; }
+.dsv-tabs { display: flex; gap: 24px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.dsv-tabs::-webkit-scrollbar { display: none; }
+.dsv-modes { flex: none; margin-left: auto; }
+.dsv .dsv-tab { flex: none; height: 52px; padding: 0; border: 0; border-radius: 0; background: none; color: #727272; font-size: 15px; font-weight: 500; line-height: 1; white-space: nowrap; cursor: pointer; }
+.dsv .dsv-tab:hover { color: #181818; }
+.dsv .dsv-tab[aria-selected="true"] { color: #181818; font-weight: 700; box-shadow: inset 0 -2px 0 #181818; }
+.dsv .dsv-tab:focus-visible { outline: 2px solid #181818; outline-offset: -2px; }
+
+/* 가이드 다운로드 머리 — 단추만. 떠 있는 상자(그림자 카드) 없이 칸 바탕에 바로 놓고, 아래는 섹션과 같은 가는 선
+   (2026-10-11 운영자 4차 「버튼이 너무 붕 뜨지 않게」 → 5차 「설명·.md 한 파일·글자 수는 지우고 버튼만 깔끔하게」) */
+.dsv-guide { padding: 20px 0; border-bottom: 1px solid #F4F4F4; }
+.dsv-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.dsv .dsv-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 38px; padding: 0 14px; border: 0; border-radius: 5px; background: #EBEBEB; color: #181818; font-size: 13.5px; font-weight: 600; line-height: 1.3; white-space: nowrap; text-decoration: none; cursor: pointer; }
+.dsv .dsv-btn:hover,
+.dsv .dsv-btn:focus-visible { background: #E7E7E7; color: #181818; }
+.dsv .dsv-btn--primary,
+.dsv .dsv-btn--primary:visited { background: var(--brand-action, #059669); color: var(--brand-on-action, #FFFFFF); }
+.dsv .dsv-btn--primary:hover,
+.dsv .dsv-btn--primary:focus-visible { background: var(--brand-hover, #037450); color: var(--brand-on-action, #FFFFFF); }
+.dsv .dsv-btn:focus-visible,
+.dsv .dsv-mini:focus-visible { outline: 2px solid #181818; outline-offset: 2px; }
+.dsv .dsv-btn svg,
+.dsv .dsv-mini svg { flex: none; }
+.dsv .dsv-seg { display: inline-flex; padding: 3px; border-radius: 6px; background: #EBEBEB; }
+.dsv .dsv-seg button { height: 28px; padding: 0 12px; border: 0; border-radius: 4px; background: transparent; color: #343434; font-size: 13px; font-weight: 400; line-height: 1; cursor: pointer; }
+.dsv .dsv-seg button[aria-pressed="true"] { background: var(--surface-white, #FFFFFF); box-shadow: 0 0 0 1px #D5D5D5; color: #181818; font-weight: 600; }
+.dsv .dsv-seg button:focus-visible { outline: 2px solid #181818; outline-offset: 1px; }
+/* 해/달 — 실제 해·달 색(그림 색이다 — 브랜드·상태 토큰에 잇지 않는다). 두 판이 다 있으면 누르는 단추 둘(고른 쪽 = 흰 바탕,
+   안 고른 쪽 = 옅게), 한쪽만 있으면 그 아이콘 하나만(누르지 않음). 2026-10-11 운영자 5차 「실제 해/달 색상 · 라이트만 있으면 해만」 */
+.dsv .dsv-modes button { display: inline-flex; align-items: center; justify-content: center; width: 34px; padding: 0; }
+.dsv .dsv-modes button[aria-pressed="false"] svg { opacity: .5; }
+.dsv .dsv-modes button[aria-pressed="false"]:hover svg { opacity: 1; }
+/* 하나만 있을 때도 같은 틀(회색 .dsv-seg) 안 흰 네모 — 둘일 때 고른 단추와 같은 모양(6차 「버튼처럼 네모 안에」) */
+.dsv-mode-one { cursor: default; }
+.dsv-mode-chip { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 28px; border-radius: 4px; background: var(--surface-white, #FFFFFF); box-shadow: 0 0 0 1px #D5D5D5; }
+.dsv .dsv-modes svg { pointer-events: none; }
+.dsv .dsv-modes[data-mode="light"] svg,
+.dsv .dsv-modes [data-mode="light"] svg { color: #F57C00; }           /* 해 — 주황 햇살·테두리 */
+.dsv .dsv-modes[data-mode="light"] svg circle,
+.dsv .dsv-modes [data-mode="light"] svg circle { fill: #FFB020; }     /* 해 — 노란 몸 */
+.dsv .dsv-modes[data-mode="dark"] svg,
+.dsv .dsv-modes [data-mode="dark"] svg { color: #D4A500; }            /* 달 — 금빛 테두리 */
+.dsv .dsv-modes[data-mode="dark"] svg path,
+.dsv .dsv-modes [data-mode="dark"] svg path { fill: #FFE066; }        /* 달 — 노란 초승달 */
+.dsv .dsv-note { margin: 0; color: #727272; font-size: 12.5px; line-height: 1.5; }
+.dsv-secs { margin-top: 22px; }
+
+/* 섹션(①~⑪) — 영문 윗줄은 빼고 한글 제목만 */
+.dsv .detail-section { margin: 0; padding: 22px 0 4px; border-top: 1px solid #F4F4F4; }
+.dsv .detail-section:first-child { border-top: 0; padding-top: 0; }
+.dsv .detail-section > h2 { display: none; }
+.dsv .detail-section h3 { margin: 0 0 10px; color: #181818; font-size: 16px; font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; }
+.dsv .detail-section h4 { margin: 14px 0 8px; color: #181818; font-size: 14px; font-weight: 600; }
+.dsv .detail-section p,
+.dsv .detail-section li { color: #343434; font-size: 14px; line-height: 1.75; }
+.dsv .swatch-grid,
+.dsv .token-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+.dsv .detail-section .code { font-size: 12px; }
+.dsv .type-preview { padding: 18px; }
+.dsv .type-preview-display { font-size: 28px; }
+.dsv .sources-list { overflow-wrap: anywhere; }
+
+/* 가이드 원문 — 머리는 탭 줄 아래에 붙는다 */
+.dsv-out { margin-top: 26px; }
+.dsv-out:empty { display: none; }
+.dsv-out-h { position: sticky; top: 52px; z-index: 2; display: flex; align-items: center; gap: 10px; margin: 0 calc(-1 * var(--dsv-pad)); padding: 12px var(--dsv-pad); background: var(--surface-white, #FFFFFF); }
+.dsv .dsv-out-h h3 { margin: 0 auto 0 0; color: #181818; font-size: 15px; font-weight: 700; line-height: 1.4; }
+.dsv-len { color: #727272; font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dsv .dsv-mini { display: inline-flex; align-items: center; gap: 4px; min-height: 30px; padding: 0 10px; border: 0; border-radius: 5px; background: #EBEBEB; color: #181818; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.dsv .dsv-mini:hover { background: #E7E7E7; }
+.dsv .dsv-md { margin: 6px 0 0; padding: 0; border: 0; background: none; color: #343434; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* 손님 — 오른쪽 탭 내용은 흐리게 가리고 그 위에 로그인 안내(탭 줄·해/달은 그대로). app.js buildViewerSide.
+   ⭐ 흐림(filter: blur)은 운영자 예외(2026-10-11 「우측 영역은 로그인 사용자에게만, 비로그인은 블러」 — CLAUDE.md 예외 목록). 이 자리 하나뿐이다.
+   칸 높이를 묶어 스크롤되지 않게 한다 — 긴 글 전체에 흐림을 걸지 않으니 그리는 면적도 화면 한 장으로 줄어든다. */
+.dsv-side.dsv-side--locked { position: relative; display: flex; flex-direction: column; overflow: hidden; padding-bottom: 0; }
+.dsv-side--locked .dsv-panes { flex: 1 1 auto; min-height: 0; overflow: hidden; filter: blur(7px); user-select: none; }
+.dsv-lock { position: absolute; inset: 52px 0 0; z-index: 4; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.dsv-lock-card { width: min(100%, 340px); padding: 26px 24px 24px; border-radius: 8px; background: var(--surface-white, #FFFFFF); box-shadow: 0 1px 2px rgba(24, 24, 24, .06), 0 8px 24px rgba(24, 24, 24, .1); text-align: center; }
+.dsv .dsv-lock-t { margin: 0; color: #181818; font-size: 17px; font-weight: 700; line-height: 1.4; }
+.dsv .dsv-lock-d { margin: 6px 0 18px; color: #727272; font-size: 13.5px; line-height: 1.5; }
+.dsv-lock-card .dsv-btn { width: 100%; }
+
+/* 900px 아래 — 한 줄로 쌓고 창 전체가 스크롤(모션 스타일 창과 같다) */
+@media (max-width: 899px) {
+  .dsv-top { height: 56px; padding: 0 6px 0 16px; }
+  .dsv-body { display: block; overflow-y: auto; overscroll-behavior: contain; }
+  .dsv-main { display: block; overflow: visible; padding: 0; }
+  .dsv-demo { height: min(72vh, 640px); min-height: 0; }
+  .dsv .sig-demo-wrap { border-radius: 0; box-shadow: none; border-bottom: 1px solid #E7E7E7; }
+  .dsv .sig-code { margin: 12px 16px 0; }
+  .dsv-info { margin: 0; padding: 18px 16px 6px; }
+  .dsv .dsv-title { font-size: 24px; }
+  .dsv-side { --dsv-pad: 16px; overflow: visible; margin-top: 18px; border-left: 0; border-top: 1px solid #E7E7E7; }
+  .dsv-side.dsv-side--locked { height: 520px; }
+}
+@media (max-width: 480px) {
+  .dsv .dsv-tab { font-size: 14px; }
+  .dsv-tabs { gap: 18px; }
+  .dsv-acts .dsv-btn { flex: 1 1 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dsv[aria-busy="true"] .dsv-body { transition: none; }
+}

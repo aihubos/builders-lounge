@@ -1,0 +1,172 @@
+/**
+ * 참여 액션(스크랩·공유·질문) 공용 스타일 — 본문 이중 앵커
+ * 시안 정본: design_handoff_engagement_actions/ (v3 토큰 값을 리터럴로 이식 — 이름 복사 금지)
+ * 마크업 렌더러: inc/engage-actions.php · 동작: js/engage-actions.js
+ *
+ * 색 리터럴 (v3): gray-100 #F0F0ED · gray-200 #E6E6E2 · gray-300 #D4D4CF
+ *                gray-500 #8A8A85 · gray-700 #45453F · gray-900 #1B1B18
+ *                primary-600 #037450(정본 --primary) · primary-700 #036546
+ */
+
+/* ── C1: 컴팩트 액션 (상단 앵커, 아이콘 전용) ─────────────────── */
+.oeg-c1 {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+.oeg-c1__sep {
+	width: 1px;
+	height: 16px;
+	background: var(--gray-200);
+	margin: 0 8px 0 4px;
+	flex: none;
+}
+.oeg-ibtn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--gray-700);
+	cursor: pointer;
+	transition: background-color .15s ease, color .15s ease;
+}
+.oeg-ibtn:hover { background: var(--gray-100); }
+.oeg-ibtn[data-oeg-share]:hover { color: var(--gray-900); }
+.oeg-ibtn.bookmarked { color: var(--primary-700); }
+.oeg-ibtn.bookmarked .oeg-ic { fill: currentColor; }
+
+/* ── C2: 풀 액션 바 (하단 앵커) ───────────────────────────────── */
+.oeg-bar {
+	border-top: 1px solid var(--gray-200);
+	border-bottom: 1px solid var(--gray-200);
+	padding: 8px 0;
+	display: flex;
+	gap: 4px;
+}
+.oeg-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 44px;
+	padding: 10px 16px;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	cursor: pointer;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--gray-700);
+	transition: background-color .15s ease, color .15s ease;
+}
+.oeg-btn:hover { background: var(--gray-100); }
+.oeg-btn--dim:hover { color: var(--gray-900); } /* 공유·질문: hover 시 글자도 진해짐 (스크랩은 상태색이 지배) */
+.oeg-btn--scrap .oeg-btn__label {
+	display: inline-block;
+	min-width: 56px;
+	text-align: left; /* "스크랩"↔"스크랩 됨" 전환 시 레이아웃 시프트 방지 */
+}
+.oeg-btn--scrap.bookmarked { color: var(--primary-700); }
+.oeg-btn--scrap.bookmarked .oeg-ic { fill: currentColor; }
+.oeg-btn__cnt {
+	color: var(--gray-500);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+.oeg-ic { flex: none; }
+
+/* ── 외곽선 변형: 위키 히어로·자료실 히어로의 2차 공유 버튼 ──── */
+.oeg-share-outline {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 38px;
+	padding: 8px 16px;
+	border: 1px solid var(--gray-300);
+	border-radius: 6px;
+	background: var(--surface-white);
+	cursor: pointer;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--gray-700);
+	transition: background-color .15s ease;
+}
+.oeg-share-outline:hover { background: var(--gray-100); }
+.oeg-share-outline--lg { min-height: 48px; padding: 12px 20px; } /* 자료실 다운로드 CTA 옆 */
+
+/* 스크랩 외곽선 변형 (위키 히어로 — 상태는 글자·아이콘 색으로만)
+ * 라벨은 56px 고정폭 안에서 가운데 정렬 — 버튼 전체가 중앙 정렬로 보이면서
+ * "스크랩"↔"스크랩 됨" 전환 시 폭 변동(레이아웃 시프트)도 없다 */
+.oeg-scrap-outline .oeg-btn__label { display: inline-block; min-width: 56px; text-align: center; }
+.oeg-scrap-outline.bookmarked { color: var(--primary-700); }
+.oeg-scrap-outline.bookmarked .oeg-ic { fill: currentColor; }
+
+/* 위키 히어로 버튼 줄: .wk-fdl(높이 46 · radius 8)과 나란히 앉도록 정합 */
+.wk-fhero-btns .oeg-share-outline { min-height: 46px; border-radius: 8px; padding: 0 18px; }
+
+/* 위키 브레드크럼 우측 소형 공유 — 줄 자체가 11.5px 저밀도라 28px·뮤트 톤 */
+.wk-crumb-share.oeg-ibtn { margin-left: auto; width: 28px; height: 28px; color: var(--gray-500); }
+.wk-crumb-share.oeg-ibtn:hover { color: var(--gray-700); background: var(--gray-100); }
+
+/* ── 자료실 상세: 다운로드(1차)+공유(2차) 줄 · 리뷰 줄 우측 C1 ── */
+.oeg-dl-row {
+	display: flex;
+	align-items: stretch; /* 두 버튼 높이를 줄 높이로 강제 통일 */
+	gap: 8px;
+	flex-wrap: wrap;
+}
+.oeg-dl-row > * { box-sizing: border-box; } /* content-box 전역이어도 min-height 해석이 어긋나지 않게 */
+.product-rating-area {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px 10px;
+}
+.product-rating-area .oeg-c1 { margin-left: auto; }
+
+/* ── 접근성: 포커스 한 겹 · 아이콘 전용 버튼 보조 텍스트 ─────── */
+.oeg-ibtn:focus-visible,
+.oeg-btn:focus-visible,
+.oeg-share-outline:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+.oeg-sr {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* ── 모바일: 풀폭 균등 분할 · 짧은 라벨 ──────────────────────── */
+@media (max-width: 768px) {
+	.oeg-bar { padding: 6px 0; gap: 0; }
+	.oeg-bar .oeg-btn {
+		flex: 1;
+		justify-content: center;
+		gap: 6px;
+		padding: 10px 8px;
+	}
+	.oeg-bar .oeg-btn--scrap .oeg-btn__label { min-width: 0; text-align: center; }
+	.oeg-btn__label--full { display: none; }        /* "질문하기" → "질문" */
+	.oeg-btn__label--short { display: inline; }
+	.oeg-share-outline { min-height: 44px; }
+}
+@media (min-width: 769px) {
+	.oeg-btn__label--full { display: inline; }
+	.oeg-btn__label--short { display: none; }
+}

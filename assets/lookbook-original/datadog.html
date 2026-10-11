@@ -1,0 +1,50 @@
+<!doctype html><html><head><meta charset="utf-8"><style>:root{--card-bg:#FFFFFF;--card-surface:#F4F4F4;--card-border:#DEDEDE;--card-fg:#161A1F;--card-fg-muted:#5C636B;--card-accent:#632CA6}html,body{margin:0;width:100%;height:100%;overflow:hidden}*{box-sizing:border-box}</style></head><body><div style="font-family:Inter,'Pretendard',-apple-system,sans-serif;background:var(--card-bg);color:var(--card-fg);height:100%;min-width:0;overflow:hidden;display:grid;grid-template-rows:34px 24px 1fr;font-variant-numeric:tabular-nums;">
+  <div style="background:#632CA6;color:#fff;padding:0 10px;display:flex;align-items:center;gap:7px;">
+    <svg viewBox="0 0 32 32" aria-hidden="true" style="width:19px;height:19px;flex:none;">
+      <path d="M5.5 10.2 3.2 3.8l7.3 3.1A12 12 0 0 1 16 5.6c2 0 3.8.5 5.5 1.3l7.3-3.1-2.3 6.4v7.2C26.5 23.8 21.8 28 16 28S5.5 23.8 5.5 17.4v-7.2Z" fill="#fff"/>
+      <circle cx="12" cy="14.2" r="1.55" fill="#632CA6"/><circle cx="20" cy="14.2" r="1.55" fill="#632CA6"/>
+      <path d="M13 20.3c1.8 1.5 4.2 1.5 6 0" fill="none" stroke="#632CA6" stroke-width="1.7" stroke-linecap="round"/>
+    </svg>
+    <strong style="font-size:11px;letter-spacing:0.01em;">DATADOG</strong>
+    <span style="margin-left:auto;font-size:10px;opacity:.82;">acme-prod</span>
+    <span style="font-size:14px;line-height:1;opacity:.9;">•••</span>
+  </div>
+  <div style="background:var(--card-surface);border-bottom:1px solid var(--card-border);padding:0 10px;display:flex;align-items:center;font-size:9px;color:var(--card-fg-muted);">
+    <strong style="color:var(--card-accent);font-weight:700;">APM</strong><span style="padding:0 5px;">›</span><span>Services</span>
+    <span style="margin-left:auto;display:flex;align-items:center;gap:4px;"><i style="width:5px;height:5px;border-radius:50%;background:#21B57F;display:inline-block;"></i>LIVE</span>
+  </div>
+  <div style="padding:8px;display:flex;flex-direction:column;gap:6px;min-height:0;">
+    <div style="height:28px;display:flex;align-items:center;gap:7px;">
+      <span style="width:24px;height:24px;border:1px solid var(--card-border);border-radius:5px;background:var(--card-surface);color:var(--card-accent);display:grid;place-items:center;font-size:10px;font-weight:800;">APM</span>
+      <div style="min-width:0;"><div style="font-size:13px;font-weight:700;line-height:1.05;">web-api</div><div style="font-size:8px;color:var(--card-fg-muted);margin-top:3px;">env:prod · version:4.8.2</div></div>
+      <span style="margin-left:auto;border:1px solid var(--card-border);border-radius:4px;padding:3px 5px;font-size:8px;color:var(--card-fg-muted);">1h ▾</span>
+    </div>
+    <div style="height:54px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+      <div style="background:var(--card-surface);border:1px solid var(--card-border);border-radius:5px;padding:6px 7px;">
+        <div style="font-size:8px;color:var(--card-fg-muted);font-weight:700;letter-spacing:.035em;">REQUESTS</div>
+        <div style="font-size:17px;font-weight:700;line-height:1.2;margin-top:2px;">2.4k<span style="font-size:8px;color:var(--card-fg-muted);font-weight:500;">/s</span></div>
+        <div style="font-size:8px;color:#21B57F;font-weight:700;">↗ 8.1%</div>
+      </div>
+      <div style="background:var(--card-surface);border:1px solid var(--card-border);border-radius:5px;padding:6px 7px;">
+        <div style="font-size:8px;color:var(--card-fg-muted);font-weight:700;letter-spacing:.035em;">ERROR RATE</div>
+        <div style="font-size:17px;font-weight:700;line-height:1.2;margin-top:2px;color:#FF7B72;">1.28<span style="font-size:8px;font-weight:600;">%</span></div>
+        <div style="font-size:8px;color:#FF7B72;font-weight:700;">↗ 0.3%</div>
+      </div>
+    </div>
+    <div style="height:82px;background:var(--card-surface);border:1px solid var(--card-border);border-radius:5px;padding:6px 7px;">
+      <div style="display:flex;align-items:center;font-size:8px;font-weight:700;letter-spacing:.035em;"><span>LATENCY</span><span style="margin-left:auto;color:var(--card-fg-muted);font-weight:500;letter-spacing:0;">p95 · 112ms</span></div>
+      <svg viewBox="0 0 220 54" preserveAspectRatio="none" aria-label="Latency timeseries" style="width:100%;height:48px;margin-top:3px;display:block;">
+        <path d="M0 12H220M0 27H220M0 42H220" stroke="var(--card-border)" stroke-width="1"/>
+        <rect x="190" y="0" width="30" height="54" fill="var(--card-border)" opacity=".35"/>
+        <polyline points="0,35 18,31 36,34 54,23 72,28 90,20 108,26 126,14 144,23 162,11 180,18 198,9 220,15" fill="none" stroke="var(--card-accent)" stroke-width="2"/>
+        <polyline points="0,45 18,43 36,46 54,39 72,42 90,34 108,40 126,31 144,37 162,29 180,35 198,26 220,30" fill="none" stroke="#FFA500" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div style="height:34px;background:var(--card-surface);border:1px solid var(--card-border);border-radius:5px;padding:0 7px;display:flex;align-items:center;gap:6px;font-size:8px;">
+      <span style="width:6px;height:6px;border-radius:50%;background:#21B57F;"></span>
+      <strong style="font-size:9px;">checkout-api</strong>
+      <span style="color:var(--card-fg-muted);">healthy</span>
+      <span style="margin-left:auto;color:var(--card-accent);font-weight:700;">99.96%</span>
+    </div>
+  </div>
+</div></body></html>

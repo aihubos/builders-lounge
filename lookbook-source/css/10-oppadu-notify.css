@@ -1,0 +1,321 @@
+/**
+ * OppaduNotify 통합 알림 스타일
+ * 토스트(상단 중앙 스택) + alert/confirm 모달.
+ * CLAUDE.md 규칙: :root 변수만 사용.
+ */
+
+/* ===================== 토스트 컨테이너 ===================== */
+#oppadu-toast-container {
+	position: fixed;
+	top: 80px;             /* 중앙 상단 */
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: var(--z-toast);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-sm);
+	width: auto;
+	max-width: calc(100vw - 32px);
+	pointer-events: none;
+}
+
+.oppadu-toast {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	max-width: 100%;
+	padding: 11px 18px;
+	border-radius: var(--radius-full);
+	background: rgba(28, 28, 30, 0.92);   /* 애플풍 다크 HUD — 컬러는 아이콘으로만 (안 튀게) */
+	-webkit-backdrop-filter: blur(12px) saturate(160%);
+	backdrop-filter: blur(12px) saturate(160%);
+	color: var(--text-white);
+	font-size: var(--font-sm);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	line-height: 1.45;
+	box-shadow: var(--shadow-lg);
+	opacity: 0;
+	transform: translateY(-12px);         /* 상단에서 슬라이드 */
+	transition: opacity var(--transition-base), transform var(--transition-base);
+	pointer-events: auto;
+}
+
+.oppadu-toast.is-show { opacity: 1; transform: translateY(0); }
+.oppadu-toast.is-hide { opacity: 0; transform: translateY(-12px); }
+
+/* 타입별 색은 배경 대신 아이콘에만 (다크 펄 + 컬러 아이콘) */
+.oppadu-toast__icon { font-size: 1.1em; flex-shrink: 0; }
+
+.oppadu-toast__msg {
+	flex: 1 1 auto;
+	min-width: 0;
+	word-break: keep-all;
+	overflow-wrap: anywhere;
+}
+
+.oppadu-toast__action {
+	flex-shrink: 0;
+	margin-left: var(--space-xs);
+	padding: 3px 12px;              /* 세로 패딩 축소 — 얇고 절제된 인라인 액션 */
+	border: none;
+	border-radius: var(--radius-full);
+	background: rgba(255, 255, 255, 0.18);
+	color: var(--text-white);
+	font-size: var(--font-sm);
+	font-weight: 600;
+	line-height: 1.5;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: background var(--transition-fast);
+}
+.oppadu-toast__action:hover { background: rgba(255, 255, 255, 0.3); }
+
+/* ===================== 모달 (alert / confirm) ===================== */
+.oppadu-modal-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: var(--z-modal);
+	display: flex;
+	align-items: flex-start;        /* 중앙 상단 배치 */
+	justify-content: center;
+	padding: var(--space-lg);
+	padding-top: clamp(56px, 12vh, 160px);
+	background: rgba(0, 0, 0, 0.32);
+	backdrop-filter: blur(4px) saturate(120%);
+	-webkit-backdrop-filter: blur(4px) saturate(120%);
+	opacity: 0;
+	transition: opacity var(--transition-base);
+}
+.oppadu-modal-overlay[hidden] { display: none; }
+.oppadu-modal-overlay.is-show { opacity: 1; }
+
+body.oppadu-modal-open { overflow: hidden; }
+
+.oppadu-modal {
+	position: relative;
+	width: min(92vw, 400px);
+	max-height: 85vh;
+	display: flex;
+	flex-direction: column;
+	background: var(--bg-subtle);
+	border: 1px solid var(--surface-200);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-lg);
+	overflow: hidden;
+	transform: translateY(-12px) scale(0.98);
+	opacity: 0;
+	transition: transform var(--transition-base), opacity var(--transition-base);
+}
+.oppadu-modal-overlay.is-show .oppadu-modal { transform: translateY(0) scale(1); opacity: 1; }
+
+/* X 닫기 버튼 (우상단) — Esc/백드롭과 동일 동작 */
+.oppadu-modal-close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: none;
+	border-radius: var(--radius-full);
+	background: transparent;
+	color: var(--text-light);
+	font-size: 22px;
+	line-height: 1;
+	cursor: pointer;
+	transition: background var(--transition-fast), color var(--transition-fast);
+}
+.oppadu-modal-close:hover { background: var(--gray-100); color: var(--t-body); }
+.oppadu-modal-close:focus { outline: none; }
+.oppadu-modal-close:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.oppadu-modal-title {
+	margin: 0;
+	padding: var(--space-lg) var(--space-lg) 0;
+	font-size: var(--font-md-lg);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: var(--t-main);
+	text-align: center;
+}
+
+.oppadu-modal-body {
+	padding: var(--space-md) var(--space-lg) var(--space-md);
+	font-size: var(--font-md);
+	line-height: 1.55;
+	color: var(--t-muted);
+	text-align: center;
+	white-space: pre-line;
+	word-break: keep-all;
+	overflow-wrap: anywhere;
+	overflow-y: auto;
+	max-height: 60vh;
+}
+
+.oppadu-modal-actions {
+	display: flex;
+	justify-content: center;
+	gap: var(--space-sm);
+	padding: var(--space-sm) var(--space-lg) var(--space-lg);
+}
+
+.oppadu-modal-btn {
+	flex: 0 1 auto;
+	min-width: 116px;
+	min-height: 48px;
+	padding: 0 24px;
+	border: none;
+	border-radius: var(--radius-nm);
+	font-size: var(--font-md);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	cursor: pointer;
+	transition: background var(--transition-fast), filter var(--transition-fast), transform var(--transition-fast);
+}
+.oppadu-modal-btn:active { transform: scale(0.97); }
+/* 포커스: 애플풍 블루 링 (outline은 레이아웃 시프트 없음) */
+.oppadu-modal-btn:focus { outline: none; }
+.oppadu-modal-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* 확인 — 오빠두 브랜드 그린 (--primary) */
+
+
+/* 보조(취소) — 채움형 옅은 회색 (애플 secondary) */
+
+/* 모달은 모노톤 유지 — 심각도는 버튼(삭제=danger)으로 표현 (애플풍, 안 튀게) */
+
+/* ===================== 완료 알림 (토스풍 체크 "뾰로롱") ===================== */
+.oppadu-completed {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 11px 20px 11px 14px;
+	border-radius: var(--radius-full);
+	background: var(--bg-subtle);
+	box-shadow: var(--shadow-lg);
+	color: var(--t-main);
+	font-size: var(--font-sm);
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	opacity: 0;
+	transform: translateY(-12px) scale(0.85);
+	transition: opacity var(--transition-base), transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+	pointer-events: none;
+}
+.oppadu-completed.is-show { opacity: 1; transform: translateY(0) scale(1); }
+.oppadu-completed.is-hide {
+	opacity: 0;
+	transform: translateY(-8px) scale(0.95);
+	transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.oppadu-completed__check { flex-shrink: 0; width: 26px; height: 26px; }
+.oppadu-completed__check svg { width: 26px; height: 26px; display: block; }
+.oppadu-completed__circle { fill: var(--color-success); }
+.oppadu-completed__tick {
+	fill: none;
+	stroke: var(--text-white);
+	stroke-width: 5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-dasharray: 40;
+	stroke-dashoffset: 40;
+}
+.oppadu-completed.is-show .oppadu-completed__tick {
+	animation: oppadu-tick-draw 0.35s 0.12s ease forwards;
+}
+@keyframes oppadu-tick-draw { to { stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+	.oppadu-completed,
+	.oppadu-completed.is-show { transition: opacity var(--transition-fast); transform: none; }
+	.oppadu-completed__tick { stroke-dashoffset: 0; animation: none; }
+}
+
+/* ===================== 스크랩 확인 카드 (버튼 아래 앵커, 네이버 Keep 스타일) ===================== */
+.scrap-confirm-popover {
+	position: absolute;
+	z-index: var(--z-modal);
+	width: 260px;
+	background: var(--bg-subtle);
+	border: 1px solid var(--surface-200);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-lg);
+	overflow: hidden;
+	text-align: center;
+}
+.scrap-confirm-close {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 28px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: none;
+	border-radius: var(--radius-full);
+	background: transparent;
+	color: var(--text-light);
+	font-size: 20px;
+	line-height: 1;
+	cursor: pointer;
+	transition: background var(--transition-fast), color var(--transition-fast);
+}
+.scrap-confirm-close:hover { background: var(--gray-100); color: var(--t-body); }
+.scrap-confirm-icon {
+	margin: 22px 0 10px;
+	font-size: 30px;
+	line-height: 1;
+	color: var(--primary);
+}
+.scrap-confirm-msg {
+	padding: 0 24px 18px;
+	font-size: var(--font-md);
+	font-weight: 600;
+	color: var(--t-main);
+}
+.scrap-confirm-actions {
+	display: flex;
+	border-top: 1px solid var(--surface-200);
+}
+.scrap-confirm-btn {
+	flex: 1 1 0;
+	padding: 13px 0;
+	border: none;
+	background: transparent;
+	color: var(--t-body);
+	font-size: var(--font-sm);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	cursor: pointer;
+	transition: background var(--transition-fast), color var(--transition-fast);
+}
+.scrap-confirm-btn:hover { background: var(--gray-100); }
+.scrap-confirm-btn--memo {
+	border-left: 1px solid var(--surface-200);
+	color: var(--primary);
+}
+.scrap-confirm-btn:focus { outline: none; }
+.scrap-confirm-btn:focus-visible { outline: 2px solid var(--brand-action); outline-offset: -2px; }
+
+/* ===================== 모바일 ===================== */
+@media (max-width: 480px) {
+	#oppadu-toast-container {
+		top: 16px;
+		left: 16px;
+		right: 16px;
+		transform: none;
+		max-width: none;
+	}
+	.oppadu-toast { width: 100%; justify-content: flex-start; }
+	.oppadu-completed { align-self: center; }
+	.oppadu-modal-overlay { padding: var(--space-md); padding-top: var(--space-2xl); }
+	.oppadu-modal { width: 100%; }
+}

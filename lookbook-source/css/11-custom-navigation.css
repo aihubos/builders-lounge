@@ -1,0 +1,842 @@
+/**
+ * 커스텀 네비게이션 스타일 — 1단 헤더 + 우측 CTA
+ *
+ *   [헤더 60px]  로고 · 학습 메뉴 6 ······ [기업 교육 문의] [검색] [로그인]
+ *
+ * 기업 문의는 메뉴 목록에서 빼고 '형태'로 분리한다 — 저채도 아웃라인 버튼.
+ * 채운 버튼으로 만들면 로그인·수강신청 CTA 와 경쟁한다.
+ *
+ * CSS 변수는 style.css :root 에서 정의된 값을 사용합니다.
+ * nav 전용 변수만 헤더 스코프에 정의합니다.
+ */
+
+/* ============================================
+   헤더 스코프 토큰
+   ============================================ */
+.oppadu-nav {
+    /* 커뮤니티 .oc-grid 콘텐츠 폭(1300px)에 로고·메뉴 좌측선을 맞춘 값(2026-08-15).
+       ⚠️ .oc-grid 는 content-box(실측 바깥폭 1363.99 = 1300 + padding 32×2)이고
+       .oppadu-nav__inner 는 border-box(위 리셋) — 그래서 여기만 1364 로 적는다.
+       두 값을 같은 의미로 읽고 1300 으로 맞추면 헤더가 64px 좁아진다. */
+    --nav-max-w: 1364px;
+    --nav-px: 32px;
+    --nav-height: 60px;
+
+    --nav-item-fs: 14px;
+    --nav-ctrl-fs: 13.5px;
+
+    --nav-logo-h: 24px;
+    --nav-logo-gap: 26px;
+    --nav-menu-gap: var(--space-lg);   /* 24px */
+
+    --nav-ctrl-h: 36px;
+    --nav-ctrl-gap: 10px;
+    --nav-search-w: 170px;
+    --nav-control-fill: var(--gray-100);
+}
+
+/* 헤더 색은 두 갈래다 (2026-09-22 운영자 결정).
+   - 로그인 = 브랜드 채움 --brand-action(밝은 에메랄드 #059669)·호버 --brand-hover. 휴대폰 메뉴의 로그인 강조 글자는
+     읽기 쉽게 짙은 --primary(#037450).
+     지금은 코너 색을 따라간다 — 다른 색 코너에서도 초록으로 못 박을지는 코너를 만들 때 정한다.
+   - 그 밖의 강조(활성 밑줄·기업 문의 hover·포커스 링·휴대폰 검색 버튼) = 무채 --chrome-control(#282828).
+   휴대폰 메뉴(.oppadu-mobile-menu)는 .oppadu-nav 밖에 그려져서 선택자를 함께 건다. */
+.oppadu-nav,
+.oppadu-mobile-menu {
+    --nav-accent: var(--chrome-control);
+    --nav-login: var(--brand-action);
+    --nav-login-hover: var(--brand-hover);
+    --nav-login-text: var(--primary);
+}
+
+/* ============================================
+   Box-sizing 리셋 (네비게이션 스코프)
+   ============================================ */
+.oppadu-nav,
+.oppadu-nav *,
+.oppadu-nav *::before,
+.oppadu-nav *::after,
+.oppadu-mobile-menu,
+.oppadu-mobile-menu *,
+.oppadu-mobile-menu *::before,
+.oppadu-mobile-menu *::after {
+    box-sizing: border-box;
+}
+
+/* ============================================
+   포커스 — 한 겹(outline)만. 테두리 색 변경·ring 중복 금지
+   ============================================ */
+.oppadu-nav__logo:focus-visible,
+.oppadu-nav__link:focus-visible,
+.oppadu-nav__dropdown li a:focus-visible,
+.oppadu-nav__cta:focus-visible,
+.oppadu-nav__login:focus-visible,
+.oppadu-nav__avatar:focus-visible,
+.oppadu-nav__hamburger:focus-visible {
+    outline: 2px solid var(--nav-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* 버튼은 자기 radius 를 따라 링이 돈다 */
+.oppadu-nav__cta:focus-visible,
+.oppadu-nav__login:focus-visible {
+    border-radius: var(--radius-md);
+}
+
+/* 검색은 래퍼가 링을 받는다 — 래퍼가 overflow:hidden 이라 input 에 걸면 잘린다 */
+.oppadu-nav__search:focus-within {
+    outline: 2px solid var(--nav-accent);
+    outline-offset: 2px;
+}
+
+.oppadu-nav__search input[type="search"]:focus,
+.oppadu-nav__search input[type="search"]:focus-visible,
+.oppadu-nav__search-icon:focus,
+.oppadu-nav__search-icon:focus-visible {
+    outline: none;
+}
+
+/* ============================================
+   GP 기본 네비게이션 숨기기
+   ============================================ */
+.main-navigation,
+.menu-toggle,
+.site-header {
+    display: none !important;
+}
+
+/* GP 글로벌 버튼 hover 스타일 리셋 — 네비게이션 내부 */
+.oppadu-nav button:hover,
+.oppadu-nav button:focus,
+.oppadu-mobile-menu button:hover,
+.oppadu-mobile-menu button:focus {
+    color: inherit;
+    background-color: inherit;
+}
+
+/* ============================================
+   네비게이션 바 — 컨테이너
+   ============================================ */
+/* 공지 스트립(있을 때) + 헤더 = 2단. 헤더만 sticky 로 두고 공지는 흘려보낸다.
+   배경은 흰색 불투명, 아래는 1px hairline 한 겹.
+   (테두리와 그림자를 겹치지 않는다 · backdrop-filter/blur 금지) */
+.oppadu-nav {
+    background: var(--surface-white);
+    border-bottom: 1px solid var(--gray-200);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+}
+
+/* WP 관리자 바 오프셋 */
+.admin-bar .oppadu-nav {
+    top: 32px;
+}
+
+@media (max-width: 782px) {
+    .admin-bar .oppadu-nav {
+        top: 46px;
+    }
+}
+
+.oppadu-nav__inner {
+    width: 100%;
+    max-width: var(--nav-max-w);
+    margin: 0 auto;
+    padding: 0 var(--nav-px);
+    display: flex;
+    align-items: center;
+    height: var(--nav-height);
+}
+
+/* ============================================
+   데스크톱 메뉴
+   ============================================ */
+.oppadu-nav__menu {
+    display: flex;
+    align-items: center;
+    gap: var(--nav-menu-gap);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.oppadu-nav__item {
+    position: relative;
+}
+
+.oppadu-nav__link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    height: var(--nav-height);
+    color: var(--gray-700);
+    text-decoration: none;
+    font-size: var(--nav-item-fs);
+    font-weight: 500;
+    white-space: nowrap;
+    transition: color var(--transition-fast);
+}
+
+.oppadu-nav__link:hover {
+    color: var(--gray-900);
+}
+
+.oppadu-nav__link--active {
+    color: var(--gray-900);
+    font-weight: 600;
+}
+
+/* 활성 표시 = 항목 폭만큼의 하단 2px 바.
+   bottom:-1px 로 헤더 하단 hairline 을 덮어 flush 하게 붙인다. */
+.oppadu-nav__link--active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--nav-accent);
+}
+
+.oppadu-nav__arrow {
+    width: 10px;
+    height: 6px;
+    flex-shrink: 0;
+    transition: transform var(--transition-fast);
+}
+
+.oppadu-nav__item--has-children:hover .oppadu-nav__arrow {
+    transform: rotate(180deg);
+}
+
+/* ============================================
+   심플 드롭다운
+   ============================================ */
+.oppadu-nav__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 180px;
+    background: var(--surface-white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    list-style: none;
+    margin: 0;
+    padding: var(--space-xs) 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity var(--transition-fast), transform var(--transition-fast), visibility var(--transition-fast);
+    pointer-events: none;
+    z-index: var(--z-dropdown);
+}
+
+.oppadu-nav__item--has-children:hover > .oppadu-nav__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.oppadu-nav__dropdown li a {
+    display: block;
+    padding: var(--space-sm) var(--space-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--font-sm);
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.oppadu-nav__dropdown li a:hover {
+    background: var(--gray-100);
+    color: var(--gray-900);
+}
+
+/* ============================================
+   우측 액션 영역 — [기업 교육 문의] [검색] [로그인]
+   ============================================ */
+.oppadu-nav__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--nav-ctrl-gap);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   기업 교육 문의 — 아웃라인 버튼
+   ============================================ */
+/* ⛔ 채운(Primary) 버튼·pill·아이콘·그림자 금지.
+      저채도 아웃라인이 의도다 — 로그인·수강신청 CTA 와 경쟁하지 않게.
+   글자색은 메뉴 항목과 같은 --gray-700 로 맞춘다(2026-08-13 운영자 결정).
+   버튼임은 테두리·여백이 알리고, 무게는 font-weight 600 하나로만 준다.
+   ⚠️ 테두리 --gray-300 은 흰 배경에서 1.47:1 로 WCAG 1.4.11(비텍스트 3:1)에 못 미친다.
+      톤 통일을 우선한 의도적 선택 — 3:1 이 필요해지면 --gray-500(4.83:1)로 올린다
+      (--gray-400 은 2.54 라 올려도 부족하다). */
+.oppadu-nav__cta {
+    display: inline-flex;
+    align-items: center;
+    height: var(--nav-ctrl-h);
+    padding: 0 14px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    background: var(--surface-white);
+    color: var(--gray-700);
+    font-size: var(--nav-ctrl-fs);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.oppadu-nav__cta:hover {
+    color: var(--nav-accent);
+    border-color: var(--nav-accent);
+    background: var(--surface-white);
+    text-decoration: none;
+}
+
+/* ============================================
+   검색 폼 — 테두리 없음
+   ============================================ */
+.oppadu-nav__search {
+    display: flex;
+    align-items: center;
+    position: relative;
+    background: var(--nav-control-fill);
+    border: none;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    width: var(--nav-search-w);
+    height: var(--nav-ctrl-h);
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: width var(--transition-base);
+}
+
+.oppadu-nav__search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--gray-500);
+    cursor: pointer;
+}
+
+/* .oppadu-nav button:hover 리셋(color/background: inherit)보다 셀렉터를 한 단 올려야
+   아이콘이 hover 때 본문 글자색으로 튀지 않는다. */
+.oppadu-nav .oppadu-nav__search-icon:hover {
+    color: var(--gray-700);
+    background: none;
+}
+
+.oppadu-nav__search input[type="search"] {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 var(--space-sm) 0 0;
+    border: none;
+    outline: none;
+    font-size: var(--font-2sm);
+    color: var(--text-primary);
+    background: transparent;
+}
+
+/* 시안은 --gray-500 이지만 --control-fill(#f3f4f6) 위에서 4.39:1 로 4.5:1 을 못 넘긴다.
+   placeholder 도 텍스트라 한 단 진하게 간다(--gray-600 → 6.87:1). 돋보기 아이콘은
+   비텍스트(3:1 기준)라 --gray-500 그대로. */
+.oppadu-nav__search input[type="search"]::placeholder {
+    color: var(--gray-600);
+    opacity: 1;
+}
+
+/* ============================================
+   로그인 — 채운(브랜드) 버튼
+   ============================================ */
+/* 우측 3개의 무게 차례: 기업 문의(아웃라인) < 검색(옅은 채움) < 로그인(브랜드 채움).
+   기업 문의를 아웃라인으로 두는 이유가 바로 이 버튼과 경쟁하지 않게 하기 위함이다.
+   흰 글자 on --brand-action(#059669) = 3.77:1 — 사이트 버튼과 같은 밝은 초록(2026-09-22 운영자 결정).
+   높이·radius 는 옆 컨트롤과 같은 토큰을 쓴다. */
+.oppadu-nav__login {
+    display: inline-flex;
+    align-items: center;
+    height: var(--nav-ctrl-h);
+    padding: 0 14px;
+    background: var(--nav-login);
+    border-radius: var(--radius-md);
+    color: var(--text-white);
+    text-decoration: none;
+    font-size: var(--nav-ctrl-fs);
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background var(--transition-fast);
+}
+
+.oppadu-nav__login:hover {
+    background: var(--nav-login-hover);
+    color: var(--text-white);
+    text-decoration: none;
+}
+
+/* ============================================
+   아바타 (로그인 상태)
+   ============================================ */
+.oppadu-nav__avatar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.oppadu-nav__avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    border: 2px solid var(--gray-200);
+    transition: border-color var(--transition-fast);
+    display: block;
+}
+
+/* 알림 빨간 점 (아바타 우상단) */
+.oppadu-nav__noti-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    background: var(--color-danger);
+    border-radius: var(--radius-full);
+    border: 2px solid #fff;
+    pointer-events: none;
+}
+
+/* 알림 숫자 뱃지 (모바일 드로어 · 내 대시보드 줄) */
+.oppadu-nav__noti-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 5px;
+    background: var(--color-danger);
+    color: var(--text-white);
+    font-size: var(--font-xs);
+    font-weight: 400;
+    line-height: 1;
+    border-radius: 9px;
+    margin-left: 2px;
+    vertical-align: middle;
+    margin-bottom: 3px;
+}
+
+/* ============================================
+   로고
+   ============================================ */
+.oppadu-nav__logo {
+    display: flex;
+    align-items: center;
+    margin-right: var(--nav-logo-gap);
+    flex-shrink: 0;
+}
+
+.oppadu-nav__logo img {
+    height: var(--nav-logo-h);
+    width: auto;
+    display: block;
+}
+
+/* ============================================
+   햄버거 버튼 (모바일 전용)
+   ============================================ */
+.oppadu-nav__hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: var(--space-sm);
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: var(--space-sm);
+}
+
+.oppadu-nav__hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-base);
+    transform-origin: center;
+}
+
+.oppadu-nav__hamburger.is-active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.oppadu-nav__hamburger.is-active span:nth-child(2) {
+    opacity: 0;
+}
+
+.oppadu-nav__hamburger.is-active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ============================================
+   모바일 오버레이
+   ============================================ */
+.oppadu-mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: var(--z-overlay);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-base), visibility var(--transition-base);
+}
+
+.oppadu-mobile-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ============================================
+   모바일 슬라이드 메뉴
+   ============================================ */
+.oppadu-mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px;
+    max-width: 85vw;
+    height: 100dvh;
+    background: var(--surface-white);
+    z-index: var(--z-modal);
+    transform: translateX(100%);
+    transition: transform var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    overscroll-behavior: contain;
+}
+
+.oppadu-mobile-menu.is-active {
+    transform: translateX(0);
+}
+
+/* 모바일 메뉴 헤더 */
+.oppadu-mobile-menu__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--gray-200);
+    flex-shrink: 0;
+}
+
+.oppadu-mobile-menu__title {
+    font-size: var(--font-base);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.oppadu-mobile-menu__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-radius: var(--radius-full);
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.oppadu-mobile-menu__close:hover {
+    background: var(--gray-100);
+    color: var(--text-primary);
+}
+
+/* 모바일 검색 */
+.oppadu-mobile-menu__search {
+    display: flex;
+    align-items: center;
+    margin: var(--space-md) var(--space-lg);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.oppadu-mobile-menu__search input[type="search"] {
+    flex: 1;
+    height: 40px;
+    padding: 0 var(--space-md);
+    border: none;
+    outline: none;
+    font-size: var(--font-sm);
+    color: var(--text-primary);
+    background: transparent;
+}
+
+.oppadu-mobile-menu__search input[type="search"]::placeholder {
+    color: var(--text-muted);
+}
+
+.oppadu-mobile-menu__search button[type="submit"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--nav-accent);
+    color: var(--text-white);
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: var(--font-sm);
+}
+
+/* 모바일 메뉴 리스트 */
+.oppadu-mobile-menu__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.oppadu-mobile-menu__item-row {
+    display: flex;
+    align-items: center;
+}
+
+.oppadu-mobile-menu__link {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: var(--font-base);
+    font-weight: 500;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.oppadu-mobile-menu__link:hover {
+    background: var(--gray-100);
+    color: var(--gray-900);
+}
+
+.oppadu-mobile-menu__link i,
+.oppadu-mobile-menu__link svg {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--font-sm);
+    flex-shrink: 0;
+}
+
+/* 모바일 서브메뉴 토글 버튼 */
+.oppadu-mobile-menu__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: transform var(--transition-fast);
+}
+
+.oppadu-mobile-menu__toggle.is-open {
+    transform: rotate(180deg);
+}
+
+/* 모바일 서브메뉴 */
+.oppadu-mobile-menu__sub {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: var(--gray-100);
+}
+
+.oppadu-mobile-menu__sub.is-open {
+    display: block;
+}
+
+.oppadu-mobile-menu__sub li a {
+    display: block;
+    padding: var(--space-sm) var(--space-lg);
+    padding-left: var(--space-2xl);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--font-sm);
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.oppadu-mobile-menu__sub li a:hover {
+    background: var(--gray-200);
+    color: var(--gray-900);
+}
+
+/* 모바일 메뉴 구분선 */
+.oppadu-mobile-menu__divider {
+    height: 1px;
+    background: var(--gray-200);
+    margin: var(--space-sm) var(--space-lg);
+}
+
+/* 로그인 항목 강조 */
+.oppadu-mobile-menu__item--login .oppadu-mobile-menu__link {
+    color: var(--nav-login-text);
+    font-weight: 600;
+}
+
+.oppadu-mobile-menu__item--login .oppadu-mobile-menu__link i,
+.oppadu-mobile-menu__item--login .oppadu-mobile-menu__link svg {
+    color: var(--nav-login-text);
+}
+
+/* ============================================
+   폭 압박 처리 — 1280 → 1100 → 1024 순서로 양보한다
+   ============================================ */
+
+/* ── ≤1280px: 검색을 아이콘으로 접는다 (필드 상시 노출 아님) ── */
+@media (max-width: 1280px) {
+    .oppadu-nav__inner {
+        position: relative; /* 펼친 검색의 기준 박스 */
+    }
+
+    .oppadu-nav__search {
+        width: var(--nav-ctrl-h);
+    }
+
+    .oppadu-nav__search-icon {
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .oppadu-nav__search input[type="search"] {
+        width: 0;
+        flex: 0 0 0;
+        padding: 0;
+        opacity: 0;
+    }
+
+    /* 펼치면 헤더 폭 전체를 덮는다 */
+    /* top/transform 을 명시한다 — flex 자식의 absolute 정적 위치는 브라우저마다 다르다 */
+    .oppadu-nav__search.is-open {
+        position: absolute;
+        left: var(--nav-px);
+        right: var(--nav-px);
+        top: 50%;
+        transform: translateY(-50%);
+        width: auto;
+        z-index: var(--z-dropdown);
+    }
+
+    .oppadu-nav__search.is-open .oppadu-nav__search-icon {
+        width: 34px;
+    }
+
+    .oppadu-nav__search.is-open input[type="search"] {
+        width: auto;
+        flex: 1;
+        padding: 0 var(--space-sm) 0 0;
+        opacity: 1;
+    }
+}
+
+/* ── ≤1100px: 메뉴 간격을 24 → 18px ── */
+@media (max-width: 1100px) {
+    .oppadu-nav {
+        --nav-menu-gap: 18px;
+    }
+}
+
+/* ── ≤1024px: 햄버거로 전환. 기업 교육 문의 버튼은 헤더에 남긴다 ── */
+@media (max-width: 1024px) {
+    .oppadu-nav {
+        --nav-px: var(--space-md);
+    }
+
+    .oppadu-nav__menu {
+        display: none;
+    }
+
+    .oppadu-nav__hamburger {
+        display: flex;
+    }
+}
+
+/* ============================================
+   반응형 — 모바일 (768px 이하)
+   ============================================ */
+@media (max-width: 768px) {
+    .oppadu-nav__inner {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .oppadu-nav__actions {
+        flex: 1;
+        justify-content: flex-end;
+    }
+
+    /* 드로어에 자체 검색이 있어 헤더 검색은 접는다 */
+    .oppadu-nav__search {
+        display: none;
+    }
+}
+
+/* ============================================
+   반응형 — 소형 모바일 (480px 이하)
+   ============================================ */
+@media (max-width: 480px) {
+    .oppadu-nav {
+        --nav-px: var(--space-sm);
+        --nav-logo-gap: var(--space-sm);
+        --nav-ctrl-gap: var(--space-sm);
+    }
+
+    .oppadu-mobile-menu__header {
+        padding: var(--space-md);
+    }
+
+    .oppadu-mobile-menu__search {
+        margin: var(--space-sm) var(--space-md);
+    }
+
+    .oppadu-mobile-menu__link {
+        padding: var(--space-md);
+    }
+
+    .oppadu-mobile-menu__sub li a {
+        padding-left: var(--space-xl);
+    }
+}

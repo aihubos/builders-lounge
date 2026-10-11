@@ -1,0 +1,940 @@
+/*!
+ * 오빠두 툴 셸 (Oppadu Tool Shell) v1.8.3
+ * 정본: 이 파일 + 마크업 계약. PHP 헬퍼(shell/shell.php)는 이 마크업을 뱉는 편의 함수일 뿐이다.
+ *
+ * 왜 CSS 가 정본인가:
+ *   디자인 시스템 갤러리는 wp-content/tools/ 아래 정적 SPA(WP 밖)라 PHP 를 못 쓴다.
+ *   PHP 전용으로 만들면 그 도구는 영원히 셸 밖에 남는다.
+ *   → 정적 페이지도 <link> 한 줄 + 마크업 복사로 동일한 껍데기를 얻는다.
+ *
+ * ⭐ v1.2 의 핵심 — 셸 바는 **불변**이다.
+ *   바에 들어가는 건 로고·도구이름·계정 셋뿐이고, 도구는 바를 건드리지 않는다.
+ *   도구 버튼은 바로 아래 .otl-toolbar 한 줄로 내려간다. 바가 도구마다 달라지지 않으니
+ *   "어느 도구를 열어도 같은 껍데기"가 구조적으로 보장된다.
+ *
+ * 마크업 계약:
+ *   <body class="otl-page">
+ *     <div class="otl otl--app">              ← 또는 .otl--flow
+ *       <header class="otl-bar">              ← 셸 고정·불변. 항상 상단 sticky
+ *         <a      class="otl-brand">             오빠두 로고 = 자료실 링크 (항상 오빠두)
+ *         <div    class="otl-bar-lead">          │ 도구 이름 · 부제 (아이콘 없음)
+ *         <button class="otl-helpbtn">           ▶ 사용법 — 락업 바로 뒤(왼쪽 묶음)
+ *         ────────────────────────────────────── auto 마진 경계
+ *         <a      class="otl-more">              ← 더 많은 도구 보러가기 (자료실 #tools)
+ *         <div    class="otl-account">           [로그인] 또는 아바타
+ *       <script type="application/json" data-otl-help-data>  ← 패널 데이터 (바 밖!)
+ *       <div class="otl-toolbar">             ← 도구 버튼 (있을 때만). 바 아래 sticky
+ *       <main class="otl-body">               ← 그 아래 전부 도구
+ *       <div class="otl-help">                ← 사용법 **좌측** 패널. shell.js 가 처음 열 때 만든다
+ *
+ * ⭐ 색은 셸의 [로그인] 하나뿐이다.
+ *   도구 버튼은 무채색 회색 채움이고, 주 액션도 색이 아니라 **채움 농도 + 글씨 굵기**로만 구분한다.
+ *   도구 본문이 무슨 색을 쓰든 껍데기에서 브랜드색과 경쟁하지 않는다.
+ *
+ * 2모드:
+ *   .otl--app   리본 빌더처럼 뷰포트에 갇혀 내부에서 자체 스크롤을 만드는 앱형
+ *   .otl--flow  팔레트 생성기처럼 문서처럼 흐르는 형
+ *
+ * ⛔ 셸 푸터(.otl-foot)는 2026-08-08 운영자 결정으로 미적용.
+ *    스펙은 design_handoff_tool_shell/shell.dc.html 「보류 컴포넌트」 섹션에 보존.
+ *
+ * v3 토큰은 라이브 테마에 정의돼 있지 않고 정적 SPA 에는 아예 없다.
+ * → 셸은 --otl-* 토큰을 리터럴로 자급하고, 전역 :root 를 오염시키지 않는다.
+ *
+ * ⭐⚠️ **로드 순서 — 이 파일이 테마 CSS보다 먼저 나간다.**
+ *   도구 템플릿이 wp_head() 보다 먼저 큐잉하므로 실제 출력 순서는
+ *     shell.css → generatepress/all.min.css → uploads/generatepress/style.min.css → 자식 style.css
+ *   즉 **요소 선택자로 된 테마 규칙이 우리 뒤에 와서 이긴다**(특이도가 아니라 순서로).
+ *   우리가 클래스에 *선언하지 않은* 속성만 조용히 테마 값으로 채워지므로 증상이 늘 국소적이다.
+ *
+ *   실제로 물린 것 둘 (2026-08-17):
+ *     · `button{padding:10px 20px}`  → .otl-help-x 아이콘이 내용 폭 0 이 되어 사라짐
+ *     · `ol,ul{list-style:none}`     → 사용법 단계의 번호가 통째로 사라짐
+ *
+ *   ⭐ 규칙: **셸 컴포넌트는 테마가 요소에 거는 속성을 전부 자기 클래스에 명시한다.**
+ *      버튼이면 padding·border·background·color·font-family 를 빠짐없이,
+ *      목록이면 list-style·margin·padding 을 빠짐없이 적는다.
+ *      (정적 SPA 에는 테마가 아예 없으니 어차피 자급이 맞다 — 같은 원칙이 양쪽을 덮는다)
+ */
+
+/* ─────────────────────────────────────────────
+ * 페이지 리셋 — 셸이 뷰포트를 온전히 쓰기 위한 최소한
+ * ───────────────────────────────────────────── */
+body.otl-page {
+	margin: 0;
+	/* 테마가 깔아 둔 페이지 배경을 셸이 덮지 않도록 흰색을 명시한다 */
+	background: var(--surface-white);
+}
+
+/* ─────────────────────────────────────────────
+ * 셸 루트 + 토큰
+ * ───────────────────────────────────────────── */
+.otl {
+	--otl-bar-h: 44px;
+	--otl-surface: #ffffff;
+	/* 회색은 정본 무채 사다리에 잇는다(2026-09-22 ② 누런빛 회색 — 옛 v3 웜 그레이 #F7F7F5·#F0F0ED·#E6E6E2·#D4D4CF·#8A8A85·#45453F·#1B1B18) */
+	--otl-line: var(--gray-200, #e7e7e7);
+	--otl-fg: var(--gray-900, #181818);
+	--otl-fg-body: var(--gray-700, #404040);
+	--otl-fg-muted: var(--gray-500, #727272);
+	--otl-hover: var(--gray-100, #f4f4f4);
+	--otl-focus: var(--primary, #037450);
+
+	/* 도구 버튼 채움 — 무채색 4단. 색이 아니라 농도로 위계를 만든다 */
+	--otl-fill: var(--gray-100, #f4f4f4);
+	--otl-fill-hover: var(--gray-200, #e7e7e7);
+	--otl-fill-strong: color-mix(in srgb, var(--gray-200, #e7e7e7) 50%, var(--gray-300, #d5d5d5));
+	--otl-fill-strong-hover: var(--gray-300, #d5d5d5);
+
+	/*
+	 * CTA 그린 — 라이트·다크 공용. 사이트 버튼과 같은 브랜드 채움 --brand-action(밝은 에메랄드 #059669).
+	 * 2026-09-22 운영자 결정 「모두 밝은 색이 더 낫다」 — 흰 글씨 3.77:1 을 감수했다(짙은 #037450 은 5.80:1).
+	 * 다크 바(#171715) 위 면 대비는 4.8:1 로 오히려 오른다.
+	 */
+	--otl-cta: var(--brand-action, #059669);
+	--otl-cta-hover: var(--brand-hover, #037450);
+
+	/* 이니셜 아바타 — 브랜드 연한 면. #EEF9F6·#D2F1E7 계열은 채도가 높아 금지 */
+	--otl-avatar-bg: var(--primary-50, #E4EFEA);
+	--otl-avatar-fg: var(--primary-700, #036546);
+
+	--otl-z-bar: 50;
+
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	font-family: 'Pretendard', 'Pretendard Variable', -apple-system, BlinkMacSystemFont,
+		'Segoe UI', 'Malgun Gothic', system-ui, sans-serif;
+	background: var(--surface-white);
+}
+
+/* 다크는 셸 토큰만 뒤집는다. 도구 테마와 셸 테마는 별개 축이다
+   (갤러리는 '카드 미리보기 다크'와 '호스트 다크'가 서로 다른 상태다). */
+.otl[data-otl-theme='dark'] {
+	/* 회색은 정본 무채 사다리에 잇는다(2026-09-22 ② 누런빛 회색 — 옛 v3 웜 그레이 #F7F7F5·#F0F0ED·#E6E6E2·#D4D4CF·#8A8A85·#45453F·#1B1B18) */
+	--otl-surface: var(--gray-900, #181818);
+	--otl-line: color-mix(in srgb, var(--gray-700, #404040) 25%, var(--gray-800, #282828));
+	--otl-fg: #ffffff;
+	--otl-fg-body: rgba(255, 255, 255, 0.72);
+	--otl-fg-muted: rgba(255, 255, 255, 0.55);
+	--otl-hover: rgba(255, 255, 255, 0.08);
+	--otl-focus: var(--brand-bright, #2ED47A);
+	--otl-fill: rgba(255, 255, 255, 0.1);
+	--otl-fill-hover: rgba(255, 255, 255, 0.16);
+	--otl-fill-strong: rgba(255, 255, 255, 0.18);
+	--otl-fill-strong-hover: rgba(255, 255, 255, 0.26);
+	--otl-avatar-bg: rgba(255, 255, 255, 0.14);
+	--otl-avatar-fg: #ffffff;
+	background: var(--gray-900, #181818);
+}
+
+/* 앱형 — 뷰포트에 가둔다. 관리자 바가 뜨면 그만큼 줄인다 */
+.otl--app { height: 100vh; min-height: 0; }
+body.admin-bar .otl--app { height: calc(100vh - 32px); }
+@media screen and (max-width: 782px) {
+	body.admin-bar .otl--app { height: calc(100vh - 46px); }
+}
+
+/* ─────────────────────────────────────────────
+ * 상단 바 — 44px. 사이트 헤더(60px)보다 의도적으로 낮다
+ * ⭐ 모드와 무관하게 항상 상단 고정.
+ *    (앱형은 뷰포트에 갇혀 있어 sticky 가 no-op 이지만, 규칙을 한 곳으로 모아
+ *     "바는 늘 거기 있다"를 코드에서도 하나로 유지한다)
+ * ───────────────────────────────────────────── */
+.otl-bar {
+	flex: 0 0 auto;
+	height: var(--otl-bar-h);
+	position: sticky;
+	top: 0;
+	z-index: var(--otl-z-bar);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 0 10px;
+	background: var(--otl-surface);
+	/* 구획은 hairline 하나. 그림자와 겹치지 않는다 */
+	border-bottom: 1px solid var(--otl-line);
+}
+body.admin-bar .otl-bar { top: 32px; }
+@media screen and (max-width: 782px) {
+	/* 782px 이하에서 WP 관리자 바는 sticky 가 아니라 스크롤과 함께 사라진다 */
+	body.admin-bar .otl-bar { top: 0; }
+}
+
+/* ─────────────────────────────────────────────
+ * 브랜드 슬롯 — 좌측 첫 자리. **언제나 오빠두 심볼**이고 목적지는 자료실
+ *
+ * 좌상단은 "브랜드 = 여기서 나가는 문"이 이미 학습된 자리라 hover 라벨 같은 보강이 필요 없다.
+ * (v1.0 의 `홈 →` 라벨은 로고가 우측에 있던 낯섦을 메우려던 것이라 폐기)
+ *
+ * ⛔ 이 슬롯에 도구 아이콘을 넣지 않는다. v1.4~1.5 는 아이콘이 있으면 여기를 내줬는데,
+ *    셸엔 푸터가 없어서 그 화면에 오빠두 표기가 한 픽셀도 안 남았다.
+ *    v1.7 부터는 바 어디에도 도구 아이콘이 없다 — 도구는 이름 텍스트로만 자기를 밝힌다.
+ *
+ * 로고 자산은 사이트 파비콘 원본과 같은 파일이다(wp-content/icon/my-icon/).
+ * 셸 CSS 는 크기만 규정하고 경로는 마크업이 들고 있다 — 정적 도구도 같은 경로를 적는다.
+ * ───────────────────────────────────────────── */
+.otl-brand {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 6px;
+	text-decoration: none;
+	transition: background 0.15s ease;
+}
+.otl-brand:hover,
+.otl-brand:focus-visible { background: var(--otl-hover); }
+/* 포커스는 한 겹으로 끝낸다 — outline + border + ring 을 겹치지 않는다 */
+.otl-brand:focus-visible { outline: 2px solid var(--otl-focus); outline-offset: 1px; }
+
+.otl-brand-img {
+	display: block;
+	width: 20px;
+	height: 20px;
+}
+
+/* ─────────────────────────────────────────────
+ * 도구 락업 — 도구이름 부제
+ *
+ * ⛔ 여기에 도구 아이콘을 두지 않는다(v1.7 운영자 결정 — "이름만이 깔끔하다").
+ *    레지스트리 icon_id 는 자료실 카드·어드민 목록 전용이다.
+ * ───────────────────────────────────────────── */
+.otl-bar-lead {
+	display: flex;
+	align-items: baseline;
+	gap: 9px;
+	min-width: 0;
+}
+/* 브랜드와 도구 락업 사이 hairline — "오빠두 › 이 도구"를 눈으로 갈라 준다 */
+.otl-bar-lead::before {
+	content: '';
+	flex: 0 0 auto;
+	align-self: center;
+	width: 1px;
+	height: 18px;
+	background: var(--otl-line);
+	margin-right: 4px;
+}
+.otl-bar-lead:empty::before { display: none; }
+
+.otl-tool-name {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--otl-fg);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.otl-tool-sub {
+	font-size: 12px;
+	color: var(--otl-fg-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* ─────────────────────────────────────────────
+ * '더 많은 도구' — 계정 슬롯 바로 왼쪽. 이 도구에서 자료실 도구 목록으로 나가는 문
+ *
+ * ⭐ 무채색 텍스트 링크다. 바에서 색을 쓰는 건 [로그인] 하나라는 규칙을 깨지 않는다.
+ * ⭐ 브랜드 슬롯과 목적지가 겹치되 같지 않다 — 여기는 자료실의 **도구 섹션**(`#tools`),
+ *    저기는 자료실 첫 화면. 같은 URL 을 주면 44px 바 안에 똑같은 링크가 둘 생긴다.
+ * ───────────────────────────────────────────── */
+.otl-more {
+	flex: 0 0 auto;
+	margin-left: auto;   /* 계정과 한 덩어리로 오른쪽 끝에 붙는다 */
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 0 8px;
+	border-radius: 6px;
+	font-size: 12.5px;
+	font-weight: 500;
+	line-height: 1;
+	color: var(--otl-fg-muted);
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+.otl-more:hover { background: var(--otl-hover); color: var(--otl-fg-body); }
+.otl-more:focus-visible { outline: 2px solid var(--otl-focus); outline-offset: 1px; }
+
+.otl-more-arrow { font-size: 13px; line-height: 1; }
+
+/* ─────────────────────────────────────────────
+ * [사용법] — **도구 락업 바로 오른쪽**(= 바의 왼쪽 묶음)
+ *
+ * ⭐ 우측이 아니라 여기인 이유: 이 버튼은 **이 도구에 대한 것**이라 도구 이름 옆에
+ *    붙어야 한 덩어리로 읽힌다. 우측 묶음(더보기·계정)은 "도구 밖으로 나가는 문"들이라
+ *    성격이 반대다 — 거기 끼면 사용법도 나가는 링크처럼 보인다.
+ *    ⚠️ 그래서 `margin-left: auto` 를 주지 않는다. 주는 순간 우측으로 날아간다.
+ *
+ * ⭐ 무채색 채움 버튼이다. 바에서 색을 쓰는 건 [로그인] 하나라는 규칙을 깨지 않는다.
+ *    영상을 등록한 도구에만 생긴다(레지스트리 help_* 가 전부 비면 마크업 자체가 없다).
+ * ⭐ 라벨은 모바일에서도 남긴다 — '더 많은 도구'와 달리 화살표만으로는 뜻이 전달되지 않고,
+ *    애초에 이 버튼을 보라고 만든 화면이다.
+ * ───────────────────────────────────────────── */
+.otl-helpbtn {
+	flex: 0 0 auto;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 0 9px;
+	border: 0;
+	border-radius: 6px;
+	background: var(--otl-fill);
+	font-family: inherit;
+	font-size: 12.5px;
+	font-weight: 500;
+	line-height: 1;
+	color: var(--otl-fg-body);
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+.otl-helpbtn:hover { background: var(--otl-fill-hover); color: var(--otl-fg); }
+.otl-helpbtn:focus-visible { outline: 2px solid var(--otl-focus); outline-offset: 1px; }
+.otl-helpbtn-i { flex: 0 0 auto; }
+
+/* ─────────────────────────────────────────────
+ * 계정 슬롯 — 셸 고정. 비로그인 [로그인] / 로그인 아바타
+ * 바에 도구 액션이 없으므로 auto 마진이 계정을 오른쪽 끝으로 민다
+ * ───────────────────────────────────────────── */
+.otl-account {
+	flex: 0 0 auto;
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+/* 우측 묶음에서 auto 마진은 **맨 앞 하나만**(= `.otl-more`) 가져야 한다.
+   둘 이상이 가지면 남은 공간을 서로 나눠 가져 버튼들이 바 한가운데로 흩어진다.
+   ⚠️ `.otl-helpbtn` 은 왼쪽 묶음이라 auto 마진 대상이 아니다 — 여기 끼워 넣지 말 것. */
+.otl-more + .otl-account { margin-left: 0; }
+
+/*
+ * 로그인 = 채운 브랜드 그린. ⭐ 껍데기에서 색을 쓰는 유일한 요소다.
+ * 색 면이지만 28×56px 남짓이라 화면 10% 규칙에 걸리지 않는다.
+ */
+.otl-login {
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	padding: 0 12px;
+	/* 테두리와 색 면을 겹치지 않는다 — 면이 이미 경계다 */
+	border: 0;
+	border-radius: 6px;
+	background: var(--otl-cta);
+	font-size: 12.5px;
+	font-weight: 600;
+	line-height: 1;
+	color: var(--text-white);
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background 0.15s ease;
+}
+.otl-login:hover { background: var(--otl-cta-hover); color: var(--text-white); }
+.otl-login:focus-visible { outline: 2px solid var(--otl-focus); outline-offset: 2px; }
+
+.otl-avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	/* 완전 원형은 아바타·dot·스위치·스피너 전용 — 아바타는 허용 대상 */
+	border-radius: 50%;
+	overflow: hidden;
+	background: var(--otl-avatar-bg);
+	color: var(--otl-avatar-fg);
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+	text-decoration: none;
+}
+.otl-avatar:focus-visible { outline: 2px solid var(--otl-focus); outline-offset: 2px; }
+.otl-avatar img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
+}
+
+/* ─────────────────────────────────────────────
+ * 도구 툴바 — 셸 바 바로 아래 한 줄. 셸이 자리만 잡고 내용은 도구가 채운다
+ * 버튼이 없는 도구는 이 줄 자체가 렌더되지 않는다(세로 공간 0)
+ * ───────────────────────────────────────────── */
+.otl-toolbar {
+	flex: 0 0 auto;
+	position: sticky;
+	top: var(--otl-bar-h);
+	z-index: calc(var(--otl-z-bar) - 1);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 10px;
+	background: var(--otl-surface);
+	border-bottom: 1px solid var(--otl-line);
+	/* 좁은 화면에서 버튼이 넘치면 줄바꿈 대신 가로 스크롤 — 바 높이가 튀지 않는다 */
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+.otl-toolbar::-webkit-scrollbar { display: none; }
+body.admin-bar .otl-toolbar { top: calc(var(--otl-bar-h) + 32px); }
+@media screen and (max-width: 782px) {
+	body.admin-bar .otl-toolbar { top: var(--otl-bar-h); }
+}
+
+/* ─────────────────────────────────────────────
+ * 도구 버튼 — 회색 채움, 테두리 0
+ * ⭐ 색을 쓰지 않는다. 주 액션도 채움 농도 + 글씨 굵기로만 구분한다
+ * ───────────────────────────────────────────── */
+.otl-btn {
+	flex: 0 0 auto;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 0 12px;
+	/* 테두리와 면을 겹치지 않는다 — 채움이 이미 경계다 */
+	border: 0;
+	border-radius: 6px;
+	background: var(--otl-fill);
+	font-family: inherit;
+	font-size: 12.5px;
+	font-weight: 500;
+	line-height: 1;
+	color: var(--otl-fg-body);
+	cursor: pointer;
+	white-space: nowrap;
+	text-decoration: none;
+	transition: background 0.15s ease;
+}
+.otl-btn:hover { background: var(--otl-fill-hover); color: var(--otl-fg); }
+.otl-btn:focus-visible { outline: 2px solid var(--otl-focus); outline-offset: 1px; }
+
+/* 주 액션 — 한 툴바에 하나만. 색이 아니라 농도·굵기로 올린다 */
+
+.otl-btn[disabled] { opacity: 0.5; cursor: default; }
+.otl-btn[disabled]:hover { background: var(--otl-fill); }
+
+/* ─────────────────────────────────────────────
+ * 본문 — 그 아래 전부 도구
+ * ───────────────────────────────────────────── */
+.otl-body {
+	flex: 1 1 auto;
+	min-height: 0;
+}
+/* 앱형은 도구가 이 안에서 자체 스크롤을 만든다.
+   body 전체 스크롤에 의존하면 하단 패널을 가진 도구가 깨진다. */
+.otl--app .otl-body { overflow: hidden; }
+
+/* ─────────────────────────────────────────────
+ * 사용법 패널 — **좌측**에서 밀려 나오는 오버레이
+ *
+ * ⭐ 좌측인 이유: 여는 버튼(.otl-helpbtn)이 바 왼쪽에 있다. 왼쪽에서 누른 것이
+ *    오른쪽에서 튀어나오면 화면을 가로질러 눈이 따라가야 한다 — 패널은 자기를 연
+ *    버튼 아래에서 자란다.
+ *
+ * ⭐ 모달이 아니라 패널인 이유: 도구를 **보면서** 따라 하라고 만든 것이다.
+ *    그래서 데스크톱에서는 딤(scrim)을 깔지 않고, 패널 바깥은 클릭이 그대로
+ *    도구에 닿는다(.otl-help 자체가 pointer-events: none 인 이유).
+ *    딤을 깔면 "영상 보는 동안 도구는 멈춘 것"이 되어 목적이 뒤집힌다.
+ *
+ * ⭐ 도구 DOM 을 밀지(push) 않는다. 도구마다 레이아웃이 제각각이라 폭을 줄이면
+ *    앱형 도구가 깨진다 — 겹쳐 뜨는 편이 어느 도구에도 안전하다.
+ *
+ * ⭐ 마크업은 shell.js 가 처음 열 때 만든다. 여기 클래스가 그 계약이다.
+ * ───────────────────────────────────────────── */
+.otl-help {
+	position: fixed;
+	inset: 0;
+	z-index: calc(var(--otl-z-bar) + 10);
+	/* 바깥은 언제나 도구 차지 — 패널·딤만 자기 몫을 되찾는다 */
+	pointer-events: none;
+	visibility: hidden;
+	/* 닫힐 때 슬라이드가 끝난 뒤에 사라지도록 visibility 만 지연시킨다 */
+	transition: visibility 0s linear 0.22s;
+}
+.otl-help.is-open {
+	visibility: visible;
+	transition-delay: 0s;
+}
+
+/* 딤 — 모바일 바텀시트에서만 쓴다(데스크톱은 위 주석 참고) */
+.otl-help-scrim {
+	display: none;
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.4);
+	opacity: 0;
+	transition: opacity 0.22s ease;
+}
+
+.otl-help-panel {
+	position: absolute;
+	top: var(--otl-bar-h);
+	left: 0;
+	bottom: 0;
+	width: min(400px, 100vw);
+	display: flex;
+	flex-direction: column;
+	pointer-events: auto;
+	background: var(--otl-surface);
+	/* 구획은 hairline 하나 — 테두리와 그림자를 겹치지 않는다 */
+	border-right: 1px solid var(--otl-line);
+	transform: translateX(-100%);
+	transition: transform 0.22s ease;
+}
+.otl-help.is-open .otl-help-panel { transform: none; }
+
+body.admin-bar .otl-help-panel { top: calc(var(--otl-bar-h) + 32px); }
+@media screen and (max-width: 782px) {
+	body.admin-bar .otl-help-panel { top: var(--otl-bar-h); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.otl-help,
+	.otl-help-panel,
+	.otl-help-scrim { transition: none; }
+}
+
+.otl-help-head {
+	flex: 0 0 auto;
+	/*
+	 * ⚠️ 바닥값 44px 이 있어야 한다. --otl-bar-h 를 **0 으로 두는 화면**이 있다
+	 *    (정적 갤러리는 위에 고정 크롬이 없어 0px 이다) — 그대로 받으면 제목과 ✕ 가
+	 *    높이 0 인 줄에 갇혀 잘린 채로 나온다. 있는 크롬은 따라가고, 없으면 제 높이를 쓴다.
+	 */
+	height: max(var(--otl-bar-h), 44px);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 0 8px 0 14px;
+	border-bottom: 1px solid var(--otl-line);
+}
+.otl-help-title {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--otl-fg);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.otl-help-x {
+	flex: 0 0 auto;
+	width: 28px;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	/*
+	 * ⭐⚠️ padding 을 빠뜨리면 아이콘이 사라진다 — 실제로 그랬다(2026-08-17).
+	 * shell.css 는 테마 CSS보다 **먼저** 로드되므로(위 §로드 순서 경고 참고)
+	 * GP 의 `button{padding:10px 20px}` 이 우리 뒤에 와서 그대로 먹힌다.
+	 * border-box + width 28px 인데 좌우 패딩만 40px → **내용 폭 0** → 15px SVG 가 찌그러진다.
+	 * (DevTools 에 40×28 로 잡히고 하이라이트가 전부 패딩 초록으로 보이면 이 증상이다)
+	 */
+	padding: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--otl-fg-muted);
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+.otl-help-x:hover { background: var(--otl-hover); color: var(--otl-fg); }
+.otl-help-x:focus-visible { outline: 2px solid var(--otl-focus); outline-offset: 1px; }
+
+.otl-help-scroll {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	overscroll-behavior: contain;   /* 패널 끝에서 스크롤이 도구로 새지 않게 */
+	padding: 14px;
+}
+
+/* ── 플레이어 ──
+   포스터를 먼저 그리고, 누를 때 iframe 으로 바꾼다.
+   유튜브 iframe 을 처음부터 심으면 안 보는 사람에게도 수백 KB 가 나간다. */
+.otl-help-player {
+	position: relative;
+	aspect-ratio: 16 / 9;
+	border-radius: 8px;   /* v3 카드 = 8px. 16px 은 '너무 둥근' 구 스타일이다 */
+	overflow: hidden;
+	background: #000;
+}
+/*
+ * 세로 영상(쇼츠) — 16:9 틀에 넣으면 양옆이 검게 남고 영상이 좁은 띠가 된다.
+ * 높이를 먼저 정하고 폭을 비율로 맡긴다. 패널이 400px 이라 폭은 저절로 그 안에 선다.
+ */
+.otl-help-player--tall {
+	aspect-ratio: 9 / 16;
+	width: auto;
+	max-width: 100%;
+	height: min(52vh, 380px);
+	margin-inline: auto;
+}
+
+.otl-help-player iframe {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+.otl-help-poster {
+	display: block;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+}
+.otl-help-poster img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.otl-help-poster:focus-visible { outline: 2px solid var(--otl-focus); outline-offset: -2px; }
+
+/* 재생 표식 — 유튜브 관례를 따르되 브랜드색을 쓰지 않는다(껍데기 색 규칙) */
+.otl-help-play {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 54px;
+	height: 38px;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.66);
+	transition: background 0.15s ease;
+}
+.otl-help-play::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 52%;
+	transform: translate(-50%, -50%);
+	border-style: solid;
+	border-width: 7px 0 7px 12px;
+	border-color: transparent transparent transparent #fff;
+}
+.otl-help-poster:hover .otl-help-play { background: rgba(0, 0, 0, 0.82); }
+
+.otl-help-now {
+	margin: 8px 0 0;
+	font-size: 12.5px;
+	font-weight: 600;
+	color: var(--otl-fg);
+	line-height: 1.5;
+}
+
+/* ── 영상 목록 — 2개 이상일 때만 나온다 ── */
+.otl-help-list {
+	margin: 12px 0 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.otl-help-item {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 6px;
+	border: 0;
+	border-radius: 8px;
+	background: transparent;
+	font-family: inherit;
+	font-size: 12.5px;
+	line-height: 1.45;
+	color: var(--otl-fg-body);
+	text-align: left;
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+.otl-help-item:hover { background: var(--otl-hover); color: var(--otl-fg); }
+.otl-help-item:focus-visible { outline: 2px solid var(--otl-focus); outline-offset: 1px; }
+/* 재생 중 항목 — 색 면이 아니라 글자 굵기·농도로 표시한다(v3: 선택은 색 면보다 인디케이터) */
+.otl-help-item[aria-current='true'] {
+	background: var(--otl-fill);
+	color: var(--otl-fg);
+	font-weight: 600;
+}
+.otl-help-thumb {
+	flex: 0 0 auto;
+	width: 68px;
+	aspect-ratio: 16 / 9;
+	border-radius: 5px;
+	overflow: hidden;
+	background: var(--otl-fill);
+}
+.otl-help-thumb img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.otl-help-item-t { min-width: 0; }
+
+/* ── 단계 ── */
+.otl-help-steps { margin-top: 18px; }
+.otl-help-h {
+	margin: 0 0 8px;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--otl-fg-muted);
+	letter-spacing: 0.01em;
+}
+.otl-help-steps ol {
+	margin: 0;
+	padding-left: 1.6em;
+	/*
+	 * ⭐⚠️ `list-style` 을 명시해야 번호가 나온다 — GP 리셋에 `ol,ul{list-style:none}` 이 있고
+	 * 그게 shell.css **뒤에** 로드된다. 안 적으면 단계가 번호 없이 줄줄이 나열된다.
+	 * ⛔ 여기에 `display:flex` 를 쓰지 말 것 — 마커 렌더가 브라우저마다 갈린다.
+	 *    줄 간격은 아래 인접 형제 마진으로 준다.
+	 */
+	list-style: decimal;
+}
+.otl-help-steps li {
+	font-size: 13px;
+	line-height: 1.6;
+	color: var(--otl-fg-body);
+}
+.otl-help-steps li + li { margin-top: 7px; }
+
+/* ── 가이드 글 ── */
+.otl-help-guide {
+	margin-top: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	background: var(--otl-fill);
+	font-size: 12.5px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--otl-fg-body);
+	text-decoration: none;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+/* 링크가 여러 개면 첫 줄만 섹션 간격을 갖고 나머지는 붙여 한 묶음으로 읽히게 한다 */
+.otl-help-guide + .otl-help-guide { margin-top: 6px; }
+.otl-help-guide:hover { background: var(--otl-fill-hover); color: var(--otl-fg); }
+.otl-help-guide:focus-visible { outline: 2px solid var(--otl-focus); outline-offset: 1px; }
+
+/* ─────────────────────────────────────────────
+ * 모바일 — 부제를 버리고 이름만 남긴다
+ * ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+	.otl-tool-sub { display: none; }
+	.otl-bar { gap: 8px; padding: 0 8px; }
+	.otl-toolbar { padding: 6px 8px; }
+
+	/*
+	 * 사용법 패널은 바텀시트로 바뀐다. 좁은 화면에서 우측 패널은 결국 전체를 덮는데,
+	 * 그러면 '옆에 두고 따라 한다'는 전제가 이미 성립하지 않는다 →
+	 * 여기서는 딤을 깔고 바깥을 누르면 닫히는, 흔한 시트 규칙을 따른다.
+	 */
+	.otl-help-scrim { display: block; pointer-events: auto; }
+	.otl-help.is-open .otl-help-scrim { opacity: 1; }
+
+	.otl-help-panel {
+		top: auto;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: auto;
+		max-height: 86vh;
+		/* v3 모달 = 12px. --radius-xl(20px) 계열은 신규 사용 금지 */
+		border-radius: 12px 12px 0 0;
+		/* ⚠️ 데스크톱의 좌측 패널 테두리를 반드시 지운다 — 시트 왼쪽에 세로선이 남는다 */
+		border-right: 0;
+		border-top: 1px solid var(--otl-line);
+		transform: translateY(100%);
+	}
+	body.admin-bar .otl-help-panel { top: auto; }
+
+	/* '더 많은 도구'는 화살표만 남긴다 — 라벨을 유지하면 도구 이름이 '디…' 로 잘린다.
+	   링크 자체를 숨기지 않는 이유: 좌상단 로고는 자료실 첫 화면으로 가므로
+	   도구 섹션으로 바로 가는 문은 여기뿐이다. aria-label 은 마크업에 있다. */
+	.otl-more-label { display: none; }
+	.otl-more { padding: 0 6px; }
+}
+
+/* ─────────────────────────────────────────────
+ * 도구 밴드 — 글로벌 내비 아래 머리말 (되돌아가는 링크 · 제목 · 한 줄 설명)
+ * 정본: shell/band.php 머리 주석 (2026-09-16 재설계, Mobbin: GitBook·Vercel·Sentry)
+ *
+ * ⛔ 바탕을 칠하지 않는다. 회색·틴트 띠는 2026-09-16 에 걷어냈다("AI 가 만든 것 같다").
+ *    깊이는 여백·글자 크기 대비·헤어라인 한 줄로만 낸다. 그림자·라운드·그라디언트 없음.
+ *
+ * ⚠️ 이 블록은 셸 토큰(--otl-*)을 쓰지 않는다. 밴드는 도구 테마(다크)와 무관하게
+ *    언제나 사이트 라이트 톤이며, 색은 디자인 시스템 v3 값을 직접 쓴다.
+ * ⚠️ 테마 CSS 가 우리 뒤에 실려 요소 선택자로 이긴다(파일 상단 주석 참고).
+ *    그래서 margin·padding·text-decoration·color 를 전부 자기 클래스에 명시한다.
+ *
+ * ⭐ 안쪽 컨테이너 div 없이 밴드 자체가 컨테이너다.
+ *   헤어라인은 화면 끝까지 가고 내용만 max-width 안에 서야 하는데,
+ *   래퍼를 하나 더 두는 대신 좌우 padding 으로 같은 결과를 만든다.
+ *   넓은 화면에서는 (100% - max) / 2 + 거터, 좁아지면 거터로 떨어진다.
+ * ───────────────────────────────────────────── */
+.otl-band {
+	box-sizing: border-box; /* 정적 SPA 에는 테마의 border-box 리셋이 없다 */
+	flex: 0 0 auto;
+	padding-block: 22px 24px;
+	background: var(--surface-white);
+	border-bottom: 1px solid var(--gray-200, #e7e7e7);
+
+	/* 컨테이너 2종 — 아래 본문의 기준선과 반드시 같아야 한다 */
+	--otl-band-max: 1200px;
+	--otl-band-gut: 30px;
+	padding-inline: max(
+		var(--otl-band-gut),
+		calc((100% - var(--otl-band-max)) / 2 + var(--otl-band-gut))
+	);
+}
+.otl-band--narrow { --otl-band-max: 1020px; }
+
+/*
+ * 한 줄 밴드(52px) — 앱형 도구 전용.
+ * 뷰포트에 갇힌 도구(.otl--app)는 머리말 높이가 곧 편집 영역의 손실이라 되돌아가기와 이름만 남긴다.
+ * 설명은 숨기는 게 아니라 PHP 가 아예 그리지 않는다(band.php).
+ */
+.otl-band--compact {
+	display: flex;
+	align-items: center;
+	min-height: 52px;
+	padding-block: 0;
+}
+.otl-band--compact .otl-band-back { margin: 0; }
+.otl-band--compact .otl-band-title {
+	margin-left: 14px;
+	padding-left: 14px;
+	border-left: 1px solid var(--gray-200, #e7e7e7); /* 구획은 헤어라인 한 줄 */
+	font-size: 15px;
+	line-height: 1.4;
+	letter-spacing: -0.01em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+@media (max-width: 768px) {
+	.otl-band--compact { min-height: 48px; }
+	.otl-band--compact .otl-band-title { font-size: 14px; }
+}
+.otl-band--wrap { --otl-band-max: 1440px; --otl-band-gut: 40px; }
+
+/*
+ * full — 가운데 정렬을 하지 않는다. 본문이 뷰포트를 꽉 쓰는 앱형 도구(리본 빌더·마크다운 변환기)는
+ * 가둘 컨테이너가 없어서, 밴드만 1200 안에 서면 본문 첫 줄과 왼쪽 끝이 어긋난다.
+ * 거터는 그 도구의 첫 줄 좌측 padding 과 같은 값을 PHP 가 인라인으로 넣는다(band_gutter).
+ */
+.otl-band--full { padding-inline: var(--otl-band-gut); }
+
+/* 되돌아가는 링크 — 도구 목록으로 가는 유일한 문. 버튼처럼 보이게 하지 않는다 */
+.otl-band-back {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 9px;
+	padding: 0;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--gray-700, #404040);
+	text-decoration: none;
+	transition: color 150ms ease;
+}
+.otl-band-back svg { display: block; flex: none; transition: transform 150ms ease; }
+.otl-band-back:hover { color: var(--primary, #037450); text-decoration: none; }
+.otl-band-back:hover svg { transform: translateX(-2px); }
+
+.otl-band-title {
+	margin: 0;
+	padding: 0;
+	font-size: 26px;
+	font-weight: 700;
+	line-height: 1.24;
+	letter-spacing: -0.024em;
+	color: var(--gray-900, #181818);
+}
+
+/*
+ * 제목 줄 — 제목 오른쪽에 [사용법] 이 붙는다(2026-09-21 운영자 결정).
+ * 버튼이 있는 도구에서만 PHP 가 이 줄을 만든다(band.php) — 없는 도구의 DOM 은 그대로다.
+ * ⚠️ min-width: 0 이 줄과 제목 양쪽에 필요하다. flex 항목의 기본 min-width 는 auto 라
+ *    제목이 길면 줄어들지 않고 밴드를 통째로 넘긴다(한 줄 밴드의 ellipsis 도 이것 없이는 안 먹는다).
+ */
+.otl-band-titlerow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+}
+.otl-band-titlerow .otl-band-title { min-width: 0; }
+/* 한 줄 밴드 — 구획 헤어라인은 제목이 들고 있으므로 줄 자체는 여백을 갖지 않는다 */
+.otl-band--compact .otl-band-titlerow { flex: 0 1 auto; }
+
+/* 한 줄 설명 — 무엇을 해 주는지 + 알아 둘 사실 하나. 없으면 요소 자체가 없다 */
+.otl-band-desc {
+	max-width: 760px;
+	margin: 6px 0 0;
+	padding: 0;
+	font-size: 14.5px;
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--gray-700, #404040);
+}
+
+/* 포커스는 한 겹만 — outline 만 쓰고 border·ring 을 겹치지 않는다 */
+.otl-band a:focus-visible {
+	outline: 2px solid var(--primary, #037450);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.otl-band-back,
+	.otl-band-back svg { transition: none; }
+	.otl-band-back:hover svg { transform: none; }
+}
+
+/* 좁아지면 거터만 줄인다 — 위 padding-inline 수식이 알아서 따라온다 */
+@media (max-width: 1024px) {
+	.otl-band:not(.otl-band--full) { --otl-band-gut: 24px; }
+	.otl-band-title { font-size: 24px; }
+}
+
+@media (max-width: 768px) {
+	.otl-band:not(.otl-band--full) {
+		--otl-band-gut: 20px;
+		padding-block: 18px 20px;
+	}
+	.otl-band-back { margin-bottom: 8px; font-size: 12.5px; }
+	.otl-band-title { font-size: 21px; }
+	.otl-band-desc { font-size: 13.5px; line-height: 1.55; }
+}
+
+@media (max-width: 480px) {
+	.otl-band-title { font-size: 20px; }
+}

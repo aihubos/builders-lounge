@@ -1,0 +1,69 @@
+<!doctype html><html><head><meta charset="utf-8"><style>:root{--card-bg:#E9EAEC;--card-surface:#FFFFFF;--card-border:#D0D1D3;--card-fg:#171717;--card-fg-muted:#5A5A5A;--card-accent:#146EF5}html,body{margin:0;width:100%;height:100%;overflow:hidden}*{box-sizing:border-box}</style></head><body><div class="wf-card">
+  <style>
+    .wf-card{height:100%;display:grid;grid-template-rows:28px 1fr;background:var(--card-bg);color:var(--card-fg);font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:10px}
+    .wf-top{display:flex;align-items:center;gap:7px;padding:0 8px;background:var(--card-surface);border-bottom:1px solid var(--card-border)}
+    .wf-mark{width:17px;height:17px;display:grid;place-items:center;color:var(--card-accent)}
+    .wf-mark svg{width:17px;height:12px;display:block}
+    .wf-site{font-weight:650;white-space:nowrap}
+    .wf-tabs{display:flex;align-self:stretch;margin-left:4px}
+    .wf-tabs span{display:grid;place-items:center;padding:0 6px;color:var(--card-fg-muted);border-bottom:2px solid transparent}
+    .wf-tabs .on{color:var(--card-fg);border-color:var(--card-accent)}
+    .wf-actions{margin-left:auto;display:flex;gap:4px}
+    .wf-actions i{width:18px;height:16px;border:1px solid var(--card-border);border-radius:4px;display:grid;place-items:center;color:var(--card-fg-muted);font-style:normal}
+    .wf-actions .publish{width:37px;color:#fff;background:var(--card-accent);border-color:var(--card-accent);font-size:8px}
+    .wf-work{min-height:0;display:grid;grid-template-columns:30px minmax(0,1fr) 70px}
+    .wf-rail{background:var(--card-surface);border-right:1px solid var(--card-border);padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:3px}
+    .wf-tool{width:22px;height:22px;border-radius:4px;display:grid;place-items:center;color:var(--card-fg-muted);font-size:12px}
+    .wf-tool.on{color:#fff;background:var(--card-accent)}
+    .wf-canvas{min-width:0;padding:10px;background:var(--card-bg);display:grid;place-items:center}
+    .wf-page{width:100%;height:100%;min-height:0;background:#FFFFFF;border:1px solid var(--card-border);box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden;color:#080808;display:grid;grid-template-rows:1fr auto}
+    .wf-hero{padding:14px 12px 8px;background:#080808;color:#fff;position:relative;overflow:hidden}
+    .wf-kicker{color:#77A9F9;font-size:7px;text-transform:uppercase;letter-spacing:.12em;font-weight:700}
+    .wf-hero strong{display:block;margin-top:5px;max-width:92px;font-size:15px;line-height:.94;letter-spacing:-.045em;font-weight:700}
+    .wf-hero b{position:absolute;right:-6px;bottom:-12px;width:54px;height:54px;border-radius:50%;border:11px solid var(--card-accent);opacity:.95}
+    .wf-features{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:6px;background:#FFFFFF}
+    .wf-feature{height:28px;padding:4px;border:1px solid #D8D8D8;border-radius:3px}
+    .wf-feature em{display:block;width:8px;height:2px;background:var(--card-accent);margin-bottom:4px}
+    .wf-feature span{display:block;height:2px;background:#ABABAB;margin-top:2px}
+    .wf-panel{background:var(--card-surface);border-left:1px solid var(--card-border);padding:7px 5px;overflow:hidden}
+    .wf-panel-head{display:flex;justify-content:space-between;align-items:center;font-weight:650;margin-bottom:7px}
+    .wf-class{padding:5px 6px;border:1px solid var(--card-accent);border-radius:4px;color:var(--card-fg);margin-bottom:7px;white-space:nowrap;overflow:hidden}
+    .wf-label{margin:6px 0 3px;color:var(--card-fg-muted);font-size:8px;text-transform:uppercase;letter-spacing:.08em}
+    .wf-row{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+    .wf-field{height:20px;padding:0 4px;display:flex;align-items:center;justify-content:space-between;background:var(--card-bg);border:1px solid var(--card-border);border-radius:3px;color:var(--card-fg-muted)}
+    .wf-field b{color:var(--card-fg);font-size:8px}
+  </style>
+  <div class="wf-top">
+    <span class="wf-mark" aria-label="Webflow">
+      <svg viewBox="0 0 32 20" aria-hidden="true"><path fill="currentColor" d="M20.9 2.2 16.7 15l-3-9.3H9.4l-3 9.3L2.2 2.2H0l5.5 15.6h2.2l3.8-10.5 3.6 10.5h3.2L23.6 2.2h-2.7Zm7.2 0-4.8 15.6h2.9L32 2.2h-3.9Z"/></svg>
+    </span>
+    <span class="wf-site">Studio site</span>
+    <span class="wf-tabs"><span class="on">Design</span><span>CMS</span></span>
+    <span class="wf-actions"><i>⌘</i><i class="publish">Publish</i></span>
+  </div>
+  <div class="wf-work">
+    <aside class="wf-rail">
+      <span class="wf-tool on">＋</span><span class="wf-tool">▱</span><span class="wf-tool">◇</span><span class="wf-tool">A</span><span class="wf-tool">⌁</span>
+    </aside>
+    <main class="wf-canvas">
+      <div class="wf-page">
+        <div class="wf-hero"><span class="wf-kicker">Built visually</span><strong>Craft sites with the power of code.</strong><b></b></div>
+        <div class="wf-features">
+          <div class="wf-feature"><em></em><span></span><span></span></div>
+          <div class="wf-feature"><em></em><span></span><span></span></div>
+          <div class="wf-feature"><em></em><span></span><span></span></div>
+        </div>
+      </div>
+    </main>
+    <aside class="wf-panel">
+      <div class="wf-panel-head"><span>Style</span><span style="color:var(--card-fg-muted)">•••</span></div>
+      <div class="wf-class">hero-heading</div>
+      <div class="wf-label">Layout</div>
+      <div class="wf-row"><div class="wf-field">▣<b>Flex</b></div><div class="wf-field">↔<b>Auto</b></div></div>
+      <div class="wf-label">Spacing</div>
+      <div class="wf-row"><div class="wf-field">W<b>100%</b></div><div class="wf-field">H<b>Auto</b></div></div>
+      <div class="wf-label">Typography</div>
+      <div class="wf-field"><span>Size</span><b>48 px</b></div>
+    </aside>
+  </div>
+</div></body></html>

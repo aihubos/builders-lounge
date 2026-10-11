@@ -1,0 +1,923 @@
+/**
+ * 모바일 앱형 공통 틀(omc) — docs/mobile-app/README.md · 채용 결과 08-picks-common-frame.md
+ *
+ * ⛔ 모든 규칙은 body.omc-on 아래, 화면 규칙은 (max-width:1024px) 안에만 둔다.
+ *    새 마크업은 hidden 속성을 달고 나오므로 이 파일이 안 실리면(또는 PC 폭이면) 아무것도 보이지 않는다.
+ * ⛔ 토큰은 :root 가 아니라 body.omc-on 에 둔다(전역 :root 는 tokens.css 한 곳 — CLAUDE.md).
+ * ⛔ 공용 크롬(상단 바·탭 바·시트)은 무채 — 활성은 --nav-accent(= --chrome-control), 초록은 채운 주 버튼에만.
+ *    그라디언트·blur·backdrop-filter·!important 쓰지 않는다. 테두리와 그림자를 겹치지 않는다.
+ *
+ * §0 토큰 · §1 상단 바 · §2 하단 탭 바 · §3 쌓기(토스트 등) · §4 키보드·움직임 · §5 검색 · §6 푸터 · §7 화면 정리 · §8 시트·dock · §9 공용 부품
+ */
+
+/* §0 토큰 ──────────────────────────────────────────────── */
+body.omc-on {
+    --omc-appbar-h: 60px;
+    --omc-safe-b: env(safe-area-inset-bottom, 0px);
+    --omc-safe-l: env(safe-area-inset-left, 0px);
+    --omc-safe-r: env(safe-area-inset-right, 0px);
+    --omc-tabbar-h: 0px;
+    --omc-dock-h: 0px;
+    --omc-ad-b: 0px;
+    --omc-kb-h: 0px;
+    --omc-label-fs: 12px;
+    --omc-r-top: 12px;      /* 하단 판(탭 바·시트) 위 모서리 — 채용 T1·D5(08 채용 결과) */   /* rem 토큰은 ≤1024 에서 작아지므로 리터럴(README 토큰 표) */
+    --omc-stack-b: calc(var(--omc-tabbar-h) + var(--omc-dock-h) + var(--omc-safe-b) + var(--omc-ad-b));
+}
+
+/* 탭 바·시트·검색은 .oppadu-nav 밖(body 직계)이라 헤더 스코프 토큰을 못 받는다 → 여기서 다시 잇는다 */
+body.omc-on .omc-tabbar,
+body.omc-on .omc-sheet,
+body.omc-on .omc-search {
+    --nav-accent: var(--chrome-control);
+}
+
+@media screen and (max-width: 1024px) {
+    body.omc-on.omc-has-tabbar {
+        --omc-tabbar-h: 56px;
+    }
+
+    /* 본문 끝이 탭 바·하단 고정 줄 밑에 숨지 않게 */
+    body.omc-on {
+        padding-bottom: var(--omc-stack-b);
+    }
+
+    /* §1 상단 바 ──────────────────────────────────────────
+       채용: A3 지그재그(왼쪽 워드마크 + 오른쪽 선 아이콘). 높이 60 그대로(위키 sticky 4곳이 60 을 가정).
+       목록형 = [로고] ··· [검색][벨]. 상세형 = [←][제목] ··· [공유][⋯]. */
+    body.omc-on .oppadu-nav__hamburger,
+    body.omc-on .oppadu-nav__cta,
+    body.omc-on .oppadu-nav__login,
+    body.omc-on .oppadu-nav__avatar,
+    body.omc-on .oppadu-nav__search,
+    body.omc-on #oppadu-mobile-menu,
+    body.omc-on #oppadu-mobile-overlay {
+        display: none;
+    }
+
+    body.omc-on .oppadu-nav__inner {
+        justify-content: space-between;
+        gap: 4px;
+        padding-left: max(var(--nav-px), var(--omc-safe-l));
+        padding-right: max(calc(var(--nav-px) - 10px), var(--omc-safe-r)); /* 아이콘 칸(44) 안쪽 여백만큼 당겨 글자선에 맞춘다 */
+    }
+
+    body.omc-on .oppadu-nav__logo {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+    }
+
+    body.omc-on .oppadu-nav__actions {
+        flex: 0 0 auto;
+        margin-left: auto;
+        gap: 0;
+    }
+
+    body.omc-on .omc-nav-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        border-radius: var(--radius-md);
+        background: transparent;
+        color: var(--nav-accent);
+        text-decoration: none;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body.omc-on .omc-nav-btn svg {
+        stroke-width: 1.75;
+    }
+
+    body.omc-on .omc-nav-btn:active {
+        background: var(--gray-100);
+    }
+
+    body.omc-on .omc-nav-btn:focus-visible {
+        outline: 2px solid var(--chrome-focus);
+        outline-offset: -2px;
+    }
+
+    /* 상세형: 로고 대신 ← 와 제목 */
+    body.omc-on.omc-appbar-detail .oppadu-nav__logo {
+        display: none;
+    }
+
+    body.omc-on.omc-appbar-detail .omc-back {
+        margin-left: calc(-1 * min(10px, var(--nav-px))); /* 아이콘 선을 글자선에 맞춘다 — 480 이하(--nav-px 8px)에서 화면 밖으로 안 나가게 */
+        flex: 0 0 auto;
+    }
+
+    body.omc-on .omc-title {
+        display: block;
+        flex: 1 1 auto;
+        min-width: 0;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--chrome-text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* 알림 점(벨·탭 공용) — dot 은 완전 원형 허용. 색은 기존 헤더 점과 같다 */
+    body.omc-on .omc-dot {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: var(--radius-full);
+        background: var(--color-danger);
+        border: 2px solid var(--surface-white);
+        box-sizing: content-box;
+        pointer-events: none;
+    }
+
+    body.omc-on .omc-bell .omc-dot {
+        top: 9px;
+        right: 9px;
+    }
+
+    /* §2 하단 탭 바 ────────────────────────────────────────
+       채용: T1 토스(위 모서리 둥근 흰 판 + 옅은 테두리) + T3 당근(탭 위 알림 표시 → 점).
+       활성 = 선 굵기 2.25 + 짙은 무채 + 굵은 글자(Lucide 는 채운 아이콘이 없다). */
+    body.omc-on .omc-tabbar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: var(--z-sticky);
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        height: calc(var(--omc-tabbar-h) + var(--omc-safe-b));
+        margin: 0;
+        padding: 0 var(--omc-safe-r) var(--omc-safe-b) var(--omc-safe-l);
+        box-sizing: border-box;
+        background: var(--surface-white);
+        border: 1px solid var(--gray-200);
+        border-bottom: 0;
+        border-radius: var(--omc-r-top) var(--omc-r-top) 0 0;
+    }
+
+    body.omc-on .omc-tab {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-width: 0;
+        min-height: 44px;
+        padding: 4px 2px 2px;
+        color: var(--gray-400);
+        text-decoration: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body.omc-on .omc-tab svg {
+        flex: 0 0 auto;
+        stroke-width: 1.75;
+    }
+
+    body.omc-on .omc-tab__label {
+        max-width: 100%;
+        font-size: var(--omc-label-fs);
+        font-weight: 500;
+        line-height: 1.25;
+        color: var(--gray-500);   /* 흰 바탕 4.81:1 */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    body.omc-on .omc-tab.is-active {
+        color: var(--nav-accent);
+    }
+
+    body.omc-on .omc-tab.is-active svg {
+        stroke-width: 2.25;
+    }
+
+    body.omc-on .omc-tab.is-active .omc-tab__label {
+        color: var(--nav-accent);
+        font-weight: 700;
+    }
+
+    body.omc-on .omc-tab:focus-visible {
+        outline: 2px solid var(--chrome-focus);
+        outline-offset: -4px;
+        border-radius: var(--radius-md);
+    }
+
+    body.omc-on .omc-tab .omc-dot {
+        top: 5px;
+        left: calc(50% + 7px);
+    }
+
+    /* MY 탭 프로필 사진(로그인, 2026-09-28 운영자) — 아바타는 완전 원형 허용.
+       흰 판 위에서 가장자리가 보이게 옅은 고리, 활성은 흰 틈 + 짙은 고리(다른 탭의 굵은 선과 같은 「짙어짐」) */
+    body.omc-on .omc-tab__ava {
+        display: block;
+        flex: 0 0 auto;
+        width: 24px;
+        height: 24px;
+        overflow: hidden;
+        border-radius: var(--radius-full);
+        background: var(--gray-100);
+        box-shadow: 0 0 0 1px var(--gray-200);
+    }
+
+    body.omc-on .omc-tab__ava img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border-radius: inherit;
+        object-fit: cover;
+    }
+
+    body.omc-on .omc-tab.is-active .omc-tab__ava {
+        box-shadow: 0 0 0 2px var(--surface-white), 0 0 0 3.5px var(--nav-accent);
+    }
+
+    /* §3 쌓기 — 화면 아래에 뜨는 것들은 탭 바·하단 고정 줄 위로 */
+    body.omc-on .scrap-toast {
+        bottom: calc(var(--omc-stack-b) + 16px);
+    }
+
+    /* 커뮤니티 「댓글을 남겼어요」 알림 — 탭 바 위(--omc-stack-b). 글 상세는 입력줄 높이까지 더한 값이다(커뮤니티 규칙이 --omc-dock-h 를 적는다) */
+    body.omc-on.omc-has-tabbar .oc-community .oc-snack {
+        bottom: calc(var(--omc-stack-b) + 16px);
+    }
+
+    /* §4 키보드 — 입력칸에 포커스가 가면 탭 바를 내린다(레이아웃은 그대로). 입력용 dock 은 남는다 */
+    html.omc-kb body.omc-on .omc-tabbar {
+        transform: translateY(calc(100% + 1px));
+        visibility: hidden;
+    }
+
+    /* 앱 래퍼가 자기 탭 바를 그릴 때(3단계 이후) */
+    html.omc-native-tabbar body.omc-on .omc-tabbar {
+        display: none;
+    }
+
+    html.omc-native-tabbar body.omc-on.omc-has-tabbar {
+        --omc-tabbar-h: 0px;
+    }
+}
+
+@media screen and (max-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    body.omc-on .omc-tabbar {
+        transition: transform var(--transition-fast), visibility var(--transition-fast);
+    }
+}
+
+/* §5 검색 화면 ─────────────────────────────────────────────
+   채용: Q1 당근 — ‹ · 회색 검색칸 · 「닫기」 / 추천 검색 칩 / 최근 검색 + 전체 삭제.
+   운영자 메모: 최근 검색 아래 프로모션(모집 중 챌린지·브리핑 보드 소식). 칩은 알약 대신 6px.
+   검색 버튼은 ≤1024 에만 있어 폭 조건 없이 둔다(열려 있을 때만 보인다). */
+html.omc-search-open body.omc-on {
+    overflow: hidden;
+}
+
+body.omc-on .omc-search {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-white);
+    padding-top: env(safe-area-inset-top, 0px);
+}
+
+body.omc-on .omc-search[hidden] {
+    display: none;
+}
+
+body.omc-on .omc-search__bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: var(--omc-appbar-h);
+    margin: 0;
+    padding: 0 6px 0 max(6px, var(--omc-safe-l));
+    flex: 0 0 auto;
+}
+
+body.omc-on .omc-search__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 44px;
+    margin: 0;
+    padding: 0 14px;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: var(--gray-100);
+    color: var(--text-primary);
+    font-size: 16px;   /* iOS 확대 방지 */
+    line-height: 44px;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+body.omc-on .omc-search__input::placeholder {
+    color: var(--gray-500);
+}
+
+body.omc-on .omc-search__input:focus-visible {
+    outline: 2px solid var(--chrome-focus);
+    outline-offset: 0;
+}
+
+body.omc-on .omc-search__close,
+body.omc-on .omc-search__clear {
+    flex: 0 0 auto;
+    min-height: 44px;
+    margin: 0;
+    padding: 0 10px;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--chrome-text);
+    font-size: 15px;
+    cursor: pointer;
+}
+
+body.omc-on .omc-search__clear {
+    padding: 0 0 0 10px;
+    color: var(--gray-500);
+    font-size: 13px;
+}
+
+body.omc-on .omc-search__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px 16px calc(24px + var(--omc-safe-b));
+}
+
+body.omc-on .omc-search__sec + .omc-search__sec {
+    margin-top: 20px;
+}
+
+body.omc-on .omc-search__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+body.omc-on .omc-search__h {
+    margin: 12px 0 8px;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--chrome-text);
+}
+
+body.omc-on .omc-search__head .omc-search__h {
+    margin: 0;
+}
+
+/* 추천 검색 — 가로로 넘기는 칩. 보이는 높이 36, 누르는 면적은 위아래로 넓혀 44 */
+body.omc-on .omc-search__chips {
+    display: flex;
+    gap: 8px;
+    margin: 0 -16px;
+    padding: 4px 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+body.omc-on .omc-search__chips::-webkit-scrollbar {
+    display: none;
+}
+
+body.omc-on .omc-search__chip {
+    position: relative;
+    flex: 0 0 auto;
+    height: 36px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    background: var(--surface-white);
+    color: var(--text-primary);
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+body.omc-on .omc-search__chip::after {
+    content: "";
+    position: absolute;
+    inset: -4px 0;
+}
+
+/* 최근 검색 */
+body.omc-on .omc-search__recent {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+body.omc-on .omc-search__recent li {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+}
+
+body.omc-on .omc-search__term {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+}
+
+body.omc-on .omc-search__term svg {
+    flex: 0 0 auto;
+    color: var(--gray-400);
+}
+
+body.omc-on .omc-search__term span {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.omc-on .omc-search__del {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    margin: 0 -12px 0 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--gray-400);
+    cursor: pointer;
+}
+
+body.omc-on .omc-search__empty {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: var(--gray-500);
+}
+
+body.omc-on .omc-search__empty[hidden] {
+    display: none;
+}
+
+/* 지금 오빠두에서 — 프로모션 줄(모집 중 챌린지·브리핑 보드 소식). 카드 그림자 없이 구분선 한 겹 */
+body.omc-on .omc-promo {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    color: inherit;
+    text-decoration: none;
+}
+
+body.omc-on .omc-promo + .omc-promo {
+    border-top: 1px solid var(--gray-100);
+}
+
+body.omc-on .omc-promo img,
+body.omc-on .omc-promo__ph {
+    display: block;
+    width: 96px;
+    height: 54px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    background: var(--gray-100);
+}
+
+body.omc-on .omc-promo__txt {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+body.omc-on .omc-promo__tag {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+body.omc-on .omc-promo__title {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+body.omc-on .omc-promo__sub {
+    font-size: 13px;
+    color: var(--gray-500);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.omc-on .omc-search button:focus-visible,
+body.omc-on .omc-promo:focus-visible {
+    outline: 2px solid var(--chrome-focus);
+    outline-offset: 2px;
+}
+
+/* §6 모바일 푸터 — 지금 푸터(.omc-footer-v1)는 PC 전용으로 두고 ≤1024 에서만 바꿔 보여 준다.
+   바탕은 공용 푸터 무채 --chrome-footer. SNS·약관·저작권·사업자 정보만(링크 열은 MY 전체 메뉴로). */
+@media screen and (max-width: 1024px) {
+    body.omc-on .omc-footer-v1 {
+        display: none;
+    }
+
+    body.omc-on .omc-footer {
+        display: block;
+        margin: 0;
+        padding: 20px max(20px, var(--omc-safe-r)) 24px max(20px, var(--omc-safe-l));
+        background: var(--chrome-footer);
+        color: var(--chrome-footer-muted);
+        text-align: left;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    body.omc-on .omc-footer a {
+        color: var(--chrome-footer-muted);
+        text-decoration: none;
+    }
+
+    body.omc-on .omc-footer__sns {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 0 4px -12px;
+    }
+
+    body.omc-on .omc-footer__sns a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+    }
+
+    body.omc-on .omc-footer__policy {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 16px;
+    }
+
+    body.omc-on .omc-footer__policy a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        font-size: 13px;
+    }
+
+    body.omc-on .omc-footer__copy,
+    body.omc-on .omc-footer__biz {
+        margin: 4px 0 0;
+        font-size: 12px;
+        color: var(--chrome-footer-faint);
+    }
+
+    body.omc-on .omc-footer__biz a {
+        color: var(--chrome-footer-faint);
+    }
+
+    body.omc-on .omc-footer a:focus-visible {
+        outline: 2px solid var(--chrome-inverse-focus);
+        outline-offset: 2px;
+    }
+}
+
+/* §7 1-11 화면 정리(2026-09-28 전 화면 점검) — 새 상단 바와 겹치는 페이지 자체 머리·푸터 틈 */
+@media screen and (max-width: 1024px) {
+    /* 도구: 새 상단 바(← 도구 목록·제목·공유)가 밴드의 「← 모든 도구 | 제목」과 두 겹이 된다 */
+    body.omc-on.omc-appbar-detail .otl-band-back {
+        display: none;
+    }
+
+    body.omc-on.omc-appbar-detail .otl-band--compact .otl-band-title {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: 0;
+    }
+
+    /* 한 줄 밴드에 「사용법」 버튼도 없으면 밴드째 접는다(편집 영역이 48px 넓어진다). :has 를 못 읽는 브라우저는 밴드가 남을 뿐 */
+    body.omc-on.omc-appbar-detail .otl-band--compact:not(:has(.otl-helpbtn)) {
+        display: none;
+    }
+
+    /* 라이브 다시보기: 새 상단 바의 ← 와 페이지 자체 ← 가 두 개가 된다(제목 줄 정리는 2-b) */
+    body.omc-on.omc-appbar-detail .lp-back-btn {
+        display: none;
+    }
+
+    /* 푸터: 부모 테마 .site-info(#222, ≤768 좌우 10px)가 모바일 푸터(#181818) 둘레에 두 톤 띠를 만든다 */
+    body.omc-on .site-info {
+        padding-left: 0;
+        padding-right: 0;
+        background: var(--chrome-footer);
+    }
+
+    /* 탭 바 위 모서리 「흰 귀」 — 맨 아래에서 탭 바 뒤(body 아래 여백)가 흰색이라 둥근 모서리 밖이 희게 보인다.
+       모바일 푸터가 있는 화면만 푸터 바탕을 탭 바 뒤까지 내린다(푸터가 빈 화면은 건드리지 않는다) */
+    body.omc-on.omc-has-tabbar .site-footer:has(.omc-footer) {
+        margin-bottom: calc(-1 * var(--omc-stack-b));
+        padding-bottom: var(--omc-stack-b);
+        background: var(--chrome-footer);
+    }
+}
+
+/* §8 공용 하단 시트 · 하단 고정 줄(dock) — 2-b 에서 처음 쓴다(레슨 챕터 시트 · 레슨 dock). 커뮤니티·챌린지도 이 껍데기를 쓴다.
+   채용: 시트 = S1(위 모서리 12px 흰 판 + 손잡이, 닫기는 ✕·바깥 누르기·뒤로가기) · dock = D3(왼쪽 작은 아이콘 1~2개 + 오른쪽 넓은 주 버튼)
+   하단 크롬 공통 언어 = 위 모서리 12px 흰 판 + 옅은 테두리(08 채용 결과). 마크업은 hidden 으로 나오고 JS(Omc.sheet)가 연다.
+   ⚠️ 쌓임 맥락에 갇히지 않게 JS 가 body 직계로 옮긴다(README z-index 표). */
+@media screen and (max-width: 1024px) {
+    body.omc-on .omc-scrim {
+        position: fixed;
+        inset: 0;
+        z-index: 300;
+        background: rgb(0 0 0 / 0.4);
+    }
+
+    body.omc-on .omc-sheet:not([hidden]) {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 400;
+        display: flex;
+        flex-direction: column;
+        max-height: min(80vh, 640px);
+        max-height: min(80dvh, 640px);
+        padding: 0 var(--omc-safe-r) var(--omc-safe-b) var(--omc-safe-l);
+        box-sizing: border-box;
+        background: var(--surface-white);
+        border: 1px solid var(--gray-200);
+        border-bottom: 0;
+        border-radius: var(--omc-r-top) var(--omc-r-top) 0 0;
+    }
+
+    /* 손잡이 — 끌기 동작은 없다(닫기는 ✕·바깥·뒤로가기) */
+    body.omc-on .omc-sheet::before {
+        content: '';
+        flex: 0 0 auto;
+        align-self: center;
+        width: 36px;
+        height: 4px;
+        margin-top: 8px;
+        border-radius: 2px;
+        background: var(--gray-300);
+    }
+
+    body.omc-on .omc-sheet__head {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 4px 4px 4px 16px;
+    }
+
+    body.omc-on .omc-sheet__h {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+
+    body.omc-on .omc-sheet__x {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius-md);
+        background: none;
+        color: var(--gray-700);
+        cursor: pointer;
+    }
+
+    body.omc-on .omc-sheet__body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* body 만 잠근다 — html 까지 잠그면 body 가 스크롤 상자가 되어 sticky 상단 바가 시트를 여는 순간 사라진다(검색 화면 잠금과 같게) */
+    html.omc-sheet-open body.omc-on {
+        overflow: hidden;
+    }
+
+    /* dock — 화면 전용 하단 고정 줄(탭 바가 없는 화면). 높이는 JS 가 재서 --omc-dock-h 로 적는다 */
+    body.omc-on .omc-dock {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: var(--z-sticky);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px calc(12px + var(--omc-safe-r)) calc(8px + var(--omc-safe-b)) calc(8px + var(--omc-safe-l));
+        box-sizing: border-box;
+        background: var(--surface-white);
+        border: 1px solid var(--gray-200);
+        border-bottom: 0;
+        border-radius: var(--omc-r-top) var(--omc-r-top) 0 0;
+    }
+
+    /* 키보드가 뜨면 dock 도 내린다(입력 dock 이 아닌 행동 dock) */
+    html.omc-kb body.omc-on .omc-dock {
+        display: none;
+    }
+
+    body.omc-on .omc-dock__ic {
+        box-sizing: border-box;   /* 테마에 전역 리셋이 없다 — min 높이·폭에 여백이 더해지지 않게 */
+        flex: 0 0 auto;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-width: 60px;
+        min-height: 48px;
+        padding: 0 4px;
+        border: 0;
+        border-radius: var(--radius-md);
+        background: none;
+        color: var(--gray-700);
+        font: inherit;
+        font-size: var(--omc-label-fs);
+        line-height: 1.25;
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    body.omc-on .omc-dock__ic svg {
+        stroke-width: 1.75;
+    }
+
+    body.omc-on .omc-dock__main {
+        box-sizing: border-box;
+        flex: 1 1 auto;
+        min-width: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: auto auto;
+        align-items: center;
+        column-gap: 8px;
+        min-height: 48px;
+        padding: 6px 12px 6px 14px;
+        border-radius: 8px;
+        background: var(--brand-action);
+        color: var(--text-white);
+        text-decoration: none;
+    }
+
+    body.omc-on .omc-dock__main:active {
+        background: var(--brand-hover);
+    }
+
+    body.omc-on .omc-dock__main-t {
+        overflow: hidden;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.3;
+        white-space: nowrap;      /* 왼쪽 아이콘이 3개인 dock(라이브)도 320 폭에서 두 줄로 꺾여 높아지지 않게 */
+        text-overflow: ellipsis;
+    }
+
+    body.omc-on .omc-dock__main-s {
+        grid-column: 1;
+        font-size: 12px;
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    body.omc-on .omc-dock__main svg {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+    }
+
+    body.omc-on .omc-dock__ic:focus-visible,
+    body.omc-on .omc-dock__main:focus-visible,
+    body.omc-on .omc-sheet__x:focus-visible {
+        outline: 2px solid var(--chrome-focus);
+        outline-offset: 2px;
+    }
+
+    /* dock 위 모서리 「흰 귀」 — 탭 바와 같은 처리(§7) */
+    body.omc-on.omc-has-dock .site-footer:has(.omc-footer) {
+        margin-bottom: calc(-1 * var(--omc-stack-b));
+        padding-bottom: var(--omc-stack-b);
+        background: var(--chrome-footer);
+    }
+}
+
+@media screen and (max-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    body.omc-on .omc-sheet:not([hidden]) {
+        animation: omc-sheet-in 0.18s ease-out;
+    }
+
+    @keyframes omc-sheet-in {
+        from { transform: translateY(24px); opacity: 0; }
+        to { transform: none; opacity: 1; }
+    }
+}
+
+/* §9 공용 부품 — 여러 화면이 같이 쓰는 작은 블록. 감싼 틀이 hidden 으로 나와 1024 이하에서만 보이므로 여기서는 폭을 가르지 않는다.
+   멤버십 한 줄: 회원 홈(inc/main-home-me.php) · 레슨 끝(inc/lecture-mobile.php) — 아이콘 · 이름 + 회색 요약 · ↗(유튜브 새 창). 색 면 없이 hairline 구획 */
+body.omc-on .omc-home-ms {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) 18px;
+    align-items: center;
+    column-gap: 12px;
+    min-height: 56px;
+    padding: 10px 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    background: var(--surface-white);
+    color: inherit;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+body.omc-on .omc-home-ms__ic {
+    color: var(--gray-700);
+    line-height: 0;
+}
+
+body.omc-on .omc-home-ms__ic svg {
+    stroke-width: 1.75;
+}
+
+body.omc-on .omc-home-ms__txt {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+body.omc-on .omc-home-ms__title {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--gray-900);
+}
+
+/* 360 폭에서 한 줄에 안 들어가 가격이 잘렸다(9/28 검토) — 말줄임 대신 낱말 사이에서 두 줄로 */
+body.omc-on .omc-home-ms__sub {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-muted);
+    word-break: keep-all;
+}
+
+body.omc-on .omc-home-ms__go {
+    color: var(--gray-400);
+    line-height: 0;
+}
+
+body.omc-on .omc-home-ms:focus-visible {
+    outline: 2px solid var(--chrome-focus);
+    outline-offset: 2px;
+}
