@@ -100,6 +100,7 @@ async function api(path, options = {}) {
 /* ---------- 로그인 ---------- */
 
 function renderAccount() {
+  document.querySelectorAll(".workspace-actions [data-login]").forEach(button => { button.hidden = !!auth.user; });
   document.querySelector("[data-account]").innerHTML = auth.user
     ? '<p><strong>' + esc(auth.user.name || "빌더") + '</strong>님</p><div class="account-actions"><a class="btn" href="#write">글쓰기</a><button class="btn-line" type="button" data-logout>로그아웃</button></div>'
     : '<button class="btn" type="button" data-login>🔑 가입·로그인</button>';
@@ -199,11 +200,16 @@ function render(force = false) {
   document.querySelector("[data-menu]").setAttribute("aria-expanded", "false");
   const { name, id } = route();
   const section = name === "write" ? "board" : name;
+  const names = {home:'라운지 홈',library:'전체 자료 검색',prompts:'프롬프트',materials:'교육자료',lectures:'강의자료',videos:'영상',board:'자유게시판',calendar:'모임 일정',curriculum:'교육 커리큘럼',newsletter:'뉴스레터',terms:'이용약관',privacy:'개인정보 처리 안내',guidelines:'운영정책'};
+  document.querySelector('[data-page-label]').textContent = names[section] || '라운지';
   document.querySelectorAll("[data-nav]").forEach((link) => {
     if (link.dataset.nav === section) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
-  if (moved) window.scrollTo(0, 0);
+  if (moved) {
+    window.scrollTo(0, 0);
+    if (window.innerWidth <= 900 && document.activeElement?.closest("#side")) main.focus();
+  }
   if (name === "home") return renderLibraryHome();
   if (["library", "materials", "lectures"].includes(name)) return id ? renderResource(id) : renderLibrary(name);
   if (["prompts", "videos"].includes(name) && !id) return renderLibrary(name);
@@ -528,7 +534,7 @@ async function countVisit() {
 }
 
 /* ---------- 자료 중심 홈·검색 ---------- */
-const LIBRARY_TYPES = { prompts: '💬 프롬프트', materials: '📘 교육자료', lectures: '🎓 강의자료', videos: '🎬 영상' };
+const LIBRARY_TYPES = { prompts: '프롬프트', materials: '교육자료', lectures: '강의자료', videos: '영상' };
 const RESOURCES = MATERIALS.map((item, index) => ({ ...item, id: 'material-' + index, section: /^(PDF|PPT|ZIP)$/.test(item.category) ? 'lectures' : 'materials', summary: item.category + ' · ' + (item.author || 'AI Builders Lab') }));
 const LIBRARY_ITEMS = [...PROMPTS.map(item => ({ ...item, section: 'prompts' })), ...RESOURCES, ...VIDEOS.map(item => ({ ...item, section: 'videos' }))];
 const resourceHref = item => '#' + item.section + '/' + enc(item.id);
@@ -542,19 +548,26 @@ function librarySearch(section = 'library', q = '') {
   return '<form class="library-search" data-library-search="' + section + '" role="search"><input type="search" name="q" maxlength="120" value="' + esc(q) + '" placeholder="🔍 예: 홈페이지, 이미지, 블로그" aria-label="자료 검색"><button class="btn" type="submit">찾기</button></form>';
 }
 function renderLibraryHome() {
-  setTitle('자료를 찾는 가장 쉬운 곳');
-  const categories = [['prompts', '복사해서 바로 쓰는 질문 틀'], ['materials', '교재, 실습지, 학습 게임'], ['lectures', '수업 슬라이드와 PPT, 묶음 파일'], ['videos', '따라 하기 좋은 입문 영상']];
-  const panel = (title, section, items) => '<section class="library-panel"><div class="panel-heading"><h2>' + title + '</h2><a href="#' + section + '">전체 →</a></div><div class="resource-stack">' + items.map(libraryRow).join('') + '</div></section>';
-  main.innerHTML = '<div class="library-home"><section class="library-hero"><p class="eyebrow">🥕 당근 모임 · AI 빌더스 랩 | AI 에이전트 공부방</p><h1>필요한 자료,<br>여기서 바로 찾아요.</h1><p class="hero-description">모임에서 쓴 프롬프트, 교재, 강의 슬라이드, 영상을 한곳에 모았어요. 검색하거나 아래 분류를 눌러 보세요.</p>' + librarySearch() + '<div class="keywords"><span>자주 찾는 말</span>' + ['홈페이지', '이미지', '블로그', '에이전트'].map(q => '<a href="?q=' + enc(q) + '#library">' + q + '</a>').join('') + '</div></section>'
-    + '<section class="category-grid" aria-label="자료 분류">' + categories.map(([key, description]) => '<a class="category-card" href="#' + key + '"><span class="category-icon">' + LIBRARY_TYPES[key].split(' ')[0] + '</span><h2>' + LIBRARY_TYPES[key].split(' ').slice(1).join(' ') + '</h2><p>' + description + '</p><strong>' + LIBRARY_ITEMS.filter(item => item.section === key).length + '개 보기 →</strong></a>').join('') + '</section>'
-    + (!auth.user ? '<section class="library-panel"><h2>🧭 처음 오셨나요?</h2><div class="start-grid"><div><strong>1 · 가입</strong><p>Google 계정으로 가입하면 게시판에 글과 댓글을 쓸 수 있어요.</p><button class="btn-line" data-login>🔑 가입하기</button></div><div><strong>2 · 프롬프트 복사</strong><p>STIC 요청 템플릿부터 써 보세요. 복사해서 ChatGPT에 붙여 넣으면 돼요.</p><a class="btn-line" href="#prompts/prompt-stic">💬 STIC 보기</a></div><div><strong>3 · 모임 참여</strong><p>일정과 공지는 당근 모임에서 확인하세요. 궁금한 점은 카카오로 물어보세요.</p><div class="community-links"><a class="btn-line" href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener noreferrer"><img src="assets/daangn-logo-204.webp" alt="당근 모임"></a><a class="btn-line" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer"><img src="assets/kakao-openchat-icon-84.webp" alt="">교육문의</a></div></div></div></section>' : '')
-    + '<div class="library-columns">' + panel('💬 자주 쓰는 프롬프트', 'prompts', LIBRARY_ITEMS.filter(item => item.section === 'prompts').slice(0, 4)) + panel('📚 수업 자료', 'lectures', [RESOURCES[4], RESOURCES[1], RESOURCES[5], RESOURCES[2]]) + '</div>'
-    + '<section class="library-panel"><div class="panel-heading"><h2>🎬 유용한 영상</h2><a href="#videos">전체 →</a></div><div class="video-grid">' + VIDEOS.slice(0, 4).map(item => '<a class="video-card" href="#videos/' + enc(item.id) + '"><div class="video-thumbnail"><img src="https://i.ytimg.com/vi/' + esc(item.videoId) + '/hqdefault.jpg" alt="" loading="lazy"><span>▶</span></div><div><strong>' + esc(item.title) + '</strong><p>' + esc(item.summary) + '</p></div></a>').join('') + '</div></section></div>';
+  setTitle('배우고, 나누고, 성장하는 라운지');
+  const categories = [['prompts','✧','바로 복사해서 쓰는 질문 틀'],['materials','▤','교재와 실습, 학습 게임'],['lectures','▥','슬라이드, PPT, 수업 파일'],['videos','▷','눈으로 보고 따라 하는 배움']];
+  const panel = (title, desc, section, items) => `<section class="library-panel"><div class="panel-heading"><div><h2>${title}</h2><p>${desc}</p></div><a href="#${section}">전체 보기 →</a></div><div class="resource-stack">${items.map(libraryRow).join('')}</div></section>`;
+  const next = upcomingEvents(1)[0];
+  const eventText = next ? `<strong>${esc(next.title)}</strong><p>${esc(eventWhen(next).text)}</p>` : `<strong>${calendarEvents === null ? '일정을 불러오고 있어요' : calendarEvents === 'error' ? '달력에서 일정을 확인해 주세요' : '다음 배움을 함께 준비해요'}</strong><p>모임 일정과 참여 안내를 확인하세요.</p>`;
+  main.innerHTML = `<div class="library-home hub-home">
+    <div class="dashboard-heading"><div><p class="eyebrow">YOUR LEARNING SPACE</p><h1>오늘, 무엇을 만들어볼까요?</h1><p>배운 것을 다시 찾고, 나만의 결과물로 이어가세요.</p></div><a class="btn" href="#curriculum">내게 맞는 과정 찾기 ↗</a></div>
+    <section class="library-hero"><div class="hero-copy"><span class="hero-tag">AI BUILDERS LAB · COMMUNITY</span><h2>작은 배움이,<br>다음 가능성으로.</h2><p>프롬프트부터 수업 자료까지.<br>필요한 순간, 바로 꺼내 쓰는 우리 모임의 자료실.</p>${librarySearch()}<div class="keywords"><span>많이 찾는 주제</span>${['홈페이지','이미지','블로그','에이전트'].map(q=>`<a href="?q=${enc(q)}#library">${q}</a>`).join('')}</div></div><div class="hero-brand" aria-hidden="true"><img src="home/assets/brand/builders-lab-symbol-icon.png" alt=""><span>LEARN.<br>SHARE.<br>GROW.</span></div></section>
+    <section class="category-grid" aria-label="자료 분류">${categories.map(([key,icon,desc])=>`<a class="category-card" href="#${key}"><div class="category-top"><span class="category-icon" aria-hidden="true">${icon}</span><span class="card-arrow">↗</span></div><div class="category-summary"><h2>${LIBRARY_TYPES[key]}</h2><strong>${LIBRARY_ITEMS.filter(i=>i.section===key).length}<small>개</small></strong></div><p>${desc}</p></a>`).join('')}</section>
+    <div class="home-workspace"><div class="home-library"><div class="library-columns">${panel('자주 쓰는 프롬프트','좋은 질문 하나로 시작하세요.','prompts',LIBRARY_ITEMS.filter(i=>i.section==='prompts').slice(0,4))}${panel('수업 자료 바로가기','수업이 끝난 뒤에도, 혼자 다시 해볼 수 있게.','lectures',[RESOURCES[4],RESOURCES[1],RESOURCES[5],RESOURCES[2]])}</div>
+    <section class="library-panel"><div class="panel-heading"><div><h2>보고 따라 하는 영상</h2><p>도구의 첫 실행부터, 직접 만드는 과정까지.</p></div><a href="#videos">전체 보기 →</a></div><div class="video-grid">${VIDEOS.slice(0,4).map(item=>`<a class="video-card" href="#videos/${enc(item.id)}"><div class="video-thumbnail"><img src="https://i.ytimg.com/vi/${esc(item.videoId)}/hqdefault.jpg" alt="" loading="lazy"><span>▶</span><em>${esc(item.duration)}</em></div><div><small>${esc(item.category)}</small><strong>${esc(item.title)}</strong></div></a>`).join('')}</div></section></div>
+    <aside class="home-rail" aria-label="시작 안내와 모임"><section class="library-panel start-panel"><span class="rail-kicker">START HERE</span><h2>처음 오셨나요?</h2><p>가장 작은 시작부터 함께해요.</p><a class="start-step" href="#prompts/prompt-stic"><b>01</b><span><strong>AI에게 질문해 보기</strong><small>STIC 템플릿을 복사해 보세요</small></span><em>→</em></a><a class="start-step" href="#materials"><b>02</b><span><strong>교재로 직접 만들어 보기</strong><small>실습 자료를 열고 따라 해보세요</small></span><em>→</em></a><a class="start-step" href="#board"><b>03</b><span><strong>경험과 질문 나누기</strong><small>혼자 막힌 부분을 함께 풀어요</small></span><em>→</em></a></section>
+    <section class="library-panel event-panel"><span class="rail-kicker">NEXT MEETUP</span><h2>다음 모임</h2>${eventText}<a class="btn-line" href="#calendar">전체 일정 보기 →</a></section>
+    <section class="library-panel community-panel"><h2>함께 만드는 배움</h2><p>모임 소식과 질문을<br>편한 채널에서 이어가세요.</p><a href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener noreferrer"><img src="assets/daangn-logo-204.webp" alt="">당근 모임 <span>↗</span></a><a href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener noreferrer"><img src="assets/kakao-openchat-icon-84.webp" alt="">카카오 단체방 <span>↗</span></a><a href="https://builderslab.ai-hub-os.com/" target="_blank" rel="noopener noreferrer">AI 빌더스 랩 소개 <span>↗</span></a></section></aside></div></div>`;
 }
+
 function renderLibrary(section) {
   const q = (new URLSearchParams(location.search).get('q') || '').slice(0, 120);
   const items = LIBRARY_ITEMS.filter(item => (section === 'library' || section === item.section) && (!q || [item.title, item.summary, item.category, item.copyText, ...(item.tags || [])].join(' ').toLocaleLowerCase().includes(q.toLocaleLowerCase())));
-  const title = LIBRARY_TYPES[section] || '📚 자료실';
+  const title = LIBRARY_TYPES[section] || '전체 자료 검색';
   setTitle(title);
   main.innerHTML = '<section class="library-panel library-list"><h1>' + title + '</h1>' + librarySearch(section, q)
     + '<nav class="library-filters" aria-label="자료 분류">' + [['library', '전체'], ...Object.entries(LIBRARY_TYPES)].map(([key, label]) => '<a href="' + (q ? '?q=' + enc(q) : '') + '#' + key + '"' + (key === section ? ' aria-current="page"' : '') + '>' + label + '</a>').join('') + '</nav>'
@@ -593,6 +606,7 @@ async function removeItem(path, question) {
 
 document.addEventListener("click", async (event) => {
   const target = event.target;
+  if (target.closest('[data-search-shortcut]')) { go(window.location.pathname + '#library'); main.querySelector('[name="q"]')?.focus(); return; }
   const menuButton = target.closest("[data-menu]");
   if (menuButton) {
     const open = document.body.classList.toggle("menu-open");
@@ -699,6 +713,9 @@ document.addEventListener("submit", async (event) => {
 window.addEventListener("popstate", () => render());
 window.addEventListener("hashchange", () => render());
 document.addEventListener("keydown", (event) => {
+  if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+    event.preventDefault(); go(window.location.pathname + '#library'); main.querySelector('[name="q"]')?.focus();
+  }
   if (event.key === "Escape" && document.body.classList.contains("menu-open")) {
     document.body.classList.remove("menu-open");
     document.querySelector("[data-menu]").setAttribute("aria-expanded", "false");
@@ -708,7 +725,7 @@ fetch("calendar.json", { cache: "no-cache" })
   .then((response) => (response.ok ? response.json() : Promise.reject(new Error("calendar"))))
   .then((data) => { calendarEvents = Array.isArray(data.events) ? data.events : []; })
   .catch(() => { calendarEvents = "error"; })
-  .finally(() => { tickBar(); if (route().name === "calendar") render(true); });
+  .finally(() => { tickBar(); if (["calendar", "home"].includes(route().name)) render(true); });
 fetch("newsletter.json", { cache: "no-cache" })
   .then((response) => (response.ok ? response.json() : Promise.reject(new Error("newsletter"))))
   .then((data) => { READINGS.newsletter.items = Array.isArray(data.items) ? data.items : []; })
