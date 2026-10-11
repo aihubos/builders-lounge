@@ -16,6 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - run: npm ci --omit=dev
       - run: node scripts/calendar.mjs
       - run: node scripts/newsletter.mjs
         env:

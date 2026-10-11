@@ -44,6 +44,9 @@ let lastHref = "";
 let googlePromise = null;
 let calendarEvents = null; // null: 불러오는 중, "error": 실패, 배열: 일정
 let barCache = "";
+let calendarView = "week";
+let calendarOffset = 0;
+let calendarCoverage = null;
 
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
 const enc = encodeURIComponent;
@@ -553,15 +556,12 @@ function renderLibraryHome() {
   setTitle('배우고, 나누고, 성장하는 라운지');
   const categories = [['prompts','✧','바로 복사해서 쓰는 질문 틀'],['materials','▤','교재와 실습, 학습 게임'],['lectures','▥','슬라이드, PPT, 수업 파일'],['videos','▷','눈으로 보고 따라 하는 배움']];
   const panel = (title, desc, section, items) => `<section class="library-panel"><div class="panel-heading"><div><h2>${title}</h2><p>${desc}</p></div><a href="#${section}">전체 보기 →</a></div><div class="resource-stack">${items.map(libraryRow).join('')}</div></section>`;
-  const next = upcomingEvents(1)[0];
-  const eventText = next ? `<strong>${esc(next.title)}</strong><p>${esc(eventWhen(next).text)}</p>` : `<strong>${calendarEvents === null ? '일정을 불러오고 있어요' : calendarEvents === 'error' ? '달력에서 일정을 확인해 주세요' : '다음 배움을 함께 준비해요'}</strong><p>모임 일정과 참여 안내를 확인하세요.</p>`;
   main.innerHTML = `<div class="library-home hub-home">
     <section class="home-intro"><p class="eyebrow">배우고, 나누고, 성장한다.</p><h1>필요한 배움을, 바로 찾아보세요.</h1><p>우리 모임의 프롬프트·교재·영상이 한곳에.</p><div class="keywords"><span>추천 검색</span>${['홈페이지','이미지','블로그','에이전트'].map(q=>`<a href="?q=${enc(q)}#library">${q}</a>`).join('')}</div></section>
     <section class="category-grid" aria-label="자료 분류">${categories.map(([key,icon,desc])=>`<a class="category-card" href="#${key}"><div class="category-top"><span class="category-icon" aria-hidden="true">${icon}</span><span class="card-arrow">↗</span></div><div class="category-summary"><h2>${LIBRARY_TYPES[key]}</h2><strong>${LIBRARY_ITEMS.filter(i=>i.section===key).length}<small>개</small></strong></div><p>${desc}</p></a>`).join('')}</section>
     <div class="home-workspace"><div class="home-library"><div class="library-columns">${panel('자주 쓰는 프롬프트','좋은 질문 하나로 시작하세요.','prompts',LIBRARY_ITEMS.filter(i=>i.section==='prompts').slice(0,4))}${panel('수업 자료 바로가기','수업이 끝난 뒤에도, 혼자 다시 해볼 수 있게.','lectures',[RESOURCES[4],RESOURCES[1],RESOURCES[5],RESOURCES[2]])}</div>
     <section class="library-panel"><div class="panel-heading"><div><h2>보고 따라 하는 영상</h2><p>도구의 첫 실행부터, 직접 만드는 과정까지.</p></div><a href="#videos">전체 보기 →</a></div><div class="video-grid">${VIDEOS.slice(0,4).map(item=>`<a class="video-card" href="#videos/${enc(item.id)}"><div class="video-thumbnail"><img src="https://i.ytimg.com/vi/${esc(item.videoId)}/hqdefault.jpg" alt="" loading="lazy"><span>▶</span><em>${esc(item.duration)}</em></div><div><small>${esc(item.category)}</small><strong>${esc(item.title)}</strong></div></a>`).join('')}</div></section></div>
     <aside class="home-rail" aria-label="시작 안내와 모임"><section class="library-panel start-panel"><span class="rail-kicker">START HERE</span><h2>처음 오셨나요?</h2><p>가장 작은 시작부터 함께해요.</p><a class="start-step" href="#prompts/prompt-stic"><b>01</b><span><strong>AI에게 질문해 보기</strong><small>STIC 템플릿을 복사해 보세요</small></span><em>→</em></a><a class="start-step" href="#materials"><b>02</b><span><strong>교재로 직접 만들어 보기</strong><small>실습 자료를 열고 따라 해보세요</small></span><em>→</em></a><a class="start-step" href="#board"><b>03</b><span><strong>경험과 질문 나누기</strong><small>혼자 막힌 부분을 함께 풀어요</small></span><em>→</em></a></section>
-    <section class="library-panel event-panel"><span class="rail-kicker">NEXT MEETUP</span><h2>다음 모임</h2>${eventText}<a class="btn-line" href="#calendar">전체 일정 보기 →</a></section>
     <section class="library-panel community-panel"><h2>함께 만드는 배움</h2><p>모임 소식과 질문을<br>편한 채널에서 이어가세요.</p><a href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener noreferrer"><img src="assets/daangn-logo-204.webp" alt="">당근 모임 <span>↗</span></a><a href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener noreferrer"><img src="assets/kakao-openchat-icon-84.webp" alt="">카카오 단체방 <span>↗</span></a><a href="https://builderslab.ai-hub-os.com/" target="_blank" rel="noopener noreferrer">AI 빌더스 랩 소개 <span>↗</span></a></section></aside></div></div>`;
 }
 
@@ -579,6 +579,53 @@ function renderResource(id) {
   if (!item) { main.innerHTML = '<section class="library-panel"><h1>자료를 찾을 수 없어요</h1><a href="#library">자료실로 돌아가기</a></section>'; return; }
   setTitle(item.title);
   main.innerHTML = '<article class="library-panel resource-detail"><a class="btn-line" href="#' + item.section + '">← 목록으로</a><p class="eyebrow">' + esc(LIBRARY_TYPES[item.section]) + '</p><h1>' + esc(item.title) + '</h1><p>' + esc(item.summary) + '</p><div class="resource-meta">🔖 형식 · ' + esc(item.category) + '<br>🏷️ 만든 곳 · ' + esc(item.author) + '</div><p><a class="btn" href="' + esc(item.url) + '" target="_blank" rel="noopener noreferrer">' + (/\.(pdf|pptx|zip)$/.test(item.url) ? '⬇ 자료 열기·받기' : '자료 열기 ↗') + '</a></p></article>';
+}
+
+/* 한국 시간 기준: 1주·2주 일정표와 월간 달력 */
+function renderMiniCalendar() {
+  const box = document.querySelector('[data-mini-calendar]');
+  const today = kst(new Date()).slice(0, 10);
+  const anchor = new Date(today + 'T00:00:00+09:00');
+  const dayMs = 86400000;
+  const key = date => kst(date).slice(0, 10);
+  const fmt = date => date.toLocaleDateString('ko-KR', {timeZone:'Asia/Seoul',month:'numeric',day:'numeric'});
+  let start, end;
+  if (calendarView === 'month') {
+    const [year, month] = today.split('-').map(Number);
+    start = new Date(Date.UTC(year, month - 1 + calendarOffset, 1) - 9 * 3600000);
+    end = new Date(Date.UTC(year, month + calendarOffset, 1) - 9 * 3600000);
+  } else {
+    const days = calendarView === 'week' ? 7 : 14;
+    start = new Date(anchor.getTime() + calendarOffset * days * dayMs);
+    end = new Date(start.getTime() + days * dayMs);
+  }
+  const events = Array.isArray(calendarEvents) ? calendarEvents.filter(e => Date.parse(e.start) < end.getTime() && Date.parse(e.end || e.start) >= start.getTime()) : [];
+  const onDay = date => events.filter(e => Date.parse(e.start) < date.getTime() + dayMs && (Date.parse(e.end || e.start) > date.getTime() || key(new Date(e.start)) === key(date)));
+  const title = calendarView === 'month' ? start.toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'long'}) : fmt(start) + ' – ' + fmt(new Date(end.getTime() - dayMs));
+  let contents = '';
+  if (calendarEvents === null) contents = '<p class="calendar-empty" role="status">일정을 불러오고 있어요.</p>';
+  else if (calendarEvents === 'error') contents = '<p class="calendar-empty" role="status">일정을 불러오지 못했어요. 아래 Google 캘린더에서 확인해 주세요.</p>';
+  else if (calendarCoverage && (start.getTime() < calendarCoverage.from || end.getTime() > calendarCoverage.to)) contents = '<p class="calendar-empty">이 기간은 Google 캘린더에서 확인해 주세요.</p>';
+  else {
+    if (calendarView === 'month') {
+      const weekday = (start.getUTCDay() + 1) % 7; // 한국 자정은 전날 UTC 15시입니다.
+      const count = Math.round((end - start) / dayMs);
+      contents += '<div class="mini-month" aria-label="월간 일정"><div class="weekdays">' + ['일','월','화','수','목','금','토'].map(d=>'<span>'+d+'</span>').join('') + '</div><div class="month-days">' + '<span></span>'.repeat(weekday);
+      for (let i=0;i<count;i++) {
+        const date = new Date(start.getTime()+i*dayMs), list=onDay(date);
+        contents += '<a href="#calendar" class="month-day'+(key(date)===today?' today':'')+(list.length?' has-events':'')+'" aria-label="'+esc(fmt(date)+(list.length?' '+list.map(e=>e.title).join(', '):' 일정 없음'))+'"><span>'+(i+1)+'</span>'+(list.length?'<b>'+list.length+'</b>':'')+'</a>';
+      }
+      contents += '</div></div>';
+    }
+    let rows = '';
+    for (let cursor=start.getTime();cursor<end.getTime();cursor+=dayMs) {
+      const date=new Date(cursor), list=onDay(date);
+      if (!list.length) continue;
+      rows += '<section class="mini-day"><h3>'+esc(date.toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul',month:'numeric',day:'numeric',weekday:'short'}))+(key(date)===today?' <em>오늘</em>':'')+'</h3>'+list.map(e=>'<a class="mini-event" href="#calendar"><time>'+esc(e.allDay?'종일':kst(new Date(e.start)).slice(11,16)+'–'+kst(new Date(e.end||e.start)).slice(11,16))+'</time><strong>'+esc(e.title)+'</strong>'+(e.location?'<small>'+esc(e.location)+'</small>':'')+'</a>').join('')+'</section>';
+    }
+    contents += '<div class="mini-agenda">'+(rows||'<p class="calendar-empty">이 기간에 등록된 모임이 없어요.</p>')+'</div>';
+  }
+  box.innerHTML = '<div class="mini-calendar-head"><span>GOOGLE CALENDAR</span><h2>모임 일정</h2></div><div class="calendar-periods" role="group" aria-label="일정 표시 기간">'+[['week','1주'],['fortnight','2주'],['month','월']].map(([v,l])=>'<button data-calendar-view="'+v+'" aria-pressed="'+(calendarView===v)+'">'+l+'</button>').join('')+'</div><div class="calendar-range"><button data-calendar-move="-1" aria-label="이전 기간">‹</button><strong>'+esc(title)+'</strong><button data-calendar-move="1" aria-label="다음 기간">›</button></div><button class="calendar-today" data-calendar-move="today">오늘 기준으로</button>'+contents+'<div class="calendar-links"><a href="#calendar">전체 일정 보기 →</a><a href="'+CALENDAR_SUBSCRIBE+'" target="_blank" rel="noopener noreferrer">Google 캘린더 열기 ↗</a></div><p class="calendar-sync">한국 시간 · 공개 일정은 약 30분마다 갱신됩니다.<br>1주·2주는 오늘부터, 월은 해당 월 기준입니다.</p>';
 }
 
 /* ---------- 이벤트 ---------- */
@@ -607,6 +654,10 @@ async function removeItem(path, question) {
 
 document.addEventListener("click", async (event) => {
   const target = event.target;
+  const period = target.closest('[data-calendar-view]');
+  if (period) { calendarView = period.dataset.calendarView; calendarOffset = 0; renderMiniCalendar(); return; }
+  const calendarMove = target.closest('[data-calendar-move]');
+  if (calendarMove) { calendarOffset = calendarMove.dataset.calendarMove === 'today' ? 0 : calendarOffset + Number(calendarMove.dataset.calendarMove); renderMiniCalendar(); return; }
   if (!target.closest('.more-nav')) document.querySelector('.more-nav')?.removeAttribute('open');
   if (target.closest('[data-search-shortcut]')) { go(window.location.pathname + '#library'); document.querySelector('.global-search input')?.focus(); return; }
   const menuButton = target.closest("[data-menu]");
@@ -726,9 +777,9 @@ document.addEventListener("keydown", (event) => {
 });
 fetch("calendar.json", { cache: "no-cache" })
   .then((response) => (response.ok ? response.json() : Promise.reject(new Error("calendar"))))
-  .then((data) => { calendarEvents = Array.isArray(data.events) ? data.events : []; })
+  .then((data) => { calendarEvents = Array.isArray(data.events) ? data.events : []; calendarCoverage = data.from && data.to ? {from:Date.parse(data.from),to:Date.parse(data.to)} : null; })
   .catch(() => { calendarEvents = "error"; })
-  .finally(() => { tickBar(); if (["calendar", "home"].includes(route().name)) render(true); });
+  .finally(() => { tickBar(); renderMiniCalendar(); if (route().name === "calendar") render(true); });
 fetch("newsletter.json", { cache: "no-cache" })
   .then((response) => (response.ok ? response.json() : Promise.reject(new Error("newsletter"))))
   .then((data) => { READINGS.newsletter.items = Array.isArray(data.items) ? data.items : []; })
@@ -738,6 +789,7 @@ fetch("newsletter.json", { cache: "no-cache" })
 setInterval(tickBar, 1000);
 tickBar();
 renderAccount();
+renderMiniCalendar();
 loadRecent();
 countVisit();
 render();

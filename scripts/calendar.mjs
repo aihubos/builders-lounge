@@ -1,41 +1,28 @@
-// 구글 공개 캘린더를 읽어 사이트가 쓰는 calendar.json을 만듭니다.
-// GitHub Actions가 30분마다 실행합니다. 직접 실행: npm run calendar
-import { writeFile } from "node:fs/promises";
-
-const ICS_URL = "https://calendar.google.com/calendar/ical/aibuilderslab.kr%40gmail.com/public/basic.ics";
-const valueOf = (line = "") => line.slice(line.indexOf(":") + 1);
-const unescapeText = (text) => text.replace(/\\n/gi, " ").replace(/\\([,;\\])/g, "$1").trim();
-
-// ponytail: UTC(Z)·날짜만·그 밖(한국 시간으로 간주) 세 형식만 처리하고, 반복 일정(RRULE)은 첫 회차만 나옵니다. 필요해지면 ICS 라이브러리로 바꾸세요.
-function parseDate(line) {
-  const match = valueOf(line).match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})(Z)?)?$/);
-  if (!match) return null;
-  const [, year, month, day, hour = "00", minute = "00", second = "00", utc] = match;
-  return { iso: new Date(year + "-" + month + "-" + day + "T" + hour + ":" + minute + ":" + second + (utc ? "Z" : "+09:00")).toISOString(), allDay: !match[4] };
+// 공개 Google Calendar의 반복·예외 일정을 펼쳐 3단 일정 패널에 제공합니다.
+import { writeFile } from 'node:fs/promises';
+import ical from 'node-ical';
+const url = 'https://calendar.google.com/calendar/ical/aibuilderslab.kr%40gmail.com/public/basic.ics';
+const now = new Date();
+const [year, month] = now.toLocaleDateString('sv-SE', {timeZone:'Asia/Seoul'}).split('-').map(Number);
+const from = new Date(Date.UTC(year, month - 3, 1) - 9 * 3600000);
+const to = new Date(Date.UTC(year, month + 4, 1) - 9 * 3600000);
+const response = await fetch(url, {signal:AbortSignal.timeout(30000)});
+if (!response.ok) throw new Error('캘린더 응답 오류: ' + response.status);
+const parsed = await ical.async.parseICS(await response.text());
+const text = value => String(value?.val ?? value ?? '').trim();
+const events = [];
+for (const event of Object.values(parsed)) {
+  if (event.type !== 'VEVENT' || event.status === 'CANCELLED') continue;
+  for (const instance of ical.expandRecurringEvent(event, {from, to, expandOngoing:true})) {
+    if (instance.event.status === 'CANCELLED') continue;
+    const asDate = date => {
+      if (!instance.isFullDay) return date.toISOString();
+      const day = date.toLocaleDateString('sv-SE',{timeZone:date.tz || 'UTC'});
+      return new Date(day + 'T00:00:00+09:00').toISOString();
+    };
+    events.push({title:text(instance.summary)||'일정',start:asDate(instance.start),end:asDate(instance.end),allDay:instance.isFullDay,location:text(instance.event.location)});
+  }
 }
-
-const response = await fetch(ICS_URL);
-if (!response.ok) throw new Error("캘린더를 불러오지 못했습니다: " + response.status);
-const lines = (await response.text()).replace(/\r?\n[ \t]/g, "").split(/\r?\n/);
-const raw = [];
-let current = null;
-for (const line of lines) {
-  if (line === "BEGIN:VEVENT") current = {};
-  else if (line === "END:VEVENT") { if (current) raw.push(current); current = null; }
-  else if (current) current[line.split(/[;:]/, 1)[0]] = line;
-}
-
-const cutoff = Date.now() - 86400000; // 끝난 지 하루가 안 된 일정까지 남겨 둡니다.
-const events = raw
-  .filter((event) => valueOf(event.STATUS) !== "CANCELLED")
-  .map((event) => {
-    const start = parseDate(event.DTSTART);
-    const end = parseDate(event.DTEND);
-    return start && { title: unescapeText(valueOf(event.SUMMARY)) || "일정", start: start.iso, end: end?.iso || start.iso, allDay: start.allDay, location: unescapeText(valueOf(event.LOCATION)) };
-  })
-  .filter((event) => event && Date.parse(event.end) > cutoff)
-  .sort((a, b) => a.start.localeCompare(b.start))
-  .slice(0, 50);
-
-await writeFile(new URL("../calendar.json", import.meta.url), JSON.stringify({ events }, null, 2) + "\n");
-console.log("calendar.json: 일정 " + events.length + "개");
+events.sort((a,b)=>a.start.localeCompare(b.start));
+await writeFile(new URL('../calendar.json',import.meta.url), JSON.stringify({updatedAt:now.toISOString(),from:from.toISOString(),to:to.toISOString(),events},null,2)+'\n');
+console.log('calendar.json: 반복 일정을 포함한 '+events.length+'개 일정');
