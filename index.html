@@ -16,9 +16,9 @@
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
     <link rel="preconnect" href="https://reportmode-request-board.report-request-board.workers.dev" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=20261011-archive-empty" />
-    <link rel="stylesheet" href="hub.css?v=20261011-archive-empty" />
-    <script type="module" src="app.js?v=20261011-archive-empty"></script>
+    <link rel="stylesheet" href="styles.css?v=20261011-floating-calendar" />
+    <link rel="stylesheet" href="hub.css?v=20261011-floating-calendar" />
+    <script type="module" src="app.js?v=20261011-floating-calendar"></script>
   </head>
   <body>
     <a class="skip" href="#main" data-skip>본문 바로가기</a>
@@ -37,10 +37,11 @@
     <div class="wrap three-layout">
       <aside class="left-menu" aria-label="사이트 메뉴"><nav class="hub-navigation reference-menu" aria-label="주요 메뉴"><a href="#home" data-nav="home"><span>모임 소개</span></a><a href="#board" data-nav="board"><span>게시판</span></a><a href="#calendar" data-nav="calendar"><span>일정</span></a><a href="#lookbook" data-nav="lookbook"><span>브랜드 룩북</span></a></nav><a class="btn-line" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">교육 문의 ↗</a></aside>
       <main class="content" id="main" tabindex="-1"></main>
-      <aside class="calendar-sidebar" aria-label="모임 일정" data-mini-calendar></aside>
+      <aside id="floating-calendar" class="calendar-sidebar" aria-label="모임 일정" data-mini-calendar></aside>
     </div>
 
 
+    <button class="calendar-fab" type="button" data-calendar-toggle aria-controls="floating-calendar" aria-expanded="true">▦ 모임 일정</button>
     <footer class="foot">
       <div class="foot-inner">
         <a href="#guidelines">커뮤니티 운영정책</a>

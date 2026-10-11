@@ -46,7 +46,7 @@ let lastHref = "";
 let googlePromise = null;
 let calendarEvents = null; // null: 불러오는 중, "error": 실패, 배열: 일정
 let barCache = "";
-let calendarView = "week";
+let calendarView = "month";
 let calendarOffset = 0;
 let calendarCoverage = null;
 
@@ -628,7 +628,7 @@ function renderMiniCalendar() {
     }
     contents += '<div class="mini-agenda">'+(rows||'<p class="calendar-empty">이 기간에 등록된 모임이 없어요.</p>')+'</div>';
   }
-  box.innerHTML = '<div class="mini-calendar-head"><span>GOOGLE CALENDAR</span><h2>모임 일정</h2></div><div class="calendar-periods" role="group" aria-label="일정 표시 기간">'+[['week','1주'],['fortnight','2주'],['month','월']].map(([v,l])=>'<button data-calendar-view="'+v+'" aria-pressed="'+(calendarView===v)+'">'+l+'</button>').join('')+'</div><div class="calendar-range"><button data-calendar-move="-1" aria-label="이전 기간">‹</button><strong>'+esc(title)+'</strong><button data-calendar-move="1" aria-label="다음 기간">›</button></div><button class="calendar-today" data-calendar-move="today">오늘 기준으로</button>'+contents+'<div class="calendar-links"><a href="#calendar">전체 일정 보기 →</a><a href="'+CALENDAR_SUBSCRIBE+'" target="_blank" rel="noopener noreferrer">Google 캘린더 열기 ↗</a></div><p class="calendar-sync">한국 시간 · 공개 일정은 약 30분마다 갱신됩니다.<br>1주·2주는 오늘부터, 월은 해당 월 기준입니다.</p>';
+  box.innerHTML = '<div class="mini-calendar-head"><span>GOOGLE CALENDAR</span><h2>모임 일정</h2><button class="calendar-close" type="button" data-calendar-close aria-label="모임 일정 접기">×</button></div><div class="calendar-periods" role="group" aria-label="일정 표시 기간">'+[['week','1주'],['fortnight','2주'],['month','월']].map(([v,l])=>'<button data-calendar-view="'+v+'" aria-pressed="'+(calendarView===v)+'">'+l+'</button>').join('')+'</div><div class="calendar-range"><button data-calendar-move="-1" aria-label="이전 기간">‹</button><strong>'+esc(title)+'</strong><button data-calendar-move="1" aria-label="다음 기간">›</button></div><button class="calendar-today" data-calendar-move="today">오늘 기준으로</button>'+contents+'<div class="calendar-links"><a href="#calendar">전체 일정 보기 →</a><a href="'+CALENDAR_SUBSCRIBE+'" target="_blank" rel="noopener noreferrer">Google 캘린더 열기 ↗</a></div><p class="calendar-sync">한국 시간 · 공개 일정은 약 30분마다 갱신됩니다.<br>1주·2주는 오늘부터, 월은 해당 월 기준입니다.</p>';
 }
 
 /* ---------- 이벤트 ---------- */
@@ -657,6 +657,13 @@ async function removeItem(path, question) {
 
 document.addEventListener("click", async (event) => {
   const target = event.target;
+  if(target.closest('[data-calendar-toggle],[data-calendar-close]')) {
+    const panel=document.querySelector('[data-mini-calendar]');
+    panel.hidden=target.closest('[data-calendar-close]')?true:!panel.hidden;
+    document.querySelector('[data-calendar-toggle]').setAttribute('aria-expanded',String(!panel.hidden));
+    if(panel.hidden) document.querySelector('[data-calendar-toggle]').focus();
+    return;
+  }
   const period = target.closest('[data-calendar-view]');
   if (period) { calendarView = period.dataset.calendarView; calendarOffset = 0; renderMiniCalendar(); return; }
   const calendarMove = target.closest('[data-calendar-move]');
@@ -796,6 +803,10 @@ const members = membership({api,auth,main,esc,render,renderAccount,loginDialog,a
 members.nav();
 members.refresh();
 renderAccount();
+const calendarMedia=window.matchMedia('(max-width:959px)');
+function setCalendarVisibility(){const open=!calendarMedia.matches;document.querySelector('[data-mini-calendar]').hidden=!open;document.querySelector('[data-calendar-toggle]').setAttribute('aria-expanded',String(open));}
+calendarMedia.addEventListener('change',setCalendarVisibility);
+setCalendarVisibility();
 renderMiniCalendar();
 loadRecent();
 countVisit();
