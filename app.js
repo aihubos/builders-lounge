@@ -102,7 +102,7 @@ async function api(path, options = {}) {
 function renderAccount() {
   document.querySelector("[data-account]").innerHTML = auth.user
     ? '<p><strong>' + esc(auth.user.name || "빌더") + '</strong>님</p><div class="account-actions"><a class="btn" href="#write">글쓰기</a><button class="btn-line" type="button" data-logout>로그아웃</button></div>'
-    : '<p class="account-hint">로그인하면 글과 댓글을 쓸 수 있어요.</p><button class="btn btn-block" type="button" data-login>Google 로그인</button>';
+    : '<button class="btn" type="button" data-login>🔑 가입·로그인</button>';
 }
 
 
@@ -182,7 +182,7 @@ async function acceptCredential(credential) {
 
 function route() {
   const [name = "", id = ""] = window.location.hash.slice(1).split("/");
-  try { return { name: name || "board", id: decodeURIComponent(id) }; } catch { return { name, id: "" }; }
+  try { return { name: name || (location.search ? "board" : "home"), id: decodeURIComponent(id) }; } catch { return { name, id: "" }; }
 }
 
 function go(url) {
@@ -204,10 +204,12 @@ function render(force = false) {
     else link.removeAttribute("aria-current");
   });
   if (moved) window.scrollTo(0, 0);
+  if (name === "home") return renderLibraryHome();
+  if (["library", "materials", "lectures"].includes(name)) return id ? renderResource(id) : renderLibrary(name);
+  if (["prompts", "videos"].includes(name) && !id) return renderLibrary(name);
   if (name === "board") return renderBoard();
   if (name === "write") return renderWrite();
   if (name === "calendar") return renderCalendar();
-  if (name === "materials") return renderMaterials();
   if (name === "curriculum") return renderCurriculum();
   if (READINGS[name]) return id ? renderReading(name, id) : renderReadingList(name);
   if (POLICIES.includes(name)) return renderPolicy(name);
@@ -254,11 +256,12 @@ async function renderBoard() {
   const page = Math.max(1, Number(params.get("page")) || 1);
   const category = CATEGORIES[params.get("category")] ? params.get("category") : "all";
   const q = (params.get("q") || "").trim().slice(0, 120);
-  document.querySelector("[data-search] input").value = q;
+
   setTitle(q ? "‘" + q + "’ 검색" : "");
   const tabs = [["all", "전체"], ...Object.entries(CATEGORIES)]
     .map(([key, label]) => '<a href="' + boardHref({ category: key, q }) + '"' + (key === category ? ' aria-current="true"' : "") + ">" + label + "</a>").join("");
-  main.innerHTML = PROMO + '<div class="head"><h1>자유게시판</h1><a class="btn" href="#write">글쓰기</a></div>'
+  main.innerHTML = '<div class="head"><h1>자유게시판</h1><a class="btn" href="#write">글쓰기</a></div>'
+    + '<form class="library-search board-search" data-search role="search"><input name="q" value="' + esc(q) + '" aria-label="게시판 검색" placeholder="게시판 검색"><button class="btn">검색</button></form>'
     + '<nav class="tabs" aria-label="분류">' + tabs + "</nav>"
     + (q ? '<p class="search-note">‘' + esc(q) + '’ 검색 결과 · <a href="' + boardHref({ category }) + '">검색 지우기</a></p>' : "")
     + '<div class="list" data-list><p class="empty">불러오는 중입니다.</p></div><nav class="pager" aria-label="페이지" data-pager></nav>';
@@ -426,6 +429,7 @@ function eventSummary(event) {
 }
 
 function tickBar() {
+  if (!document.querySelector("[data-clock]")) return;
   const now = new Date();
   document.querySelector("[data-clock]").textContent = now.toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" });
   const next = upcomingEvents(1)[0];
@@ -523,6 +527,46 @@ async function countVisit() {
   document.querySelectorAll("[data-visit-total]").forEach((node) => { node.textContent = data ? num(data.total) : "-"; });
 }
 
+/* ---------- 자료 중심 홈·검색 ---------- */
+const LIBRARY_TYPES = { prompts: '💬 프롬프트', materials: '📘 교육자료', lectures: '🎓 강의자료', videos: '🎬 영상' };
+const RESOURCES = MATERIALS.map((item, index) => ({ ...item, id: 'material-' + index, section: /^(PDF|PPT|ZIP)$/.test(item.category) ? 'lectures' : 'materials', summary: item.category + ' · ' + (item.author || 'AI Builders Lab') }));
+const LIBRARY_ITEMS = [...PROMPTS.map(item => ({ ...item, section: 'prompts' })), ...RESOURCES, ...VIDEOS.map(item => ({ ...item, section: 'videos' }))];
+const resourceHref = item => '#' + item.section + '/' + enc(item.id);
+const libraryAction = item => item.section === 'prompts'
+  ? '<button class="btn-line" data-copy-prompt="' + esc(item.id) + '">📋 복사</button>'
+  : '<a class="btn-line" href="' + resourceHref(item) + '">' + (item.section === 'videos' ? '▶ 보기' : '자료 보기 →') + '</a>';
+function libraryRow(item) {
+  return '<div class="library-row ' + (item.section === 'prompts' ? 'prompt-row' : '') + '"><span class="resource-kind">' + esc(item.category || LIBRARY_TYPES[item.section]) + '</span><a class="resource-title" href="' + resourceHref(item) + '"><strong>' + esc(item.title) + '</strong><small>' + esc(item.summary) + '</small></a>' + libraryAction(item) + '</div>';
+}
+function librarySearch(section = 'library', q = '') {
+  return '<form class="library-search" data-library-search="' + section + '" role="search"><input type="search" name="q" maxlength="120" value="' + esc(q) + '" placeholder="🔍 예: 홈페이지, 이미지, 블로그" aria-label="자료 검색"><button class="btn" type="submit">찾기</button></form>';
+}
+function renderLibraryHome() {
+  setTitle('자료를 찾는 가장 쉬운 곳');
+  const categories = [['prompts', '복사해서 바로 쓰는 질문 틀'], ['materials', '교재, 실습지, 학습 게임'], ['lectures', '수업 슬라이드와 PPT, 묶음 파일'], ['videos', '따라 하기 좋은 입문 영상']];
+  const panel = (title, section, items) => '<section class="library-panel"><div class="panel-heading"><h2>' + title + '</h2><a href="#' + section + '">전체 →</a></div><div class="resource-stack">' + items.map(libraryRow).join('') + '</div></section>';
+  main.innerHTML = '<div class="library-home"><section class="library-hero"><p class="eyebrow">🥕 당근 모임 · AI 빌더스 랩 | AI 에이전트 공부방</p><h1>필요한 자료,<br>여기서 바로 찾아요.</h1><p class="hero-description">모임에서 쓴 프롬프트, 교재, 강의 슬라이드, 영상을 한곳에 모았어요. 검색하거나 아래 분류를 눌러 보세요.</p>' + librarySearch() + '<div class="keywords"><span>자주 찾는 말</span>' + ['홈페이지', '이미지', '블로그', '에이전트'].map(q => '<a href="?q=' + enc(q) + '#library">' + q + '</a>').join('') + '</div></section>'
+    + '<section class="category-grid" aria-label="자료 분류">' + categories.map(([key, description]) => '<a class="category-card" href="#' + key + '"><span class="category-icon">' + LIBRARY_TYPES[key].split(' ')[0] + '</span><h2>' + LIBRARY_TYPES[key].split(' ').slice(1).join(' ') + '</h2><p>' + description + '</p><strong>' + LIBRARY_ITEMS.filter(item => item.section === key).length + '개 보기 →</strong></a>').join('') + '</section>'
+    + (!auth.user ? '<section class="library-panel"><h2>🧭 처음 오셨나요?</h2><div class="start-grid"><div><strong>1 · 가입</strong><p>Google 계정으로 가입하면 게시판에 글과 댓글을 쓸 수 있어요.</p><button class="btn-line" data-login>🔑 가입하기</button></div><div><strong>2 · 프롬프트 복사</strong><p>STIC 요청 템플릿부터 써 보세요. 복사해서 ChatGPT에 붙여 넣으면 돼요.</p><a class="btn-line" href="#prompts/prompt-stic">💬 STIC 보기</a></div><div><strong>3 · 모임 참여</strong><p>일정과 공지는 당근 모임에서 확인하세요. 궁금한 점은 카카오로 물어보세요.</p><div class="community-links"><a class="btn-line" href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener noreferrer"><img src="assets/daangn-logo-204.webp" alt="당근 모임"></a><a class="btn-line" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer"><img src="assets/kakao-openchat-icon-84.webp" alt="">교육문의</a></div></div></div></section>' : '')
+    + '<div class="library-columns">' + panel('💬 자주 쓰는 프롬프트', 'prompts', LIBRARY_ITEMS.filter(item => item.section === 'prompts').slice(0, 4)) + panel('📚 수업 자료', 'lectures', [RESOURCES[4], RESOURCES[1], RESOURCES[5], RESOURCES[2]]) + '</div>'
+    + '<section class="library-panel"><div class="panel-heading"><h2>🎬 유용한 영상</h2><a href="#videos">전체 →</a></div><div class="video-grid">' + VIDEOS.slice(0, 4).map(item => '<a class="video-card" href="#videos/' + enc(item.id) + '"><div class="video-thumbnail"><img src="https://i.ytimg.com/vi/' + esc(item.videoId) + '/hqdefault.jpg" alt="" loading="lazy"><span>▶</span></div><div><strong>' + esc(item.title) + '</strong><p>' + esc(item.summary) + '</p></div></a>').join('') + '</div></section></div>';
+}
+function renderLibrary(section) {
+  const q = (new URLSearchParams(location.search).get('q') || '').slice(0, 120);
+  const items = LIBRARY_ITEMS.filter(item => (section === 'library' || section === item.section) && (!q || [item.title, item.summary, item.category, item.copyText, ...(item.tags || [])].join(' ').toLocaleLowerCase().includes(q.toLocaleLowerCase())));
+  const title = LIBRARY_TYPES[section] || '📚 자료실';
+  setTitle(title);
+  main.innerHTML = '<section class="library-panel library-list"><h1>' + title + '</h1>' + librarySearch(section, q)
+    + '<nav class="library-filters" aria-label="자료 분류">' + [['library', '전체'], ...Object.entries(LIBRARY_TYPES)].map(([key, label]) => '<a href="' + (q ? '?q=' + enc(q) : '') + '#' + key + '"' + (key === section ? ' aria-current="page"' : '') + '>' + label + '</a>').join('') + '</nav>'
+    + '<p class="result-count">' + items.length + '개 자료' + (q ? ' · “' + esc(q) + '” 검색 결과 <a href="#' + section + '">검색 지우기</a>' : '') + '</p><div class="resource-stack">' + (items.map(libraryRow).join('') || '<p class="empty">찾는 자료가 없어요. 다른 말로 검색하거나 <a href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">카카오로 요청해 주세요.</a></p>') + '</div></section>';
+}
+function renderResource(id) {
+  const item = RESOURCES.find(item => item.id === id);
+  if (!item) { main.innerHTML = '<section class="library-panel"><h1>자료를 찾을 수 없어요</h1><a href="#library">자료실로 돌아가기</a></section>'; return; }
+  setTitle(item.title);
+  main.innerHTML = '<article class="library-panel resource-detail"><a class="btn-line" href="#' + item.section + '">← 목록으로</a><p class="eyebrow">' + esc(LIBRARY_TYPES[item.section]) + '</p><h1>' + esc(item.title) + '</h1><p>' + esc(item.summary) + '</p><div class="resource-meta">🔖 형식 · ' + esc(item.category) + '<br>🏷️ 만든 곳 · ' + esc(item.author) + '</div><p><a class="btn" href="' + esc(item.url) + '" target="_blank" rel="noopener noreferrer">' + (/\.(pdf|pptx|zip)$/.test(item.url) ? '⬇ 자료 열기·받기' : '자료 열기 ↗') + '</a></p></article>';
+}
+
 /* ---------- 이벤트 ---------- */
 
 async function copyText(text, button) {
@@ -609,6 +653,12 @@ document.addEventListener("click", async (event) => {
 
 document.addEventListener("submit", async (event) => {
   const form = event.target;
+  if (form.matches("[data-library-search]")) {
+    event.preventDefault();
+    const q = form.elements.q.value.trim().slice(0, 120);
+    go(window.location.pathname + (q ? "?q=" + enc(q) : "") + "#" + (form.dataset.librarySearch || "library"));
+    return;
+  }
   if (form.matches("[data-search]")) {
     event.preventDefault();
     go(boardHref({ q: form.elements.q.value.trim().slice(0, 120) }));

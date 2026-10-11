@@ -3,83 +3,41 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#f6f8f7" />
     <title>Builders Lounge | AI Builders Lab</title>
-    <meta name="description" content="AI를 만들고 배우는 사람들이 질문과 경험을 나누는 AI Builders Lab 커뮤니티 게시판입니다." />
+    <meta name="description" content="모임에서 쓴 프롬프트, 교재, 강의자료와 영상을 한곳에서 찾아보세요." />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:url" content="https://aihubos.github.io/builders-lounge/" />
     <meta property="og:title" content="Builders Lounge | AI Builders Lab" />
-    <meta property="og:description" content="AI를 만들고 배우는 사람들이 질문과 경험을 나누는 AI Builders Lab 커뮤니티 게시판입니다." />
+    <meta property="og:description" content="모임에서 쓴 프롬프트, 교재, 강의자료와 영상을 한곳에서 찾아보세요." />
     <meta property="og:image" content="https://aihubos.github.io/builders-lounge/assets/og.png" />
     <link rel="canonical" href="https://aihubos.github.io/builders-lounge/" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
     <link rel="preconnect" href="https://reportmode-request-board.report-request-board.workers.dev" crossorigin />
-    <script>
-      // 주소에 게시판 정보가 없으면 소개 페이지로 보냅니다. (?post=ID#board 같은 공유 주소는 그대로 게시판)
-      if (!location.search && /^#?(home.*)?$/.test(location.hash)) location.replace("home/");
-    </script>
-    <link rel="stylesheet" href="styles.css?v=20260926-home" />
-    <script type="module" src="app.js?v=20260926-home"></script>
+    <link rel="stylesheet" href="styles.css?v=20261011-library" />
+    <script type="module" src="app.js?v=20261011-library"></script>
   </head>
   <body>
     <a class="skip" href="#main" data-skip>본문 바로가기</a>
 
     <header class="top">
       <div class="top-inner">
-        <div class="brand">
-          <button class="menu-btn" type="button" aria-label="메뉴 열기" aria-controls="side" aria-expanded="false" data-menu>☰</button>
-          <a class="logo" href="home/" aria-label="Builders Lounge 소개 페이지로 이동">
-            <picture>
-              <source srcset="assets/builders-lounge-logo.webp" type="image/webp" />
-              <img src="assets/builders-lounge-logo.png" width="218" height="73" alt="Builders Lounge" />
-            </picture>
-          </a>
-        </div>
-        <section class="schedule-bar" aria-label="시계와 다음 일정">
-          <div class="clock"><strong data-clock>--:--:--</strong><span data-today></span></div>
-          <a class="ev" href="#calendar" data-ev><span class="ev-label">다음 일정</span><span class="ev-body"></span></a>
-          <a class="ev-more" href="#calendar">전체 일정 →</a>
-        </section>
-        <nav class="quick-links" aria-label="모임·상담 바로가기">
-          <a class="ql ql-daangn" href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener noreferrer" aria-label="당근모임" title="당근모임"><img src="assets/daangn-logo-204.webp" width="40" height="20" alt="" /></a>
-          <a class="ql ql-kakao" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer" aria-label="교육문의" title="교육문의"><img src="assets/kakao-openchat-icon-84.webp" width="28" height="16" alt="" />교육문의</a>
-          <a class="ql ql-telegram" href="https://t.me/+fvLrEpQ99jplNmI9" target="_blank" rel="noopener noreferrer" aria-label="텔레그램 단체방" title="텔레그램 단체방"><img src="assets/telegram-logo.svg" width="28" height="16" alt="" />단체방</a>
-          <a class="ql ql-kakao" href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener noreferrer" aria-label="카카오 단체방" title="카카오 단체방"><img src="assets/kakao-openchat-icon-84.webp" width="28" height="16" alt="" />단체방</a>
+        <a class="logo" href="#home" aria-label="Builders Lounge 홈"><img src="assets/builders-lounge-logo.webp" width="120" height="40" alt="Builders Lounge"></a>
+        <nav class="primary-nav" aria-label="주요 메뉴">
+          <a href="#home" data-nav="home">🏠 홈</a><a href="#prompts" data-nav="prompts">💬 프롬프트</a><a href="#materials" data-nav="materials">📘 교육자료</a><a href="#lectures" data-nav="lectures">🎓 강의자료</a><a href="#videos" data-nav="videos">🎬 영상</a>
         </nav>
+        <div class="header-account" data-account></div>
+        <button class="menu-btn" data-menu aria-controls="side" aria-expanded="false" aria-label="더 보기 메뉴">☰</button>
       </div>
     </header>
-
     <div class="wrap">
-      <nav class="side" id="side" aria-label="게시판 메뉴">
-        <a href="home/">모임 소개</a>
-        <a href="#board" data-nav="board">자유게시판</a>
-        <a href="#calendar" data-nav="calendar">일정</a>
-        <a href="#curriculum" data-nav="curriculum">교육 커리큘럼</a>
-        <a href="#materials" data-nav="materials">교육자료</a>
-        <a href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">교육문의 ↗</a>
-        <a href="#prompts" data-nav="prompts">프롬프트</a>
-        <a href="#newsletter" data-nav="newsletter">뉴스레터</a>
-        <a href="#videos" data-nav="videos">영상</a>
-        <a href="https://aihubos.github.io/reportmode/archive/" target="_blank" rel="noopener">리포트 허브 ↗</a>
+      <nav class="side" id="side" aria-label="커뮤니티 메뉴">
+        <a href="#board" data-nav="board">자유게시판</a><a href="#calendar" data-nav="calendar">일정</a><a href="#curriculum" data-nav="curriculum">교육 커리큘럼</a><a href="#newsletter" data-nav="newsletter">뉴스레터</a>
+        <a href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">교육문의 ↗</a><a href="https://aihubos.github.io/reportmode/archive/" target="_blank" rel="noopener noreferrer">리포트 허브 ↗</a>
       </nav>
       <main class="content" id="main" tabindex="-1"></main>
-      <aside class="right" aria-label="로그인과 검색">
-        <section class="box account-box" data-account></section>
-        <form class="search" role="search" data-search>
-          <input type="search" name="q" maxlength="120" placeholder="게시판 검색" aria-label="게시판 검색" />
-          <button type="submit">검색</button>
-        </form>
-        <section class="box recent" aria-labelledby="recent-title">
-          <h2 id="recent-title">바로 배우기</h2>
-          <a href="#materials">교육자료 보기 →</a><a href="#curriculum">내게 맞는 과정 찾기 →</a><a href="#prompts">프롬프트 활용하기 →</a>
-        </section>
-        <section class="box visits" aria-labelledby="visits-title">
-          <h2 id="visits-title">방문자</h2>
-          <dl class="visit-stats"><div><dt>오늘</dt><dd data-visit-today>-</dd></div><div><dt>전체</dt><dd data-visit-total>-</dd></div></dl>
-        </section>
-      </aside>
     </div>
 
 
@@ -88,6 +46,8 @@
         <a href="#guidelines">커뮤니티 운영정책</a>
         <a href="#privacy">개인정보 처리 안내</a>
         <a href="#terms">이용약관</a>
+        <a href="https://t.me/+fvLrEpQ99jplNmI9" target="_blank" rel="noopener noreferrer">텔레그램 단체방 ↗</a>
+        <a href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener noreferrer">카카오 단체방 ↗</a>
         <span>문의 hello@ai-hub-os.com</span>
         <span>방문자 오늘 <b data-visit-today>-</b> · 전체 <b data-visit-total>-</b></span>
         <span>© AI Builders Lab</span>
@@ -96,7 +56,7 @@
 
     <dialog class="login" data-login-dialog aria-labelledby="login-title">
       <div class="login-head">
-        <h2 id="login-title">로그인</h2>
+        <h2 id="login-title">🔑 가입·로그인</h2>
         <button class="link" type="button" data-login-close aria-label="로그인 창 닫기">닫기</button>
       </div>
       <p>Google 계정으로 로그인하면 글과 댓글을 쓸 수 있습니다.</p>

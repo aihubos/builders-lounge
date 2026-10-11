@@ -1,10 +1,12 @@
 # Builders Lounge
 
-AI Builders Lab 모임 소개와 커뮤니티입니다. 첫 화면은 `home/` 소개 페이지(jeremy.ai-hub-os.com 디자인 기반, 가격 대신 라운지 참여 카드)이고, 게시판은 기존 3단 글 목록을 유지합니다.
+AI Builders Lab 모임 자료실과 커뮤니티입니다. 첫 화면은 프롬프트·교육자료·강의자료·영상 통합 검색 홈입니다. 첨부된 Claude 디자인의 민트색 테마를 적용하고 기존 Google 로그인과 게시판 서버를 유지합니다.
 
 - 공개 주소: https://aihubos.github.io/builders-lounge/
-- 3단 구조: 왼쪽 메뉴 · 가운데 본문 · 오른쪽 로그인·검색·최근 글
-- 맨 위: 로고(왼쪽 고정), 시계, 다음 일정 (AI Builders Lab 구글 캘린더 기준)
+- 상단: 로고 · 주요 자료 분류 · 가입 및 로그인
+- 본문: 통합 검색 · 자료 분류 · 시작 안내 · 추천 자료 · 영상
+- 하단 메뉴: 기존 게시판 · 일정 · 교육 과정 · 뉴스레터 · 문의
+- `home/` 기존 주소는 새 홈으로 이동합니다. 자료는 기존 공개 URL에서 열립니다.
 - 메뉴: 모임 소개(첫 화면), 자유게시판, 일정, 교육 커리큘럼, 교육자료, 교육문의, 프롬프트, 뉴스레터, 영상, 리포트 허브
 - 하단: 커뮤니티 운영정책, 개인정보 처리 안내, 이용약관
 
@@ -12,7 +14,7 @@ AI Builders Lab 모임 소개와 커뮤니티입니다. 첫 화면은 `home/` �
 
 | 파일 | 역할 |
 |---|---|
-| `index.html` | 상단 바, 왼쪽 메뉴, 로그인 창, 약관 문구 |
+| `index.html` | 상단 바, 메뉴, 로그인 창, 약관 문구 |
 | `styles.css` | 전체 디자인 |
 | `app.js` | Google 로그인, 게시판, 읽을거리·약관 화면 전환 |
 | `newsletter.json` | 키라쨩 카드뉴스(aihubos/kira-chan) 날짜별 발행본 목록. 같은 작업이 30분마다 `scripts/newsletter.mjs`로 갱신합니다. |
@@ -28,7 +30,7 @@ npm run dev       # http://127.0.0.1:4173
 npm run calendar    # calendar.json 바로 갱신
 npm run newsletter  # newsletter.json 바로 갱신
 npm run build  # 문법 확인 후 dist/client 생성
-node scripts/check-landing.mjs # 소개 페이지 이동·게시글 주소·금액 삭제 확인
+node scripts/check-landing.mjs # 홈·자료실·게시글 주소와 로컬 이미지 연결 확인
 ```
 
 GitHub Pages는 `main` 브랜치 루트 파일을 그대로 공개합니다. API 키·로그인 토큰·비밀번호는 저장소에 넣지 않습니다.

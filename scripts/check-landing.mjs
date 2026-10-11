@@ -1,20 +1,25 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
+import { runInNewContext } from 'node:vm';
 
-// 첫 방문은 소개 페이지(home/)로, 게시판·공유 주소는 그대로 게시판으로 가는지 확인합니다.
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-const rule = html.match(/if \((.*)\) location\.replace\("home\/"\)/)[1];
-const goesHome = (search, hash) => new Function('location', 'return ' + rule)({ search, hash });
-for (const [search, hash, expected] of [['', '', true], ['', '#home', true], ['?post=abc', '#board', false], ['', '#board', false], ['', '#prompts/x', false], ['?q=ai', '', false]]) {
-  assert.equal(goesHome(search, hash), expected, search + hash);
-}
+const app = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
 const home = readFileSync(new URL('../home/index.html', import.meta.url), 'utf8');
-assert.ok(!/30,000|30000|#pricing/.test(home), '소개 페이지에 금액이 남아 있습니다.');
-for (const asset of home.matchAll(/(?:src|srcset|href)="(assets\/[^" ]+)"/g)) {
-  assert.ok(existsSync(new URL('../home/' + asset[1], import.meta.url)), asset[1] + ' 파일이 없습니다.');
+const route = app.slice(app.indexOf('function route()'), app.indexOf('\nfunction go('));
+for (const [search, hash, name, id] of [
+  ['', '', 'home', ''], ['', '#home', 'home', ''], ['?post=abc', '#board', 'board', ''],
+  ['', '#prompts/prompt-stic', 'prompts', 'prompt-stic'], ['?q=AI', '#library', 'library', ''],
+  ['', '#lectures/material-4', 'lectures', 'material-4'],
+]) {
+  const location = { search, hash };
+  const actual = runInNewContext(route + '\nroute()', { location, window: { location } });
+  assert.equal(actual.name, name);
+  assert.equal(actual.id, id);
 }
-for (const video of ['../assets/intro-wide.mp4', '../assets/intro-tall.mp4', 'assets/kira-shorts.mp4']) {
-  assert.ok(home.includes(video) && existsSync(new URL('../home/' + video, import.meta.url)), video + ' 영상이 없습니다.');
+assert.ok(!html.includes('location.replace("home/")'), '루트가 옛 소개 페이지로 돌아가면 안 됩니다.');
+assert.ok(home.includes("location.search + (location.hash || '#home')"), '기존 home 주소의 검색·화면 경로를 보존합니다.');
+for (const asset of html.matchAll(/(?:src|href)="(assets\/[^" ]+)"/g)) {
+  assert.ok(existsSync(new URL('../' + asset[1], import.meta.url)), asset[1]);
 }
-assert.equal((home.match(/<video[^>]*\bmuted\b/g) || []).length, (home.match(/<video/g) || []).length, '모든 영상은 무음으로 시작해야 합니다.');
-console.log('Home redirect, price removal, and home assets passed.');
+assert.ok(html.includes('data-login-dialog') && html.includes('data-consent'));
+console.log('홈·자료실·게시글 경로, 기존 주소 이동, 로컬 이미지 연결 확인 완료');
