@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" color="#20242b" viewBox="0 0 76 30">
+      <path d="M8 10C23-2 50-2 67 8" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="8" y="23" fill="#fff" font-family="'Brush Script MT','Segoe Script',cursive" font-size="16" font-weight="700">Disney</text>
+      <path d="M64 16v9M59.5 20.5h9" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+    </svg>

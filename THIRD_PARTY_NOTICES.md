@@ -30,3 +30,6 @@ SOFTWARE.
 
 ## Brand lookbook
 Brand names, categories and indicative primary colors reference the publicly accessible Oppadu design-systems brand index (https://www.oppadu.com/ai/design-systems-site/, accessed 2026-10-11). Brand names belong to their respective owners. No gated guides, preview source code, screenshots or editorial descriptions are included. All lookbook previews, sample components and downloadable suggestions are original Builders Lounge examples, not official brand guidelines.
+
+### Brand logos
+Logos are used to identify the listed brands; all trademark rights remain with their owners. Sources for each asset are recorded in `assets/brand-logos/sources.json`. Vector marks are from Simple Icons (CC0; individual trademarks remain protected), the reference site's publicly visible logo previews, and official brand pages. Website icons identify brands where vector marks were unavailable. Assets are hosted locally to avoid third-party image requests from visitors. Logo colors and proportions are retained.

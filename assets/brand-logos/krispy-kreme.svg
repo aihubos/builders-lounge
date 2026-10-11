@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" color="#20242b" viewBox="0 0 190 72">
+      <path d="M12 16C34 5 57 8 76 14C88 18 102 18 114 14C133 8 156 5 178 16L169 55C146 65 125 61 108 56C100 54 90 54 82 56C65 61 44 65 21 55Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M12 16C34 5 57 8 76 14C88 18 102 18 114 14C133 8 156 5 178 16L169 55C146 65 125 61 108 56C100 54 90 54 82 56C65 61 44 65 21 55Z" fill="#FFFFFF" stroke="#00764F" stroke-width="2.5" stroke-linejoin="round"/>
+      <text x="95" y="37" text-anchor="middle" fill="#CC083E" style="font:italic 700 23px 'Brush Script MT','Segoe Script',cursive;">Krispy Kreme</text>
+      <text x="95" y="50" text-anchor="middle" fill="#00764F" style="font:800 7px Arial,sans-serif;letter-spacing:3px;">DOUGHNUTS</text>
+    </svg>

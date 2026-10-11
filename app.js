@@ -1,4 +1,4 @@
-import { renderLookbook } from "./lookbook.js";
+import { renderLookbook } from "./lookbook.js?v=20261011-brandlogos";
 import { CLASSROOM, CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
 
 const API = window.location.port === "8787"

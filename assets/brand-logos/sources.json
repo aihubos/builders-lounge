@@ -1,0 +1,1422 @@
+{
+  "ably": {
+    "file": "ably.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/ably.json",
+    "kind": "wordmark"
+  },
+  "adidas": {
+    "file": "adidas.svg",
+    "source": "https://www.adidas.com",
+    "kind": "symbol"
+  },
+  "adobe-illustrator": {
+    "file": "adobe-illustrator.svg",
+    "source": "https://www.adobe.com/creativecloud.html",
+    "kind": "symbol"
+  },
+  "adobe-photoshop": {
+    "file": "adobe-photoshop.svg",
+    "source": "https://www.adobe.com/creativecloud.html",
+    "kind": "symbol"
+  },
+  "adobe-spectrum": {
+    "file": "adobe-spectrum.svg",
+    "source": "https://www.adobe.com",
+    "kind": "symbol"
+  },
+  "adot": {
+    "file": "adot.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/adot.json",
+    "kind": "wordmark"
+  },
+  "affinity": {
+    "file": "affinity.svg",
+    "source": "https://affinity.serif.com",
+    "kind": "symbol"
+  },
+  "airbnb": {
+    "file": "airbnb.svg",
+    "source": "https://www.airbnb.com",
+    "kind": "symbol"
+  },
+  "airtable": {
+    "file": "airtable.svg",
+    "source": "https://airtable.com/newsroom",
+    "kind": "symbol"
+  },
+  "aliexpress": {
+    "file": "aliexpress.svg",
+    "source": "https://www.alibabagroup.com/en/ir/reports",
+    "kind": "symbol"
+  },
+  "amazon-prime-video": {
+    "file": "amazon-prime-video.svg",
+    "source": "https://videodirect.amazon.com/home/help?topicId=GT7W7GJBTDJW6Z8W#G8T2JFQZXPMHJLRZ",
+    "kind": "symbol"
+  },
+  "amazon": {
+    "file": "amazon.svg",
+    "source": "https://www.amazon.com",
+    "kind": "symbol"
+  },
+  "amorepacific": {
+    "file": "amorepacific.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/amorepacific.json",
+    "kind": "wordmark"
+  },
+  "ant-design": {
+    "file": "ant-design.svg",
+    "source": "https://ant.design",
+    "kind": "symbol"
+  },
+  "anthropic": {
+    "file": "anthropic.svg",
+    "source": "https://www.anthropic.com",
+    "kind": "symbol"
+  },
+  "apple-hig": {
+    "file": "apple-hig.svg",
+    "source": "https://www.apple.com",
+    "kind": "symbol"
+  },
+  "apple-music": {
+    "file": "apple-music.svg",
+    "source": "https://www.apple.com/itunes/marketing-on-music/identity-guidelines.html#apple-music-icon",
+    "kind": "symbol"
+  },
+  "apple-tv-plus": {
+    "file": "apple-tv-plus.svg",
+    "source": "https://en.wikipedia.org/wiki/File:Apple_TV_(logo).svg",
+    "kind": "symbol"
+  },
+  "asana": {
+    "file": "asana.svg",
+    "source": "https://asana.com/brand",
+    "kind": "symbol"
+  },
+  "atlassian": {
+    "file": "atlassian.svg",
+    "source": "https://atlassian.design/resources/logo-library",
+    "kind": "symbol"
+  },
+  "aws": {
+    "file": "aws.svg",
+    "source": "https://commons.wikimedia.org/wiki/File:Amazon_Web_Services_Logo.svg",
+    "kind": "symbol"
+  },
+  "azure": {
+    "file": "azure.svg",
+    "source": "https://github.com/microsoft/vscode-azureresourcegroups/blob/0a06362e82170fd7f8dc2496286825b1a69cc42b/resources/azure.svg",
+    "kind": "symbol"
+  },
+  "bilibili": {
+    "file": "bilibili.svg",
+    "source": "https://www.bilibili.com",
+    "kind": "symbol"
+  },
+  "binance": {
+    "file": "binance.svg",
+    "source": "https://binance.com",
+    "kind": "symbol"
+  },
+  "bluesky": {
+    "file": "bluesky.svg",
+    "source": "https://bsky.social/about/blog/press-faq",
+    "kind": "symbol"
+  },
+  "booking": {
+    "file": "booking.svg",
+    "source": "https://www.bookingholdings.com/media-room",
+    "kind": "symbol"
+  },
+  "brex": {
+    "file": "brex.svg",
+    "source": "https://www.brex.com/journal/press",
+    "kind": "symbol"
+  },
+  "calendly": {
+    "file": "calendly.svg",
+    "source": "https://calendly.com/newsroom",
+    "kind": "symbol"
+  },
+  "canva": {
+    "file": "canva.svg",
+    "source": "https://www.canva.com",
+    "kind": "symbol"
+  },
+  "cash-app": {
+    "file": "cash-app.svg",
+    "source": "https://cash.app/press",
+    "kind": "symbol"
+  },
+  "channel-talk": {
+    "file": "channel-talk.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/channel-talk.json",
+    "kind": "wordmark"
+  },
+  "chzzk": {
+    "file": "chzzk.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/chzzk.json",
+    "kind": "wordmark"
+  },
+  "class101": {
+    "file": "class101.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/class101.json",
+    "kind": "wordmark"
+  },
+  "claude": {
+    "file": "claude.svg",
+    "source": "https://claude.ai",
+    "kind": "symbol"
+  },
+  "clickup": {
+    "file": "clickup.svg",
+    "source": "https://clickup.com/brand",
+    "kind": "symbol"
+  },
+  "cloudflare": {
+    "file": "cloudflare.svg",
+    "source": "https://www.cloudflare.com/logo/",
+    "kind": "symbol"
+  },
+  "coca-cola": {
+    "file": "coca-cola.svg",
+    "source": "https://commons.wikimedia.org/wiki/File:Coca-Cola_logo.svg",
+    "kind": "symbol"
+  },
+  "coda": {
+    "file": "coda.svg",
+    "source": "https://coda.io",
+    "kind": "symbol"
+  },
+  "cohere": {
+    "file": "cohere.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/cohere.json",
+    "kind": "wordmark"
+  },
+  "coinbase": {
+    "file": "coinbase.svg",
+    "source": "https://www.coinbase.com/press",
+    "kind": "symbol"
+  },
+  "copilot": {
+    "file": "copilot.svg",
+    "source": "https://copilot.microsoft.com/static/cmc/favicon.svg",
+    "kind": "site-icon"
+  },
+  "cursor": {
+    "file": "cursor.svg",
+    "source": "https://cursor.com/brand",
+    "kind": "symbol"
+  },
+  "databricks": {
+    "file": "databricks.svg",
+    "source": "https://www.databricks.com",
+    "kind": "symbol"
+  },
+  "datadog": {
+    "file": "datadog.svg",
+    "source": "https://www.datadoghq.com/about/resources",
+    "kind": "symbol"
+  },
+  "deepseek": {
+    "file": "deepseek.svg",
+    "source": "https://www.deepseek.com",
+    "kind": "symbol"
+  },
+  "deliveroo": {
+    "file": "deliveroo.svg",
+    "source": "https://deliveroo.com",
+    "kind": "symbol"
+  },
+  "digitalocean": {
+    "file": "digitalocean.svg",
+    "source": "https://www.digitalocean.com/press/",
+    "kind": "symbol"
+  },
+  "discord": {
+    "file": "discord.svg",
+    "source": "https://discord.com/branding",
+    "kind": "symbol"
+  },
+  "disney-plus": {
+    "file": "disney-plus.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/disney-plus.json",
+    "kind": "wordmark"
+  },
+  "docker": {
+    "file": "docker.svg",
+    "source": "https://www.docker.com/company/newsroom/media-resources",
+    "kind": "symbol"
+  },
+  "doordash": {
+    "file": "doordash.svg",
+    "source": "https://www.doordash.com/about/",
+    "kind": "symbol"
+  },
+  "dribbble": {
+    "file": "dribbble.svg",
+    "source": "https://dribbble.com/branding",
+    "kind": "symbol"
+  },
+  "dropbox": {
+    "file": "dropbox.svg",
+    "source": "https://www.dropbox.com/branding",
+    "kind": "symbol"
+  },
+  "duolingo": {
+    "file": "duolingo.svg",
+    "source": "https://design.duolingo.com",
+    "kind": "symbol"
+  },
+  "ebay": {
+    "file": "ebay.svg",
+    "source": "https://go.developer.ebay.com/logos",
+    "kind": "symbol"
+  },
+  "elastic": {
+    "file": "elastic.svg",
+    "source": "https://www.elastic.co/brand",
+    "kind": "symbol"
+  },
+  "elevenlabs": {
+    "file": "elevenlabs.svg",
+    "source": "https://elevenlabs.io/brand",
+    "kind": "symbol"
+  },
+  "epic-games-store": {
+    "file": "epic-games-store.svg",
+    "source": "https://dev.epicgames.com/docs/services/en-US/EpicAccountServices/DesignGuidelines/index.html#epicgamesbrandguidelines",
+    "kind": "symbol"
+  },
+  "etsy": {
+    "file": "etsy.svg",
+    "source": "https://www.etsy.com/uk/press",
+    "kind": "symbol"
+  },
+  "expedia": {
+    "file": "expedia.svg",
+    "source": "https://brandfolder.com/portals/brand-expedia",
+    "kind": "symbol"
+  },
+  "facebook": {
+    "file": "facebook.svg",
+    "source": "https://about.meta.com/brand/resources/facebook/logo",
+    "kind": "symbol"
+  },
+  "figma": {
+    "file": "figma.svg",
+    "source": "https://www.figma.com/using-the-figma-brand/",
+    "kind": "symbol"
+  },
+  "framer": {
+    "file": "framer.svg",
+    "source": "https://framer.com",
+    "kind": "symbol"
+  },
+  "gcp": {
+    "file": "gcp.svg",
+    "source": "https://cloud.google.com",
+    "kind": "symbol"
+  },
+  "gemini": {
+    "file": "gemini.svg",
+    "source": "https://gemini.google.com",
+    "kind": "symbol"
+  },
+  "gentle-monster": {
+    "file": "gentle-monster.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/gentle-monster.json",
+    "kind": "wordmark"
+  },
+  "github-primer": {
+    "file": "github-primer.svg",
+    "source": "https://github.com/logos",
+    "kind": "symbol"
+  },
+  "gitlab": {
+    "file": "gitlab.svg",
+    "source": "https://about.gitlab.com/press/press-kit/",
+    "kind": "symbol"
+  },
+  "gmarket": {
+    "file": "gmarket.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/gmarket.json",
+    "kind": "wordmark"
+  },
+  "google-maps": {
+    "file": "google-maps.svg",
+    "source": "https://commons.wikimedia.org/wiki/File:Google_Maps_icon.svg",
+    "kind": "symbol"
+  },
+  "google-material": {
+    "file": "google-material.svg",
+    "source": "https://m3.material.io",
+    "kind": "symbol"
+  },
+  "google-sheets": {
+    "file": "google-sheets.svg",
+    "source": "https://sheets.google.com",
+    "kind": "symbol"
+  },
+  "google-workspace": {
+    "file": "google-workspace.svg",
+    "source": "https://partnermarketinghub.withgoogle.com",
+    "kind": "symbol"
+  },
+  "gov24": {
+    "file": "gov24.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/gov24.json",
+    "kind": "wordmark"
+  },
+  "grab": {
+    "file": "grab.svg",
+    "source": "https://en.wikipedia.org/wiki/File:Grab_(application)_logo.svg",
+    "kind": "symbol"
+  },
+  "grafana": {
+    "file": "grafana.svg",
+    "source": "https://grafana.com",
+    "kind": "symbol"
+  },
+  "hana-bank": {
+    "file": "hana-bank.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/hana-bank.json",
+    "kind": "wordmark"
+  },
+  "hbo-max": {
+    "file": "hbo-max.svg",
+    "source": "https://commons.wikimedia.org/wiki/File:Max_2025_logo.svg",
+    "kind": "symbol"
+  },
+  "heroku": {
+    "file": "heroku.svg",
+    "source": "https://devcenter.heroku.com/articles/heroku-brand-guidelines#logos",
+    "kind": "symbol"
+  },
+  "hubspot": {
+    "file": "hubspot.svg",
+    "source": "https://www.hubspot.com/style-guide",
+    "kind": "symbol"
+  },
+  "hugging-face": {
+    "file": "hugging-face.svg",
+    "source": "https://huggingface.co/brand",
+    "kind": "symbol"
+  },
+  "hyundai-motor": {
+    "file": "hyundai-motor.svg",
+    "source": "https://www.hyundai.com",
+    "kind": "symbol"
+  },
+  "ibm-carbon": {
+    "file": "ibm-carbon.svg",
+    "source": "https://www.ibm.com/design/language/ibm-logos/8-bar/",
+    "kind": "symbol"
+  },
+  "ikea": {
+    "file": "ikea.svg",
+    "source": "https://www.ikea.com",
+    "kind": "symbol"
+  },
+  "instagram": {
+    "file": "instagram.svg",
+    "source": "https://about.meta.com/brand/resources/instagram",
+    "kind": "symbol"
+  },
+  "jetbrains": {
+    "file": "jetbrains.svg",
+    "source": "https://www.jetbrains.com/company/brand/logos/",
+    "kind": "symbol"
+  },
+  "kakao": {
+    "file": "kakao.svg",
+    "source": "https://www.kakaocorp.com/kakao/introduce/ci",
+    "kind": "symbol"
+  },
+  "kia": {
+    "file": "kia.svg",
+    "source": "https://www.kia.com",
+    "kind": "symbol"
+  },
+  "klarna": {
+    "file": "klarna.svg",
+    "source": "https://klarna.design",
+    "kind": "symbol"
+  },
+  "klaviyo": {
+    "file": "klaviyo.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/klaviyo.json",
+    "kind": "wordmark"
+  },
+  "krds": {
+    "file": "krds.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/krds.json",
+    "kind": "wordmark"
+  },
+  "krispy-kreme": {
+    "file": "krispy-kreme.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/krispy-kreme.json",
+    "kind": "wordmark"
+  },
+  "kyobo-book-centre": {
+    "file": "kyobo-book-centre.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/kyobo-book-centre.json",
+    "kind": "wordmark"
+  },
+  "lg-electronics": {
+    "file": "lg-electronics.svg",
+    "source": "https://www.lg.com/global/our-brand/brand-expression/elements/logo/index.jsp",
+    "kind": "symbol"
+  },
+  "line": {
+    "file": "line.svg",
+    "source": "https://line.me/en/logo",
+    "kind": "symbol"
+  },
+  "linear": {
+    "file": "linear.svg",
+    "source": "https://linear.app",
+    "kind": "symbol"
+  },
+  "linkedin": {
+    "file": "linkedin.svg",
+    "source": "https://brand.linkedin.com",
+    "kind": "symbol"
+  },
+  "loom": {
+    "file": "loom.svg",
+    "source": "https://www.loom.com/press",
+    "kind": "symbol"
+  },
+  "lyft": {
+    "file": "lyft.svg",
+    "source": "https://www.lyft.com/press",
+    "kind": "symbol"
+  },
+  "mailchimp": {
+    "file": "mailchimp.svg",
+    "source": "https://mailchimp.com/about/brand-assets",
+    "kind": "symbol"
+  },
+  "mastodon": {
+    "file": "mastodon.svg",
+    "source": "https://github.com/mastodon/mastodon/blob/7ccf7a73f1c47a8c03712c39f7c591e837cf6d08/app/javascript/images/logo-symbol-icon.svg",
+    "kind": "symbol"
+  },
+  "mcdonalds": {
+    "file": "mcdonalds.svg",
+    "source": "https://www.mcdonalds.com/gb/en-gb/newsroom.html",
+    "kind": "symbol"
+  },
+  "medium": {
+    "file": "medium.svg",
+    "source": "https://medium.design/logos-and-brand-guidelines-f1a01a733592",
+    "kind": "symbol"
+  },
+  "meituan": {
+    "file": "meituan.svg",
+    "source": "https://www.meituan.com/media",
+    "kind": "symbol"
+  },
+  "mercury": {
+    "file": "mercury.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/mercury.json",
+    "kind": "wordmark"
+  },
+  "meta": {
+    "file": "meta.svg",
+    "source": "https://www.meta.com",
+    "kind": "symbol"
+  },
+  "microsoft-fluent": {
+    "file": "microsoft-fluent.svg",
+    "source": "https://developer.microsoft.com",
+    "kind": "symbol"
+  },
+  "midjourney": {
+    "file": "midjourney.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/midjourney.json",
+    "kind": "wordmark"
+  },
+  "miro": {
+    "file": "miro.svg",
+    "source": "https://miro.com",
+    "kind": "symbol"
+  },
+  "mistral": {
+    "file": "mistral.svg",
+    "source": "https://chat.mistral.ai",
+    "kind": "symbol"
+  },
+  "mongodb": {
+    "file": "mongodb.svg",
+    "source": "https://www.mongodb.com/pressroom",
+    "kind": "symbol"
+  },
+  "monzo": {
+    "file": "monzo.svg",
+    "source": "https://monzo.com/press/",
+    "kind": "symbol"
+  },
+  "ms-excel": {
+    "file": "ms-excel.svg",
+    "source": "https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products",
+    "kind": "symbol"
+  },
+  "ms-loop": {
+    "file": "ms-loop.svg",
+    "source": "https://res.cdn.office.net/fluid/prod/loop-app/hashed/assets/favicon/favicon.6869e16c22.svg",
+    "kind": "site-icon"
+  },
+  "ms-onenote": {
+    "file": "ms-onenote.svg",
+    "source": "https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products",
+    "kind": "symbol"
+  },
+  "ms-outlook": {
+    "file": "ms-outlook.svg",
+    "source": "https://developer.microsoft.com/en-us/outlook/docs",
+    "kind": "symbol"
+  },
+  "ms-powerpoint": {
+    "file": "ms-powerpoint.svg",
+    "source": "https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products",
+    "kind": "symbol"
+  },
+  "ms-teams": {
+    "file": "ms-teams.svg",
+    "source": "https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products",
+    "kind": "symbol"
+  },
+  "ms-word": {
+    "file": "ms-word.svg",
+    "source": "https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products",
+    "kind": "symbol"
+  },
+  "n26": {
+    "file": "n26.svg",
+    "source": "https://n26.com",
+    "kind": "symbol"
+  },
+  "naver-pay": {
+    "file": "naver-pay.svg",
+    "source": "https://developers.naver.com/docs/login/bi/bi.md",
+    "kind": "symbol"
+  },
+  "naver-webtoon": {
+    "file": "naver-webtoon.ico",
+    "source": "https://shared-comic.pstatic.net/favicon/favicon_96x96.ico",
+    "kind": "site-icon"
+  },
+  "naver": {
+    "file": "naver.svg",
+    "source": "https://developers.naver.com/docs/login/bi/bi.md",
+    "kind": "symbol"
+  },
+  "ncsoft": {
+    "file": "ncsoft.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/ncsoft.json",
+    "kind": "wordmark"
+  },
+  "netflix": {
+    "file": "netflix.svg",
+    "source": "https://brand.netflix.com/en/assets/logos",
+    "kind": "symbol"
+  },
+  "netlify": {
+    "file": "netlify.svg",
+    "source": "https://www.netlify.com/press/",
+    "kind": "symbol"
+  },
+  "nexon": {
+    "file": "nexon.svg",
+    "source": "https://brand.nexon.com/en/ci-brand-guidelines/primary-identity",
+    "kind": "symbol"
+  },
+  "nike": {
+    "file": "nike.svg",
+    "source": "https://www.nike.com",
+    "kind": "symbol"
+  },
+  "nintendo": {
+    "file": "nintendo.svg",
+    "source": "https://www.nintendo.com",
+    "kind": "symbol"
+  },
+  "notion": {
+    "file": "notion.svg",
+    "source": "https://www.notion.so",
+    "kind": "symbol"
+  },
+  "nvidia": {
+    "file": "nvidia.svg",
+    "source": "https://www.nvidia.com/en-us",
+    "kind": "symbol"
+  },
+  "obsidian": {
+    "file": "obsidian.svg",
+    "source": "https://obsidian.md",
+    "kind": "symbol"
+  },
+  "openai": {
+    "file": "openai.svg",
+    "source": "https://openai.com",
+    "kind": "symbol"
+  },
+  "pagerduty": {
+    "file": "pagerduty.svg",
+    "source": "https://www.pagerduty.com/brand/",
+    "kind": "symbol"
+  },
+  "paypal": {
+    "file": "paypal.svg",
+    "source": "https://www.paypal.com/us",
+    "kind": "symbol"
+  },
+  "perplexity": {
+    "file": "perplexity.svg",
+    "source": "https://www.perplexity.ai",
+    "kind": "symbol"
+  },
+  "pinterest": {
+    "file": "pinterest.svg",
+    "source": "https://business.pinterest.com/en/brand-guidelines",
+    "kind": "symbol"
+  },
+  "playstation": {
+    "file": "playstation.svg",
+    "source": "https://www.playstation.com/en-us/",
+    "kind": "symbol"
+  },
+  "postman": {
+    "file": "postman.svg",
+    "source": "https://www.getpostman.com/resources/media-assets/",
+    "kind": "symbol"
+  },
+  "rakuten": {
+    "file": "rakuten.svg",
+    "source": "https://global.rakuten.com/corp/news/media",
+    "kind": "symbol"
+  },
+  "reddit": {
+    "file": "reddit.svg",
+    "source": "https://www.redditinc.com/brand",
+    "kind": "symbol"
+  },
+  "redis": {
+    "file": "redis.svg",
+    "source": "https://redis.io/brand-guidelines",
+    "kind": "symbol"
+  },
+  "replicate": {
+    "file": "replicate.svg",
+    "source": "https://replicate.com",
+    "kind": "symbol"
+  },
+  "replit": {
+    "file": "replit.svg",
+    "source": "https://repl.it",
+    "kind": "symbol"
+  },
+  "revolut": {
+    "file": "revolut.svg",
+    "source": "https://developer.revolut.com/docs/resources/marketing-assets-guidelines/marketing-guidelines",
+    "kind": "symbol"
+  },
+  "roam": {
+    "file": "roam.svg",
+    "source": "https://roamresearch.com/#/app/help/page/Vu1MmjinS",
+    "kind": "symbol"
+  },
+  "robinhood": {
+    "file": "robinhood.svg",
+    "source": "https://press.robinhood.com",
+    "kind": "symbol"
+  },
+  "roblox": {
+    "file": "roblox.svg",
+    "source": "https://www.roblox.com",
+    "kind": "symbol"
+  },
+  "salesforce-lightning": {
+    "file": "salesforce-lightning.svg",
+    "source": "https://brand.salesforce.com/content/logo-guidelines",
+    "kind": "symbol"
+  },
+  "samsung-electronics": {
+    "file": "samsung-electronics.svg",
+    "source": "https://www.samsung.com/us/about-us/brand-identity/logo/",
+    "kind": "symbol"
+  },
+  "samsung-one-ui": {
+    "file": "samsung-one-ui.svg",
+    "source": "https://www.samsung.com/us/about-us/brand-identity/logo/",
+    "kind": "symbol"
+  },
+  "samsung-pay": {
+    "file": "samsung-pay.svg",
+    "source": "https://pay.samsung.com/developers/resource/brand",
+    "kind": "symbol"
+  },
+  "sap-fiori": {
+    "file": "sap-fiori.svg",
+    "source": "https://www.sap.com",
+    "kind": "symbol"
+  },
+  "semrush": {
+    "file": "semrush.svg",
+    "source": "https://www.semrush.com",
+    "kind": "symbol"
+  },
+  "sentry": {
+    "file": "sentry.svg",
+    "source": "https://sentry.io/branding/",
+    "kind": "symbol"
+  },
+  "shopify-polaris": {
+    "file": "shopify-polaris.svg",
+    "source": "https://www.shopify.com/brand-assets",
+    "kind": "symbol"
+  },
+  "sk-telecom": {
+    "file": "sk-telecom.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/sk-telecom.json",
+    "kind": "wordmark"
+  },
+  "sketch": {
+    "file": "sketch.svg",
+    "source": "https://www.sketch.com/about-us/#press",
+    "kind": "symbol"
+  },
+  "slack": {
+    "file": "slack.svg",
+    "source": "https://slack.com/brand-guidelines",
+    "kind": "symbol"
+  },
+  "snapchat": {
+    "file": "snapchat.svg",
+    "source": "https://www.snapchat.com/brand-guidelines",
+    "kind": "symbol"
+  },
+  "snowflake": {
+    "file": "snowflake.svg",
+    "source": "https://www.snowflake.com/brand-guidelines/",
+    "kind": "symbol"
+  },
+  "socar": {
+    "file": "socar.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/socar.json",
+    "kind": "wordmark"
+  },
+  "soundcloud": {
+    "file": "soundcloud.svg",
+    "source": "https://press.soundcloud.com",
+    "kind": "symbol"
+  },
+  "spotify": {
+    "file": "spotify.svg",
+    "source": "https://developer.spotify.com/documentation/general/design-and-branding/#using-our-logo",
+    "kind": "symbol"
+  },
+  "square": {
+    "file": "square.svg",
+    "source": "https://squareup.com",
+    "kind": "symbol"
+  },
+  "starbucks": {
+    "file": "starbucks.svg",
+    "source": "https://starbucks.com",
+    "kind": "symbol"
+  },
+  "steam": {
+    "file": "steam.svg",
+    "source": "https://partner.steamgames.com/doc/marketing/branding",
+    "kind": "symbol"
+  },
+  "stibee": {
+    "file": "stibee.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/stibee.json",
+    "kind": "wordmark"
+  },
+  "strava": {
+    "file": "strava.svg",
+    "source": "https://itunes.apple.com/us/app/strava-running-and-cycling-gps/id426826309",
+    "kind": "symbol"
+  },
+  "stripe": {
+    "file": "stripe.svg",
+    "source": "https://stripe.com/newsroom/information",
+    "kind": "symbol"
+  },
+  "substack": {
+    "file": "substack.svg",
+    "source": "https://on.substack.com",
+    "kind": "symbol"
+  },
+  "supabase": {
+    "file": "supabase.svg",
+    "source": "https://github.com/supabase/supabase/blob/4031a7549f5d46da7bc79c01d56be4177dc7c114/packages/common/assets/images/supabase-logo-wordmark--light.svg",
+    "kind": "symbol"
+  },
+  "target": {
+    "file": "target.svg",
+    "source": "https://www.target.com",
+    "kind": "symbol"
+  },
+  "telegram": {
+    "file": "telegram.svg",
+    "source": "https://telegram.org/tour/screenshots",
+    "kind": "symbol"
+  },
+  "terraform": {
+    "file": "terraform.svg",
+    "source": "https://www.hashicorp.com/brand",
+    "kind": "symbol"
+  },
+  "tesla": {
+    "file": "tesla.svg",
+    "source": "https://www.tesla.com/tesla-gallery",
+    "kind": "symbol"
+  },
+  "things": {
+    "file": "things.svg",
+    "source": "https://culturedcode.com/things/",
+    "kind": "symbol"
+  },
+  "threads": {
+    "file": "threads.svg",
+    "source": "https://www.meta.com/brand/resources/instagram/threads",
+    "kind": "symbol"
+  },
+  "tidal": {
+    "file": "tidal.svg",
+    "source": "https://tidal.com/press",
+    "kind": "symbol"
+  },
+  "tiffany": {
+    "file": "tiffany.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/tiffany.json",
+    "kind": "wordmark"
+  },
+  "tiktok": {
+    "file": "tiktok.svg",
+    "source": "https://tiktok.com",
+    "kind": "symbol"
+  },
+  "tinder": {
+    "file": "tinder.svg",
+    "source": "https://www.gotinder.com/press",
+    "kind": "symbol"
+  },
+  "tmap": {
+    "file": "tmap.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/tmap.json",
+    "kind": "wordmark"
+  },
+  "todoist": {
+    "file": "todoist.svg",
+    "source": "https://doist.com/press",
+    "kind": "symbol"
+  },
+  "toss-payments": {
+    "file": "toss-payments.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/toss-payments.json",
+    "kind": "wordmark"
+  },
+  "trello": {
+    "file": "trello.svg",
+    "source": "https://atlassian.design/resources/logo-library",
+    "kind": "symbol"
+  },
+  "tripadvisor": {
+    "file": "tripadvisor.svg",
+    "source": "https://tripadvisor.mediaroom.com/logo-guidelines",
+    "kind": "symbol"
+  },
+  "twitch": {
+    "file": "twitch.svg",
+    "source": "https://brand.twitch.tv",
+    "kind": "symbol"
+  },
+  "uber-base-web": {
+    "file": "uber-base-web.svg",
+    "source": "https://assets.uber.com/d/k4nuxdZ8MC7E/logos/collection/151",
+    "kind": "symbol"
+  },
+  "uber": {
+    "file": "uber.svg",
+    "source": "https://assets.uber.com/d/k4nuxdZ8MC7E/logos/collection/151",
+    "kind": "symbol"
+  },
+  "uniqlo": {
+    "file": "uniqlo.svg",
+    "source": "https://www.uniqlo.com",
+    "kind": "symbol"
+  },
+  "upstage": {
+    "file": "upstage.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/upstage.json",
+    "kind": "wordmark"
+  },
+  "v0": {
+    "file": "v0.svg",
+    "source": "https://v0.dev",
+    "kind": "symbol"
+  },
+  "valorant": {
+    "file": "valorant.svg",
+    "source": "https://commons.wikimedia.org/wiki/File:Valorant_logo_-_black_color_version.svg",
+    "kind": "symbol"
+  },
+  "venmo": {
+    "file": "venmo.svg",
+    "source": "https://venmo.com/about/brand",
+    "kind": "symbol"
+  },
+  "vercel": {
+    "file": "vercel.svg",
+    "source": "https://vercel.com/geist/brands",
+    "kind": "symbol"
+  },
+  "vimeo": {
+    "file": "vimeo.svg",
+    "source": "https://press.vimeo.com/brand-guidelines",
+    "kind": "symbol"
+  },
+  "visa": {
+    "file": "visa.svg",
+    "source": "https://merchantsignageeu.visa.com/product.asp?dptID=696",
+    "kind": "symbol"
+  },
+  "vs-code": {
+    "file": "vs-code.svg",
+    "source": "https://commons.wikimedia.org/wiki/File:Visual_Studio_Code_1.35_icon.svg",
+    "kind": "symbol"
+  },
+  "walmart": {
+    "file": "walmart.svg",
+    "source": "https://corporate.walmart.com",
+    "kind": "symbol"
+  },
+  "wanted": {
+    "file": "wanted.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/wanted.json",
+    "kind": "wordmark"
+  },
+  "warp": {
+    "file": "warp.svg",
+    "source": "https://warp.dev",
+    "kind": "symbol"
+  },
+  "webflow": {
+    "file": "webflow.svg",
+    "source": "https://brand-at.webflow.io/resources#logos",
+    "kind": "symbol"
+  },
+  "wechat": {
+    "file": "wechat.svg",
+    "source": "https://wechat.design/tool/brand",
+    "kind": "symbol"
+  },
+  "whatsapp": {
+    "file": "whatsapp.svg",
+    "source": "https://about.meta.com/brand/resources/whatsapp/whatsapp-brand",
+    "kind": "symbol"
+  },
+  "wise": {
+    "file": "wise.svg",
+    "source": "https://wise.design/foundations/logo",
+    "kind": "symbol"
+  },
+  "workday-canvas": {
+    "file": "workday-canvas.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/workday-canvas.json",
+    "kind": "wordmark"
+  },
+  "wrtn": {
+    "file": "wrtn.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/wrtn.json",
+    "kind": "wordmark"
+  },
+  "x": {
+    "file": "x.svg",
+    "source": "https://x.com",
+    "kind": "symbol"
+  },
+  "xbox": {
+    "file": "xbox.svg",
+    "source": "https://www.xbox.com/en-US/consoles",
+    "kind": "symbol"
+  },
+  "yahoo": {
+    "file": "yahoo.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/yahoo.json",
+    "kind": "wordmark"
+  },
+  "youtube-music": {
+    "file": "youtube-music.svg",
+    "source": "https://partnermarketinghub.withgoogle.com/#/brands",
+    "kind": "symbol"
+  },
+  "youtube": {
+    "file": "youtube.svg",
+    "source": "https://www.youtube.com/howyoutubeworks/resources/brand-resources/#logos-icons-and-colors",
+    "kind": "symbol"
+  },
+  "zara": {
+    "file": "zara.svg",
+    "source": "https://www.zara.com",
+    "kind": "symbol"
+  },
+  "zigbang": {
+    "file": "zigbang.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/zigbang.json",
+    "kind": "wordmark"
+  },
+  "zigzag": {
+    "file": "zigzag.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/zigzag.json",
+    "kind": "wordmark"
+  },
+  "zoom": {
+    "file": "zoom.svg",
+    "source": "https://brand.zoom.us/media-library/",
+    "kind": "symbol"
+  },
+  "11st": {
+    "file": "11st.png",
+    "source": "https://11st.co.kr",
+    "kind": "site-icon"
+  },
+  "29cm": {
+    "file": "29cm.png",
+    "source": "https://29cm.co.kr",
+    "kind": "site-icon"
+  },
+  "baemin": {
+    "file": "baemin.png",
+    "source": "https://baemin.com",
+    "kind": "site-icon"
+  },
+  "agoda": {
+    "file": "agoda.png",
+    "source": "https://agoda.com",
+    "kind": "site-icon"
+  },
+  "aesop": {
+    "file": "aesop.png",
+    "source": "https://aesop.com",
+    "kind": "site-icon"
+  },
+  "affirm": {
+    "file": "affirm.png",
+    "source": "https://affirm.com",
+    "kind": "site-icon"
+  },
+  "bibigo": {
+    "file": "bibigo.png",
+    "source": "https://bibigo.com",
+    "kind": "site-icon"
+  },
+  "chipotle": {
+    "file": "chipotle.png",
+    "source": "https://chipotle.com",
+    "kind": "site-icon"
+  },
+  "character-ai": {
+    "file": "character-ai.png",
+    "source": "https://character.ai",
+    "kind": "site-icon"
+  },
+  "ben-jerrys": {
+    "file": "ben-jerrys.png",
+    "source": "https://benjerry.com",
+    "kind": "site-icon"
+  },
+  "coupang": {
+    "file": "coupang.png",
+    "source": "https://coupang.com",
+    "kind": "site-icon"
+  },
+  "coupang-play": {
+    "file": "coupang-play.png",
+    "source": "https://coupangplay.com",
+    "kind": "site-icon"
+  },
+  "daangn": {
+    "file": "daangn.png",
+    "source": "https://daangn.com",
+    "kind": "site-icon"
+  },
+  "dyson": {
+    "file": "dyson.png",
+    "source": "https://dyson.com",
+    "kind": "site-icon"
+  },
+  "genie-music": {
+    "file": "genie-music.png",
+    "source": "https://genie.co.kr",
+    "kind": "site-icon"
+  },
+  "grok": {
+    "file": "grok.png",
+    "source": "https://grok.com",
+    "kind": "site-icon"
+  },
+  "fantastical": {
+    "file": "fantastical.png",
+    "source": "https://flexibits.com",
+    "kind": "site-icon"
+  },
+  "com2us": {
+    "file": "com2us.png",
+    "source": "https://com2us.com",
+    "kind": "site-icon"
+  },
+  "kakao-bank": {
+    "file": "kakao-bank.png",
+    "source": "https://kakaobank.com",
+    "kind": "site-icon"
+  },
+  "kakao-pay": {
+    "file": "kakao-pay.png",
+    "source": "https://kakaopay.com",
+    "kind": "site-icon"
+  },
+  "hulu": {
+    "file": "hulu.png",
+    "source": "https://hulu.com",
+    "kind": "site-icon"
+  },
+  "hyundai-card": {
+    "file": "hyundai-card.png",
+    "source": "https://hyundaicard.com",
+    "kind": "site-icon"
+  },
+  "inflearn": {
+    "file": "inflearn.png",
+    "source": "https://inflearn.com",
+    "kind": "site-icon"
+  },
+  "kb-starbanking": {
+    "file": "kb-starbanking.png",
+    "source": "https://kbstar.com",
+    "kind": "site-icon"
+  },
+  "kream": {
+    "file": "kream.png",
+    "source": "https://kream.co.kr",
+    "kind": "site-icon"
+  },
+  "kt": {
+    "file": "kt.png",
+    "source": "https://kt.com",
+    "kind": "site-icon"
+  },
+  "krafton": {
+    "file": "krafton.png",
+    "source": "https://krafton.com",
+    "kind": "site-icon"
+  },
+  "kurly": {
+    "file": "kurly.png",
+    "source": "https://kurly.com",
+    "kind": "site-icon"
+  },
+  "laneige": {
+    "file": "laneige.png",
+    "source": "https://laneige.com",
+    "kind": "site-icon"
+  },
+  "laduree": {
+    "file": "laduree.png",
+    "source": "https://laduree.com",
+    "kind": "site-icon"
+  },
+  "lego": {
+    "file": "lego.png",
+    "source": "https://lego.com",
+    "kind": "site-icon"
+  },
+  "kakao-t": {
+    "file": "kakao-t.png",
+    "source": "https://kakaomobility.com",
+    "kind": "site-icon"
+  },
+  "lovable": {
+    "file": "lovable.png",
+    "source": "https://lovable.dev",
+    "kind": "site-icon"
+  },
+  "monday": {
+    "file": "monday.png",
+    "source": "https://monday.com",
+    "kind": "site-icon"
+  },
+  "lindt": {
+    "file": "lindt.png",
+    "source": "https://lindt.com",
+    "kind": "site-icon"
+  },
+  "melon": {
+    "file": "melon.png",
+    "source": "https://melon.com",
+    "kind": "site-icon"
+  },
+  "muji": {
+    "file": "muji.png",
+    "source": "https://muji.com",
+    "kind": "site-icon"
+  },
+  "musinsa": {
+    "file": "musinsa.png",
+    "source": "https://musinsa.com",
+    "kind": "site-icon"
+  },
+  "ms-todo": {
+    "file": "ms-todo.png",
+    "source": "https://to-do.office.com",
+    "kind": "site-icon"
+  },
+  "ohouse": {
+    "file": "ohouse.png",
+    "source": "https://ohou.se",
+    "kind": "site-icon"
+  },
+  "olive-young": {
+    "file": "olive-young.png",
+    "source": "https://oliveyoung.co.kr",
+    "kind": "site-icon"
+  },
+  "netmarble": {
+    "file": "netmarble.png",
+    "source": "https://netmarble.com",
+    "kind": "site-icon"
+  },
+  "orion": {
+    "file": "orion.png",
+    "source": "https://orionworld.com",
+    "kind": "site-icon"
+  },
+  "procreate": {
+    "file": "procreate.png",
+    "source": "https://procreate.com",
+    "kind": "site-icon"
+  },
+  "ramp": {
+    "file": "ramp.png",
+    "source": "https://ramp.com",
+    "kind": "site-icon"
+  },
+  "ridi": {
+    "file": "ridi.png",
+    "source": "https://ridibooks.com",
+    "kind": "site-icon"
+  },
+  "plaid": {
+    "file": "plaid.png",
+    "source": "https://plaid.com",
+    "kind": "site-icon"
+  },
+  "runway": {
+    "file": "runway.png",
+    "source": "https://runwayml.com",
+    "kind": "site-icon"
+  },
+  "paris-baguette": {
+    "file": "paris-baguette.png",
+    "source": "https://parisbaguette.com",
+    "kind": "site-icon"
+  },
+  "shein": {
+    "file": "shein.png",
+    "source": "https://shein.com",
+    "kind": "site-icon"
+  },
+  "shinhan-sol": {
+    "file": "shinhan-sol.png",
+    "source": "https://shinhan.com",
+    "kind": "site-icon"
+  },
+  "skyscanner": {
+    "file": "skyscanner.png",
+    "source": "https://skyscanner.com",
+    "kind": "site-icon"
+  },
+  "ssg": {
+    "file": "ssg.png",
+    "source": "https://ssg.com",
+    "kind": "site-icon"
+  },
+  "stability-ai": {
+    "file": "stability-ai.png",
+    "source": "https://stability.ai",
+    "kind": "site-icon"
+  },
+  "spline": {
+    "file": "spline.png",
+    "source": "https://spline.design",
+    "kind": "site-icon"
+  },
+  "sulwhasoo": {
+    "file": "sulwhasoo.png",
+    "source": "https://sulwhasoo.com",
+    "kind": "site-icon"
+  },
+  "temu": {
+    "file": "temu.png",
+    "source": "https://temu.com",
+    "kind": "site-icon"
+  },
+  "toss-dark-mode": {
+    "file": "toss-dark-mode.png",
+    "source": "https://toss.im",
+    "kind": "site-icon"
+  },
+  "toss": {
+    "file": "toss.png",
+    "source": "https://toss.im",
+    "kind": "site-icon"
+  },
+  "superhuman": {
+    "file": "superhuman.png",
+    "source": "https://superhuman.com",
+    "kind": "site-icon"
+  },
+  "tous-les-jours": {
+    "file": "tous-les-jours.png",
+    "source": "https://tlj.co.kr",
+    "kind": "site-icon"
+  },
+  "watcha": {
+    "file": "watcha.png",
+    "source": "https://watcha.com",
+    "kind": "site-icon"
+  },
+  "tving": {
+    "file": "tving.png",
+    "source": "https://tving.com",
+    "kind": "site-icon"
+  },
+  "yanolja": {
+    "file": "yanolja.png",
+    "source": "https://yanolja.com",
+    "kind": "site-icon"
+  },
+  "yogiyo": {
+    "file": "yogiyo.png",
+    "source": "https://yogiyo.co.kr",
+    "kind": "site-icon"
+  },
+  "sungsimdang": {
+    "file": "sungsimdang.svg",
+    "source": "https://sungsimdang.co.kr/theme/responsive_sungsimdang/include/img/top_logo.svg",
+    "kind": "wordmark"
+  },
+  "wavve": {
+    "file": "wavve.svg",
+    "source": "https://www.oppadu.com/tools/design-systems-site/data/hero/wavve.json",
+    "kind": "symbol"
+  }
+}
