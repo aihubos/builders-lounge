@@ -50,6 +50,9 @@ let barCache = "";
 let calendarView = "month";
 let calendarOffset = 0;
 let calendarCoverage = null;
+let calendarUpdatedAt = null;
+let calendarRefreshing = false;
+let calendarLastAttempt = 0;
 
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
 const enc = encodeURIComponent;
@@ -630,7 +633,7 @@ function renderMiniCalendar() {
     }
     contents += '<div class="mini-agenda">'+(rows||'<p class="calendar-empty">이 기간에 등록된 모임이 없어요.</p>')+'</div>';
   }
-  box.innerHTML = '<div class="mini-calendar-head"><span>GOOGLE CALENDAR</span><h2>모임 일정</h2><button class="calendar-close" type="button" data-calendar-close aria-label="모임 일정 접기">×</button></div><div class="calendar-periods" role="group" aria-label="일정 표시 기간">'+[['week','1주'],['fortnight','2주'],['month','월']].map(([v,l])=>'<button data-calendar-view="'+v+'" aria-pressed="'+(calendarView===v)+'">'+l+'</button>').join('')+'</div><div class="calendar-range"><button data-calendar-move="-1" aria-label="이전 기간">‹</button><strong>'+esc(title)+'</strong><button data-calendar-move="1" aria-label="다음 기간">›</button></div><button class="calendar-today" data-calendar-move="today">오늘 기준으로</button>'+contents+'<div class="calendar-links"><a href="#calendar">전체 일정 보기 →</a><a href="'+CALENDAR_SUBSCRIBE+'" target="_blank" rel="noopener noreferrer">Google 캘린더 열기 ↗</a></div><p class="calendar-sync">한국 시간 · 공개 일정은 약 30분마다 갱신됩니다.<br>1주·2주는 오늘부터, 월은 해당 월 기준입니다.</p>';
+  box.innerHTML = '<div class="mini-calendar-head"><span>GOOGLE CALENDAR</span><h2>모임 일정</h2><button class="calendar-close" type="button" data-calendar-close aria-label="모임 일정 접기">×</button></div><div class="calendar-periods" role="group" aria-label="일정 표시 기간">'+[['week','1주'],['fortnight','2주'],['month','월']].map(([v,l])=>'<button data-calendar-view="'+v+'" aria-pressed="'+(calendarView===v)+'">'+l+'</button>').join('')+'</div><div class="calendar-range"><button data-calendar-move="-1" aria-label="이전 기간">‹</button><strong>'+esc(title)+'</strong><button data-calendar-move="1" aria-label="다음 기간">›</button></div><button class="calendar-today" data-calendar-move="today">오늘 기준으로</button>'+contents+'<div class="calendar-links"><a href="#calendar">전체 일정 보기 →</a><a href="'+CALENDAR_SUBSCRIBE+'" target="_blank" rel="noopener noreferrer">Google 캘린더 열기 ↗</a></div><p class="calendar-sync">한국 시간 · 30초 자동 갱신<br>'+ (calendarUpdatedAt && calendarEvents !== 'error' ? '최근 확인 ' + new Date(calendarUpdatedAt).toLocaleTimeString('ko-KR', {timeZone:'Asia/Seoul'}) : (calendarEvents === 'error' ? '갱신 실패 · 다시 시도해 주세요' : '최신 일정 확인 중')) + '<br><button type="button" class="calendar-today" data-calendar-refresh>일정 새로고침</button><br>1주·2주는 오늘부터, 월은 해당 월 기준입니다.</p>';
 }
 
 /* ---------- 이벤트 ---------- */
@@ -659,6 +662,7 @@ async function removeItem(path, question) {
 
 document.addEventListener("click", async (event) => {
   const target = event.target;
+  if (target.closest('[data-calendar-refresh]')) { refreshCalendar(true); return; }
   if(target.closest('[data-calendar-toggle],[data-calendar-close]')) {
     const panel=document.querySelector('[data-mini-calendar]');
     panel.hidden=target.closest('[data-calendar-close]')?true:!panel.hidden;
@@ -788,11 +792,37 @@ document.addEventListener("keydown", (event) => {
     document.querySelector("[data-menu]").setAttribute("aria-expanded", "false");
   }
 });
-fetch("calendar.json", { cache: "no-cache" })
-  .then((response) => (response.ok ? response.json() : Promise.reject(new Error("calendar"))))
-  .then((data) => { calendarEvents = Array.isArray(data.events) ? data.events : []; calendarCoverage = data.from && data.to ? {from:Date.parse(data.from),to:Date.parse(data.to)} : null; })
-  .catch(() => { calendarEvents = "error"; })
-  .finally(() => { tickBar(); renderMiniCalendar(); if (route().name === "calendar") render(true); });
+async function refreshCalendar(force = false) {
+  if (calendarRefreshing || (!force && Date.now() - calendarLastAttempt < 5000)) return;
+  calendarRefreshing = true;
+  calendarLastAttempt = Date.now();
+  const button = document.querySelector('[data-calendar-refresh]');
+  if (button) { button.disabled = true; button.textContent = '불러오는 중…'; }
+  const previousEvents = JSON.stringify(calendarEvents);
+  try {
+    const response = await fetch('https://builders-lounge-calendar.report-request-board.workers.dev/calendar', {cache:'no-store', signal:AbortSignal.timeout(20000)});
+    if (!response.ok) throw new Error('calendar');
+    const data = await response.json();
+    if (!Array.isArray(data.events)) throw new Error('calendar');
+    calendarEvents = data.events;
+    calendarCoverage = data.from && data.to ? {from:Date.parse(data.from),to:Date.parse(data.to)} : null;
+    calendarUpdatedAt = data.updatedAt;
+  } catch {
+    calendarEvents = 'error';
+  } finally {
+    calendarRefreshing = false;
+    const panel = document.querySelector('[data-mini-calendar]');
+    const scrollTop = panel.scrollTop;
+    tickBar();
+    renderMiniCalendar();
+    panel.scrollTop = scrollTop;
+    if (route().name === 'calendar' && previousEvents !== JSON.stringify(calendarEvents)) render(true);
+  }
+}
+refreshCalendar();
+setInterval(() => { if (!document.hidden) refreshCalendar(); }, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshCalendar(); });
+window.addEventListener('focus', () => refreshCalendar());
 fetch("newsletter.json", { cache: "no-cache" })
   .then((response) => (response.ok ? response.json() : Promise.reject(new Error("newsletter"))))
   .then((data) => { READINGS.newsletter.items = Array.isArray(data.items) ? data.items : []; })

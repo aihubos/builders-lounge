@@ -1,0 +1,8 @@
+{
+ "name":"builders-lounge-calendar",
+ "main":"index.js",
+ "account_id":"771175bdaa002077d2a753084d3fea30",
+ "compatibility_date":"2026-10-11",
+ "compatibility_flags":["nodejs_compat"],
+ "workers_dev":true
+}
