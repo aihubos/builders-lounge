@@ -199,6 +199,8 @@ function render(force = false) {
   document.body.classList.remove("menu-open");
   document.querySelector("[data-menu]").setAttribute("aria-expanded", "false");
   const { name, id } = route();
+  document.querySelector('.more-nav')?.removeAttribute('open');
+  document.querySelector('.global-search input').value = new URLSearchParams(location.search).get('q') || '';
   const section = name === "write" ? "board" : name;
   const names = {home:'라운지 홈',library:'전체 자료 검색',prompts:'프롬프트',materials:'교육자료',lectures:'강의자료',videos:'영상',board:'자유게시판',calendar:'모임 일정',curriculum:'교육 커리큘럼',newsletter:'뉴스레터',terms:'이용약관',privacy:'개인정보 처리 안내',guidelines:'운영정책'};
   document.querySelector('[data-page-label]').textContent = names[section] || '라운지';
@@ -554,8 +556,7 @@ function renderLibraryHome() {
   const next = upcomingEvents(1)[0];
   const eventText = next ? `<strong>${esc(next.title)}</strong><p>${esc(eventWhen(next).text)}</p>` : `<strong>${calendarEvents === null ? '일정을 불러오고 있어요' : calendarEvents === 'error' ? '달력에서 일정을 확인해 주세요' : '다음 배움을 함께 준비해요'}</strong><p>모임 일정과 참여 안내를 확인하세요.</p>`;
   main.innerHTML = `<div class="library-home hub-home">
-    <div class="dashboard-heading"><div><p class="eyebrow">YOUR LEARNING SPACE</p><h1>오늘, 무엇을 만들어볼까요?</h1><p>배운 것을 다시 찾고, 나만의 결과물로 이어가세요.</p></div><a class="btn" href="#curriculum">내게 맞는 과정 찾기 ↗</a></div>
-    <section class="library-hero"><div class="hero-copy"><span class="hero-tag">AI BUILDERS LAB · COMMUNITY</span><h2>작은 배움이,<br>다음 가능성으로.</h2><p>프롬프트부터 수업 자료까지.<br>필요한 순간, 바로 꺼내 쓰는 우리 모임의 자료실.</p>${librarySearch()}<div class="keywords"><span>많이 찾는 주제</span>${['홈페이지','이미지','블로그','에이전트'].map(q=>`<a href="?q=${enc(q)}#library">${q}</a>`).join('')}</div></div><div class="hero-brand" aria-hidden="true"><img src="home/assets/brand/builders-lab-symbol-icon.png" alt=""><span>LEARN.<br>SHARE.<br>GROW.</span></div></section>
+    <section class="home-intro"><p class="eyebrow">배우고, 나누고, 성장한다.</p><h1>필요한 배움을, 바로 찾아보세요.</h1><p>우리 모임의 프롬프트·교재·영상이 한곳에.</p><div class="keywords"><span>추천 검색</span>${['홈페이지','이미지','블로그','에이전트'].map(q=>`<a href="?q=${enc(q)}#library">${q}</a>`).join('')}</div></section>
     <section class="category-grid" aria-label="자료 분류">${categories.map(([key,icon,desc])=>`<a class="category-card" href="#${key}"><div class="category-top"><span class="category-icon" aria-hidden="true">${icon}</span><span class="card-arrow">↗</span></div><div class="category-summary"><h2>${LIBRARY_TYPES[key]}</h2><strong>${LIBRARY_ITEMS.filter(i=>i.section===key).length}<small>개</small></strong></div><p>${desc}</p></a>`).join('')}</section>
     <div class="home-workspace"><div class="home-library"><div class="library-columns">${panel('자주 쓰는 프롬프트','좋은 질문 하나로 시작하세요.','prompts',LIBRARY_ITEMS.filter(i=>i.section==='prompts').slice(0,4))}${panel('수업 자료 바로가기','수업이 끝난 뒤에도, 혼자 다시 해볼 수 있게.','lectures',[RESOURCES[4],RESOURCES[1],RESOURCES[5],RESOURCES[2]])}</div>
     <section class="library-panel"><div class="panel-heading"><div><h2>보고 따라 하는 영상</h2><p>도구의 첫 실행부터, 직접 만드는 과정까지.</p></div><a href="#videos">전체 보기 →</a></div><div class="video-grid">${VIDEOS.slice(0,4).map(item=>`<a class="video-card" href="#videos/${enc(item.id)}"><div class="video-thumbnail"><img src="https://i.ytimg.com/vi/${esc(item.videoId)}/hqdefault.jpg" alt="" loading="lazy"><span>▶</span><em>${esc(item.duration)}</em></div><div><small>${esc(item.category)}</small><strong>${esc(item.title)}</strong></div></a>`).join('')}</div></section></div>
@@ -569,7 +570,7 @@ function renderLibrary(section) {
   const items = LIBRARY_ITEMS.filter(item => (section === 'library' || section === item.section) && (!q || [item.title, item.summary, item.category, item.copyText, ...(item.tags || [])].join(' ').toLocaleLowerCase().includes(q.toLocaleLowerCase())));
   const title = LIBRARY_TYPES[section] || '전체 자료 검색';
   setTitle(title);
-  main.innerHTML = '<section class="library-panel library-list"><h1>' + title + '</h1>' + librarySearch(section, q)
+  main.innerHTML = '<section class="library-panel library-list"><h1>' + title + '</h1>'
     + '<nav class="library-filters" aria-label="자료 분류">' + [['library', '전체'], ...Object.entries(LIBRARY_TYPES)].map(([key, label]) => '<a href="' + (q ? '?q=' + enc(q) : '') + '#' + key + '"' + (key === section ? ' aria-current="page"' : '') + '>' + label + '</a>').join('') + '</nav>'
     + '<p class="result-count">' + items.length + '개 자료' + (q ? ' · “' + esc(q) + '” 검색 결과 <a href="#' + section + '">검색 지우기</a>' : '') + '</p><div class="resource-stack">' + (items.map(libraryRow).join('') || '<p class="empty">찾는 자료가 없어요. 다른 말로 검색하거나 <a href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">카카오로 요청해 주세요.</a></p>') + '</div></section>';
 }
@@ -606,7 +607,8 @@ async function removeItem(path, question) {
 
 document.addEventListener("click", async (event) => {
   const target = event.target;
-  if (target.closest('[data-search-shortcut]')) { go(window.location.pathname + '#library'); main.querySelector('[name="q"]')?.focus(); return; }
+  if (!target.closest('.more-nav')) document.querySelector('.more-nav')?.removeAttribute('open');
+  if (target.closest('[data-search-shortcut]')) { go(window.location.pathname + '#library'); document.querySelector('.global-search input')?.focus(); return; }
   const menuButton = target.closest("[data-menu]");
   if (menuButton) {
     const open = document.body.classList.toggle("menu-open");
@@ -713,8 +715,9 @@ document.addEventListener("submit", async (event) => {
 window.addEventListener("popstate", () => render());
 window.addEventListener("hashchange", () => render());
 document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") document.querySelector(".more-nav")?.removeAttribute("open");
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-    event.preventDefault(); go(window.location.pathname + '#library'); main.querySelector('[name="q"]')?.focus();
+    event.preventDefault(); go(window.location.pathname + '#library'); document.querySelector('.global-search input')?.focus();
   }
   if (event.key === "Escape" && document.body.classList.contains("menu-open")) {
     document.body.classList.remove("menu-open");
