@@ -27,3 +27,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Brand lookbook
+Brand names, categories and indicative primary colors reference the publicly accessible Oppadu design-systems brand index (https://www.oppadu.com/ai/design-systems-site/, accessed 2026-10-11). Brand names belong to their respective owners. No gated guides, preview source code, screenshots or editorial descriptions are included. All lookbook previews, sample components and downloadable suggestions are original Builders Lounge examples, not official brand guidelines.

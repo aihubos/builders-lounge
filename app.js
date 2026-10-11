@@ -1,3 +1,4 @@
+import { renderLookbook } from "./lookbook.js";
 import { CLASSROOM, CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
 
 const API = window.location.port === "8787"
@@ -215,7 +216,8 @@ function render(force = false) {
     window.scrollTo(0, 0);
     if (window.innerWidth <= 900 && document.activeElement?.closest("#side")) main.focus();
   }
-  if (name === "lookbook" || name === "motion") return renderDesignDirectory(name);
+  if (name === "lookbook") { setTitle("브랜드 룩북"); return renderLookbook(main, id); }
+  if (name === "motion") return renderDesignDirectory(name);
   if (name === "home") return renderLibraryHome();
   if (["library", "materials", "lectures"].includes(name)) return id ? renderResource(id) : renderLibrary(name);
   if (["prompts", "videos"].includes(name) && !id) return renderLibrary(name);
