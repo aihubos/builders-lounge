@@ -1,5 +1,5 @@
 import { promptBoard } from "./prompt-board.js?v=20261011-prompt-board";
-import { membership } from "./membership.js?v=20261011-prompt-board";
+import { membership } from "./membership.js?v=20261011-menu-clean";
 import { renderLookbook } from "./lookbook.js?v=20261011-fullsource";
 import { CLASSROOM, CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
 
