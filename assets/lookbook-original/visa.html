@@ -1,0 +1,121 @@
+<!doctype html><html data-theme="light"><head><meta charset="utf-8"><style>:root, :root[data-theme="light"] {
+  --card-bg: #FFFFFF;
+  --card-surface: #F5F5F5;
+  --card-border: rgba(0,0,0,0.1);
+  --card-fg: #000000;
+  --card-fg-muted: #4A4A4A;
+  --card-accent: #1434CB;
+}
+:root[data-theme="dark"] {
+  --card-bg: #0A0A0A;
+  --card-surface: #1A1A1A;
+  --card-border: #FFFFFF1F;
+  --card-fg: #FFFFFF;
+  --card-fg-muted: #D9D9D9;
+  --card-accent: #BDEAFF;
+}
+</style><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:var(--card-bg,#fff);color:var(--card-fg,inherit);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Pretendard',sans-serif}*{box-sizing:border-box}</style></head><body><style>
+.visa-h{--vh-ink:var(--card-fg,#000000);--vh-sub:var(--card-fg-muted,#4A4A4A);--vh-line:var(--card-border,rgba(0,0,0,.1));--vh-act:var(--card-accent,#1434CB);--vh-cta:#022551;--vh-cta-fg:#FFFFFF;--vh-merchant:#1F5A73;--vh-dim:rgba(20,34,57,.14);--vh-pop:var(--card-bg,#FFFFFF);--vh-chr:var(--card-surface,#F5F5F5);position:relative;height:100%;overflow:hidden;background:var(--card-bg,#FFFFFF);color:var(--vh-ink);font-family:'Visa Dialect UI','Visa Dialect',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;line-height:1.25;}
+html[data-theme="dark"] .visa-h{--vh-cta:#BDEAFF;--vh-cta-fg:#2E2E2E;--vh-merchant:#9CC9DC;--vh-dim:rgba(0,0,0,.36);--vh-pop:#1A1A1A;--vh-chr:#2E2E2E;}
+.visa-h *{box-sizing:border-box;}
+.visa-h svg{display:block;flex:none;}
+.visa-h-top{height:24px;display:flex;align-items:center;gap:6px;padding:0 9px;border-bottom:1px solid var(--vh-line);}
+.visa-h-kit{font-family:Georgia,'Times New Roman',serif;font-size:12.5px;line-height:1;color:var(--vh-merchant);letter-spacing:-.2px;}
+.visa-h-co{font-size:5.6px;letter-spacing:.16em;color:var(--vh-sub);}
+.visa-h-ord{position:absolute;left:9px;top:31px;width:calc(45% - 24px);display:flex;flex-direction:column;}
+.visa-h-ov{font-size:5.4px;font-weight:600;letter-spacing:.1em;color:var(--vh-sub);text-transform:uppercase;line-height:7px;}
+.visa-h-item{display:flex;gap:5px;margin-top:4px;align-items:center;}
+.visa-h-tile{flex:none;width:40px;height:40px;border-radius:6px;background:var(--card-surface,#F5F5F5);display:flex;align-items:center;justify-content:center;}
+.visa-h-name{font-size:7.3px;font-weight:600;line-height:9px;white-space:nowrap;}
+.visa-h-meta{font-size:5.6px;line-height:7.4px;color:var(--vh-sub);white-space:nowrap;}
+.visa-h-price{font-size:7.2px;font-weight:600;line-height:9px;}
+.visa-h-rows{margin-top:5px;font-size:5.9px;line-height:8.6px;color:var(--vh-sub);}
+.visa-h-rows div{display:flex;justify-content:space-between;}
+.visa-h-tot{margin-top:2px;padding-top:2px;border-top:1px solid var(--vh-line);color:var(--vh-ink);font-size:7.2px;font-weight:700;line-height:10px;}
+.visa-h-pm{margin-top:6px;}
+.visa-h-panel{margin-top:3px;padding:4px 4px 5px;border-radius:6px;background:var(--card-surface,#F5F5F5);}
+.visa-h-ctp{display:flex;align-items:center;gap:3px;font-size:6px;font-weight:600;line-height:8px;white-space:nowrap;}
+.visa-h-radio{flex:none;width:7px;height:7px;border-radius:50%;border:2px solid var(--vh-act);background:var(--card-bg,#FFFFFF);}
+.visa-h-bar{flex:none;width:1px;height:7px;background:currentColor;opacity:.35;}
+.visa-h-mail{font-size:5.5px;line-height:7px;color:var(--vh-sub);margin:2px 0 0 10px;}
+.visa-h-cardrow{display:flex;align-items:center;gap:4px;margin-top:3px;padding:3px 4px;border-radius:4px;background:var(--card-bg,#FFFFFF);border:1px solid var(--vh-line);}
+.visa-h-cardrow b{display:block;font-size:6px;font-weight:600;line-height:7.5px;}
+.visa-h-cardrow span{display:block;font-size:5.5px;line-height:7px;color:var(--vh-sub);}
+.visa-h-mpay{display:none;margin-top:5px;height:15px;border-radius:4px;background:#0E5A78;color:#FFFFFF;font-size:6.4px;font-weight:600;align-items:center;justify-content:center;gap:3px;}
+.visa-h-dim{position:absolute;inset:0;background:var(--vh-dim);}
+.visa-h-pop{position:absolute;right:8px;top:8px;bottom:8px;width:55%;display:flex;flex-direction:column;border-radius:10px;overflow:hidden;background:var(--vh-pop);box-shadow:0 0 0 1px rgba(2,30,76,.08),0 12px 22px -6px rgba(0,0,0,.35),0 3px 8px rgba(0,0,0,.16);}
+.visa-h-chrome{flex:none;height:13px;display:flex;align-items:center;gap:3px;padding:0 6px;background:var(--vh-chr);border-bottom:1px solid var(--vh-line);font-size:5.5px;color:var(--vh-sub);white-space:nowrap;}
+.visa-h-chrome svg:last-child{margin-left:auto;}
+.visa-h-body{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 10px 7px;}
+.visa-h-gap{flex:1 1 0;min-height:3px;}
+.visa-h-brand{display:flex;align-items:center;gap:4px;font-size:7.6px;font-weight:700;line-height:9px;color:#12806F;letter-spacing:-.1px;}
+html[data-theme="dark"] .visa-h-brand{color:#5CD0BC;}
+.visa-h-logo{color:#1434CB;}
+html[data-theme="dark"] .visa-h-logo{color:#FFFFFF;}
+.visa-h-art{position:relative;width:76%;margin-left:12%;}
+.visa-h-art>svg{width:100%;height:auto;filter:drop-shadow(0 4px 5px rgba(2,30,76,.3));}
+.visa-h-fp{position:absolute;left:-20%;bottom:-9%;width:36%;aspect-ratio:1;border-radius:6px;background:#FFFFFF;box-shadow:0 3px 7px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;}
+.visa-h-h{margin-top:9px;font-size:9.2px;font-weight:600;line-height:11px;}
+.visa-h-p{margin-top:2px;font-size:6.1px;line-height:8.3px;color:var(--vh-sub);}
+.visa-h-p b{color:var(--vh-ink);font-weight:600;}
+.visa-h-btn{flex:none;width:100%;height:20px;border-radius:6px;background:var(--vh-cta);color:var(--vh-cta-fg);display:flex;align-items:center;justify-content:center;font-size:7.2px;font-weight:600;letter-spacing:.2px;}
+.visa-h-alt{margin-top:5px;font-size:6.1px;line-height:7px;font-weight:600;color:var(--vh-act);}
+@media (min-height:228px){
+  .visa-h-mpay{display:flex;}
+  .visa-h-art{width:78%;}
+  .visa-h-h{font-size:10px;line-height:12px;margin-top:10px;}
+  .visa-h-p{font-size:6.6px;line-height:9px;}
+  .visa-h-btn{height:22px;font-size:7.8px;}
+  .visa-h-alt{font-size:6.6px;}
+}
+</style>
+<div class="visa-h" lang="en">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="visa-h-logo" viewBox="0 0 71 23"><path fill="currentColor" fill-rule="evenodd" d="M50.6986 15.3377C50.7123 11.8369 47.8134 10.3152 45.4937 9.09755C43.9358 8.27981 42.6393 7.59921 42.6617 6.54843C42.6781 5.75329 43.4371 4.90557 45.0931 4.692C47.0325 4.5045 48.9864 4.8451 50.7479 5.67771L51.7566 0.985714C50.0419 0.341244 48.2261 0.00745647 46.3943 0C40.7429 0 36.7376 3.013 36.7014 7.33043C36.6653 10.5143 39.5501 12.3017 41.7286 13.363C43.9629 14.4473 44.7153 15.1439 44.7054 16.1164C44.7054 17.6049 42.9213 18.2587 41.2751 18.285C38.4794 18.3296 36.8224 17.5564 35.5085 16.9434L35.3839 16.8853L34.3357 21.7416C35.6763 22.3593 38.1504 22.8949 40.7166 22.9211C46.7393 22.9211 50.6821 19.9443 50.7019 15.3377H50.6986ZM26.9429 0.404143L17.6541 22.5729H11.592L7.02157 4.88257C6.74229 3.79171 6.50243 3.39414 5.658 2.93414C4.27143 2.18829 2.00429 1.48514 0 1.04814L0.138 0.391H9.89329C11.2059 0.396383 12.3201 1.35458 12.5219 2.65157L14.9369 15.4823L20.9234 0.404143H26.9429ZM70.9714 22.5663H65.6683L64.975 19.2641H57.6183L56.4223 22.5729H50.4029L59.0016 2.03057C59.409 1.04254 60.3741 0.399575 61.4429 0.404143H66.3419L70.9714 22.5663ZM59.2677 14.72L62.2873 6.394L64.0254 14.72H59.2677ZM30.3994 22.5729L35.1571 0.404143H29.4071L24.6626 22.5729H30.3994Z"/></symbol></defs></svg>
+  <div class="visa-h-top"><span class="visa-h-kit">Kitchen</span><span class="visa-h-co">CHECKOUT</span></div>
+  <div class="visa-h-ord">
+    <div class="visa-h-ov">Your order</div>
+    <div class="visa-h-item">
+      <div class="visa-h-tile">
+        <svg width="37" height="35" viewBox="0 0 100 94" aria-hidden="true"><defs><linearGradient id="visa-h-olive" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B7C181"/><stop offset=".28" stop-color="#98A461"/><stop offset=".75" stop-color="#7C8749"/><stop offset="1" stop-color="#646F38"/></linearGradient><linearGradient id="visa-h-chrome" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9AA0A6"/><stop offset=".25" stop-color="#F7F8F9"/><stop offset=".55" stop-color="#C3C8CD"/><stop offset=".8" stop-color="#FFFFFF"/><stop offset="1" stop-color="#8A9097"/></linearGradient></defs><ellipse cx="50" cy="90" rx="42" ry="3.4" fill="#000000" opacity=".16"/><path d="M16 24C16 13 24 8 35 8H65C76 8 84 13 84 24V82H16Z" fill="url(#visa-h-olive)"/><path d="M72 9C79 11 84 16 84 24V82H74Z" fill="#55602E" opacity=".35"/><path d="M22 22C22 15 27 12 34 12" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M21 30V72" stroke="#FFFFFF" stroke-opacity=".2" stroke-width="3" stroke-linecap="round"/><rect x="20" y="3.5" width="60" height="5" rx="2.5" fill="url(#visa-h-chrome)"/><rect x="37" y="16" width="22" height="4.6" rx="2.3" fill="url(#visa-h-chrome)"/><circle cx="71" cy="34" r="8.4" fill="url(#visa-h-chrome)"/><circle cx="71" cy="34" r="5.9" fill="#F4F1E8"/><path d="M71 34L74.6 30.4" stroke="#C8102E" stroke-width="1.3" stroke-linecap="round"/><circle cx="71" cy="34" r="1.1" fill="#2B2B2B"/><rect x="32" y="32" width="28" height="7" rx="2" fill="url(#visa-h-chrome)"/><path d="M34 39H58L55 46H37Z" fill="url(#visa-h-chrome)"/><rect x="55" y="40.2" width="23" height="4.6" rx="2.3" fill="#1C1C1C"/><path d="M46 46V59" stroke="#6B3E1F" stroke-width="1.3" opacity=".75"/><path d="M38 60H54V66C54 71 51 73 46 73C41 73 38 71 38 66Z" fill="#FFFFFF" stroke="#D0D0D0" stroke-width=".8"/><path d="M54 62C58 62 58 68 54 68" stroke="#D0D0D0" stroke-width="1.4" fill="none"/><ellipse cx="46" cy="60.4" rx="7.6" ry="1.5" fill="#6B3E1F"/><rect x="24" y="73" width="48" height="6" rx="2" fill="url(#visa-h-chrome)"/><path d="M28 76H68" stroke="#80868C" stroke-width="1" stroke-dasharray="1.6 1.8"/><rect x="12" y="80" width="76" height="7" rx="3" fill="#56622F"/><path d="M16 34H10V62C10 65 11.5 66 13.5 66" stroke="url(#visa-h-chrome)" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="10" cy="31" r="2.6" fill="#1C1C1C"/></svg>
+      </div>
+      <div>
+        <div class="visa-h-name">Coffee Machine</div>
+        <div class="visa-h-meta">Colour: Olive Green</div>
+        <div class="visa-h-meta">Qty: 1</div>
+        <div class="visa-h-price">£135.00</div>
+      </div>
+    </div>
+    <div class="visa-h-rows">
+      <div><span>Subtotal</span><span>£135.00</span></div>
+      <div><span>Delivery</span><span>FREE</span></div>
+      <div class="visa-h-tot"><span>Order total</span><span>£135.00</span></div>
+    </div>
+    <div class="visa-h-ov visa-h-pm">Payment method</div>
+    <div class="visa-h-panel">
+      <div class="visa-h-ctp"><i class="visa-h-radio"></i><svg class="visa-h-logo" width="16" height="5.2" viewBox="0 0 71 23" role="img" aria-label="Visa"><use href="#visa-h-logo"/></svg><i class="visa-h-bar"></i><span>Click to Pay</span></div>
+      <div class="visa-h-mail">al•••r@mail.com</div>
+      <div class="visa-h-cardrow">
+        <svg width="21" height="13.2" viewBox="0 0 856 540" aria-hidden="true"><rect width="856" height="540" rx="44" fill="#1434CB"/><rect x="86" y="194" width="114" height="90" rx="15" fill="#E7C263"/><use href="#visa-h-logo" x="560" y="380" width="234" height="76" style="color:#FFFFFF"/></svg>
+        <div><b>Bank Debit</b><span>•••• 5678</span></div>
+      </div>
+    </div>
+    <div class="visa-h-mpay"><svg width="6" height="6" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C10.2091 0 12 1.79086 12 4V5H15V16H1V5H4V4C4 1.79086 5.79086 0 8 0ZM3 14H13V7H3V14ZM8 2C6.89543 2 6 2.89543 6 4V5H10V4C10 2.89543 9.10457 2 8 2Z"/></svg>Pay 135.00 GBP</div>
+  </div>
+  <div class="visa-h-dim"></div>
+  <div class="visa-h-pop">
+    <div class="visa-h-chrome"><svg width="6" height="6" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C10.2091 0 12 1.79086 12 4V5H15V16H1V5H4V4C4 1.79086 5.79086 0 8 0ZM3 14H13V7H3V14ZM8 2C6.89543 2 6 2.89543 6 4V5H10V4C10 2.89543 9.10457 2 8 2Z"/><path fill="currentColor" d="M9 11.9961H7V8.99609H9V11.9961Z"/></svg><span>clicktopay.auth.visa.com/auth</span><svg width="6" height="6" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M15.3635 2.05078L9.41431 8.00098L15.3635 13.9502L13.9495 15.3643L8.00024 9.41504L2.05005 15.3643L0.635986 13.9502L6.58618 8.00098L0.635986 2.05078L2.05005 0.636719L8.00024 6.58691L13.9495 0.636719L15.3635 2.05078Z"/></svg></div>
+    <div class="visa-h-body">
+      <div class="visa-h-brand"><span>Digital Bank.</span><i class="visa-h-bar"></i><svg class="visa-h-logo" width="24" height="7.8" viewBox="0 0 71 23" role="img" aria-label="Visa"><use href="#visa-h-logo"/></svg></div>
+      <div class="visa-h-gap"></div>
+      <div class="visa-h-art">
+        <svg viewBox="0 0 856 540" role="img" aria-label="Digital Bank Visa debit card"><defs><linearGradient id="visa-h-cbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E55F0"/><stop offset=".45" stop-color="#1434CB"/><stop offset="1" stop-color="#0A1F86"/></linearGradient><radialGradient id="visa-h-cglow" cx=".2" cy=".05" r=".85"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".3"/><stop offset=".55" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient><linearGradient id="visa-h-chip" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBEBB5"/><stop offset=".35" stop-color="#DDB24E"/><stop offset=".62" stop-color="#F6DA8A"/><stop offset="1" stop-color="#B4862A"/></linearGradient><clipPath id="visa-h-cclip"><rect width="856" height="540" rx="34"/></clipPath></defs><g clip-path="url(#visa-h-cclip)"><rect width="856" height="540" fill="url(#visa-h-cbg)"/><use href="#visa-h-logo" x="236" y="176" width="667" height="216" style="color:#4D6CFF" opacity=".34"/><rect width="856" height="540" fill="url(#visa-h-cglow)"/></g><rect x="2" y="2" width="852" height="536" rx="32" fill="none" stroke="#FFFFFF" stroke-opacity=".25" stroke-width="3"/><text x="58" y="98" fill="#FFFFFF" font-family="'Visa Dialect UI','Segoe UI',Arial,sans-serif" font-size="46" font-weight="700" letter-spacing="-1">Digital Bank.</text><g transform="translate(724 58)" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity=".9"><path d="M0 8C9 18 9 34 0 44"/><path d="M16 0C30 16 30 36 16 52"/><path d="M32 -8C51 14 51 38 32 60"/></g><rect x="86" y="194" width="114" height="90" rx="15" fill="url(#visa-h-chip)"/><path d="M86 224H126M86 254H126M160 224H200M160 254H200M126 194V284M160 194V284M126 239H160" stroke="#8A6418" stroke-opacity=".55" stroke-width="3.5" fill="none"/><text x="798" y="396" text-anchor="end" fill="#FFFFFF" fill-opacity=".85" font-family="'Visa Dialect UI','Segoe UI',Arial,sans-serif" font-size="25" font-weight="600" letter-spacing="4">DEBIT</text><use href="#visa-h-logo" x="594" y="416" width="204" height="66" style="color:#FFFFFF"/></svg>
+        <div class="visa-h-fp"><svg width="72%" height="72%" viewBox="0 0 24 24" aria-hidden="true"><path fill="#FCC015" d="M12 5.00098C15.8594 5.00098 19 8.14112 19 12.001V13.0869L22.1494 16.2363C21.8782 16.8836 21.5456 17.4984 21.1611 18.0762L17 13.915V12.001C17 9.24414 14.7568 7.00098 12 7.00098C9.24316 7.00098 7 9.24414 7 12.001V12.915L2.45996 17.4551C2.10663 16.8395 1.81225 16.1874 1.58203 15.5049L5 12.0869V12.001C5 8.14112 8.14014 5.00098 12 5.00098ZM12 1.00098C17.9238 1.00098 22.7695 5.70898 22.9922 11.5791L23 12.001C23 12.752 22.9233 13.4852 22.7793 14.1943L21 12.415V12.001C21 7.03858 16.9629 3.00098 12 3.00098C7.18494 3.00098 3.25251 6.80536 3.02246 11.5645L1.11035 13.4766C1.04504 12.9927 1 12.5024 1 12.001C1 5.93555 5.93457 1.00098 12 1.00098Z"/><path fill="#1434CB" d="M19.9722 19.5586C19.5117 20.0441 19.0068 20.4854 18.4653 20.8809L17.0005 19.415L13.5337 22.8809C13.0312 22.9514 12.5221 23.001 12.0005 23.001C11.5509 23.001 11.1099 22.9657 10.6743 22.9131L17.0005 16.5869L19.9722 19.5586ZM12.0005 9.00098C13.6546 9.00117 15.0005 10.3468 15.0005 12.001V15.915L8.49658 22.4189C7.81409 22.1887 7.16188 21.8943 6.54639 21.541L13.0005 15.0869V12.001C13.0005 11.4498 12.5521 11.0012 12.0005 11.001C11.4492 11.001 11.0005 11.4497 11.0005 12.001V14.415L4.96631 20.4492C4.45344 20.0215 3.97993 19.548 3.55225 19.0352L9.00049 13.5869V12.001C9.00049 10.3467 10.3462 9.00098 12.0005 9.00098Z"/></svg></div>
+      </div>
+      <div class="visa-h-h">Let’s make sure it’s you</div>
+      <div class="visa-h-p">Use your passkey to authorise a payment of <b>135.00&nbsp;GBP</b> to Kitchen Shop</div>
+      <div class="visa-h-gap"></div>
+      <div class="visa-h-btn">Authorise payment</div>
+      <div class="visa-h-alt">Authenticate another way</div>
+    </div>
+  </div>
+</div></body></html>

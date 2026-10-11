@@ -33,3 +33,6 @@ Brand names, categories and indicative primary colors reference the publicly acc
 
 ### Brand logos
 Logos are used to identify the listed brands; all trademark rights remain with their owners. Sources for each asset are recorded in `assets/brand-logos/sources.json`. Vector marks are from Simple Icons (CC0; individual trademarks remain protected), the reference site's publicly visible logo previews, and official brand pages. Website icons identify brands where vector marks were unavailable. Assets are hosted locally to avoid third-party image requests from visitors. Logo colors and proportions are retained.
+
+### User-provided original previews (2026-10-11)
+24 preview HTML documents and their accompanying card descriptions were extracted from the user-provided `oppadu-brand-lookbook.zip` without rewriting their contents. The user states they obtained permission. The archive contains the rendered gallery and styles, but no full brand-detail documents or detail data. These supplied previews are distinct from Builders Lounge's independently authored component and style suggestions.
