@@ -1,4 +1,4 @@
-import { membership } from "./membership.js?v=20261011-members";
+import { membership } from "./membership.js?v=20261011-archive-empty";
 import { renderLookbook } from "./lookbook.js?v=20261011-fullsource";
 import { CLASSROOM, CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
 
