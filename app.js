@@ -1,3 +1,4 @@
+import { membership } from "./membership.js?v=20261011-members";
 import { renderLookbook } from "./lookbook.js?v=20261011-fullsource";
 import { CLASSROOM, CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
 
@@ -96,7 +97,7 @@ async function api(path, options = {}) {
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
     if (response.status === 401 && auth.credential) logout("로그인 시간이 만료되었습니다. 다시 로그인해 주세요.");
-    throw new Error(ERRORS[body?.error] || "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    throw new Error(ERRORS[body?.error] || body?.error || "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
   }
   return body;
 }
@@ -104,14 +105,16 @@ async function api(path, options = {}) {
 /* ---------- 로그인 ---------- */
 
 function renderAccount() {
+  if (typeof members !== "undefined") members.nav();
   document.querySelectorAll(".workspace-actions [data-login]").forEach(button => { button.hidden = !!auth.user; });
   document.querySelector("[data-account]").innerHTML = auth.user
-    ? '<p><strong>' + esc(auth.user.name || "빌더") + '</strong>님</p><div class="account-actions"><a class="btn" href="#write">글쓰기</a><button class="btn-line" type="button" data-logout>로그아웃</button></div>'
+    ? (auth.user.isAdmin ? '<a class="btn-line" href="#admin">관리자 · 보관함</a>' : '') + '<p><strong>' + esc(auth.user.name || "빌더") + '</strong>님</p><div class="account-actions"><a class="btn" href="#write">글쓰기</a><button class="btn-line" type="button" data-logout>로그아웃</button></div>'
     : '<button class="btn" type="button" data-login>🔑 가입·로그인</button>';
 }
 
 
 function logout(message = "로그아웃했습니다.") {
+  if(auth.credential.startsWith("blm_")) api("/lounge/members/logout",{method:"POST"}).catch(()=>{});
   clearTimeout(auth.timer);
   auth.credential = "";
   auth.user = null;
@@ -169,12 +172,14 @@ async function acceptCredential(credential) {
   try {
     const data = await api("/lounge/me");
     auth.user = data.user || { name: "빌더" };
+    if(!auth.user.isAdmin) throw new Error("일반 회원은 아이디·비밀번호로 가입하고 로그인해 주세요.");
     clearTimeout(auth.timer);
     const expiry = tokenExpiry(auth.credential);
     if (expiry) auth.timer = setTimeout(() => logout("로그인 시간이 만료되었습니다. 다시 로그인해 주세요."), Math.max(1000, expiry - Date.now() - 5000));
     loginDialog.close();
     renderAccount();
     announce((auth.user.name || "빌더") + "님, 로그인되었습니다.");
+    if(auth.user.isAdmin) location.hash="admin";
     render(true);
   } catch (error) {
     auth.credential = "";
@@ -216,6 +221,9 @@ function render(force = false) {
     window.scrollTo(0, 0);
     if (window.innerWidth <= 900 && document.activeElement?.closest("#side")) main.focus();
   }
+  if (name === "signup") return members.signup();
+  if (name === "admin") return members.admin();
+  if (members.state[name] && !auth.user?.isAdmin) { main.innerHTML='<section class="library-panel"><h1>보관된 콘텐츠입니다</h1><p>현재 공개하지 않는 자료입니다.</p><a href="#home">모임 소개로 돌아가기</a></section>'; return; }
   if (name === "lookbook") { setTitle("브랜드 룩북"); return renderLookbook(main, id); }
   if (name === "motion") return renderDesignDirectory(name);
   if (name === "home") return renderLibraryHome();
@@ -556,25 +564,17 @@ function librarySearch(section = 'library', q = '') {
   return '<form class="library-search" data-library-search="' + section + '" role="search"><input type="search" name="q" maxlength="120" value="' + esc(q) + '" placeholder="🔍 예: 홈페이지, 이미지, 블로그" aria-label="자료 검색"><button class="btn" type="submit">찾기</button></form>';
 }
 function renderLibraryHome() {
-  setTitle('배우고, 나누고, 성장하는 라운지');
-  const categories = [['prompts','✧','바로 복사해서 쓰는 질문 틀'],['materials','▤','교재와 실습, 학습 게임'],['lectures','▥','슬라이드, PPT, 수업 파일'],['videos','▷','눈으로 보고 따라 하는 배움']];
-  const panel = (title, desc, section, items) => `<section class="library-panel"><div class="panel-heading"><div><h2>${title}</h2><p>${desc}</p></div><a href="#${section}">전체 보기 →</a></div><div class="resource-stack">${items.map(libraryRow).join('')}</div></section>`;
-  main.innerHTML = `<div class="library-home hub-home">
-    <section class="home-intro"><p class="eyebrow">배우고, 나누고, 성장한다.</p><h1>필요한 배움을, 바로 찾아보세요.</h1><p>우리 모임의 프롬프트·교재·영상이 한곳에.</p><div class="keywords"><span>추천 검색</span>${['홈페이지','이미지','블로그','에이전트'].map(q=>`<a href="?q=${enc(q)}#library">${q}</a>`).join('')}</div></section>
-    <section class="category-grid" aria-label="자료 분류">${categories.map(([key,icon,desc])=>`<a class="category-card" href="#${key}"><div class="category-top"><span class="category-icon" aria-hidden="true">${icon}</span><span class="card-arrow">↗</span></div><div class="category-summary"><h2>${LIBRARY_TYPES[key]}</h2><strong>${LIBRARY_ITEMS.filter(i=>i.section===key).length}<small>개</small></strong></div><p>${desc}</p></a>`).join('')}</section>
-    <div class="home-workspace"><div class="home-library"><div class="library-columns">${panel('자주 쓰는 프롬프트','좋은 질문 하나로 시작하세요.','prompts',LIBRARY_ITEMS.filter(i=>i.section==='prompts').slice(0,4))}${panel('수업 자료 바로가기','수업이 끝난 뒤에도, 혼자 다시 해볼 수 있게.','lectures',[RESOURCES[4],RESOURCES[1],RESOURCES[5],RESOURCES[2]])}</div>
-    <section class="library-panel"><div class="panel-heading"><div><h2>보고 따라 하는 영상</h2><p>도구의 첫 실행부터, 직접 만드는 과정까지.</p></div><a href="#videos">전체 보기 →</a></div><div class="video-grid">${VIDEOS.slice(0,4).map(item=>`<a class="video-card" href="#videos/${enc(item.id)}"><div class="video-thumbnail"><img src="https://i.ytimg.com/vi/${esc(item.videoId)}/hqdefault.jpg" alt="" loading="lazy"><span>▶</span><em>${esc(item.duration)}</em></div><div><small>${esc(item.category)}</small><strong>${esc(item.title)}</strong></div></a>`).join('')}</div></section></div>
-    <aside class="home-rail" aria-label="시작 안내와 모임"><section class="library-panel start-panel"><span class="rail-kicker">START HERE</span><h2>처음 오셨나요?</h2><p>가장 작은 시작부터 함께해요.</p><a class="start-step" href="#prompts/prompt-stic"><b>01</b><span><strong>AI에게 질문해 보기</strong><small>STIC 템플릿을 복사해 보세요</small></span><em>→</em></a><a class="start-step" href="#materials"><b>02</b><span><strong>교재로 직접 만들어 보기</strong><small>실습 자료를 열고 따라 해보세요</small></span><em>→</em></a><a class="start-step" href="#board"><b>03</b><span><strong>경험과 질문 나누기</strong><small>혼자 막힌 부분을 함께 풀어요</small></span><em>→</em></a></section>
-    <section class="library-panel community-panel"><h2>함께 만드는 배움</h2><p>모임 소식과 질문을<br>편한 채널에서 이어가세요.</p><a href="https://daangn.com/kr/share/community/ref/invite-group/baRr2nojJVT?utm_campaign=share_qr" target="_blank" rel="noopener noreferrer"><img src="assets/daangn-logo-204.webp" alt="">당근 모임 <span>↗</span></a><a href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener noreferrer"><img src="assets/kakao-openchat-icon-84.webp" alt="">카카오 단체방 <span>↗</span></a><a href="https://builderslab.ai-hub-os.com/" target="_blank" rel="noopener noreferrer">AI 빌더스 랩 소개 <span>↗</span></a></section></aside></div></div>`;
+ setTitle('모임 소개');
+ main.innerHTML=`<section class="library-panel home-intro"><p class="eyebrow">AI BUILDERS LAB</p><h1>함께 배우고,<br>직접 만들어 보는 AI.</h1><p>빌더스랩은 AI로 아이디어를 실제 결과물로 만들어 가는 모임입니다.<br>질문을 나누고, 자료를 익히고, 서로의 경험에서 배워요.</p><p><a class="btn" href="#signup">모임 회원가입</a> <a class="btn-line" href="#calendar">다가오는 모임</a></p></section><section class="category-grid">${Object.entries(members.labels).filter(([k])=>k!=='home'&&members.visible(k)).map(([k,v])=>`<a class="category-card" href="#${k}"><h2>${v}</h2><p>${({board:'질문과 경험을 나누세요.',calendar:'함께할 다음 일정을 확인하세요.',materials:'수업 자료로 직접 실습해 보세요.',lookbook:'브랜드 디자인의 실제 예시를 살펴보세요.'})[k]||'자료 살펴보기'} →</p></a>`).join('')}</section>`;
 }
 
 function renderLibrary(section) {
   const q = (new URLSearchParams(location.search).get('q') || '').slice(0, 120);
-  const items = LIBRARY_ITEMS.filter(item => (section === 'library' || section === item.section) && (!q || [item.title, item.summary, item.category, item.copyText, ...(item.tags || [])].join(' ').toLocaleLowerCase().includes(q.toLocaleLowerCase())));
+  const items = LIBRARY_ITEMS.filter(item => (auth.user?.isAdmin || members.visible(item.section)) && (section === 'library' || section === item.section) && (!q || [item.title, item.summary, item.category, item.copyText, ...(item.tags || [])].join(' ').toLocaleLowerCase().includes(q.toLocaleLowerCase())));
   const title = LIBRARY_TYPES[section] || '전체 자료 검색';
   setTitle(title);
   main.innerHTML = '<section class="library-panel library-list"><h1>' + title + '</h1>'
-    + '<nav class="library-filters" aria-label="자료 분류">' + [['library', '전체'], ...Object.entries(LIBRARY_TYPES)].map(([key, label]) => '<a href="' + (q ? '?q=' + enc(q) : '') + '#' + key + '"' + (key === section ? ' aria-current="page"' : '') + '>' + label + '</a>').join('') + '</nav>'
+    + '<nav class="library-filters" aria-label="자료 분류">' + [['library', '전체'], ...Object.entries(LIBRARY_TYPES).filter(([k])=>auth.user?.isAdmin || members.visible(k))].map(([key, label]) => '<a href="' + (q ? '?q=' + enc(q) : '') + '#' + key + '"' + (key === section ? ' aria-current="page"' : '') + '>' + label + '</a>').join('') + '</nav>'
     + '<p class="result-count">' + items.length + '개 자료' + (q ? ' · “' + esc(q) + '” 검색 결과 <a href="#' + section + '">검색 지우기</a>' : '') + '</p><div class="resource-stack">' + (items.map(libraryRow).join('') || '<p class="empty">찾는 자료가 없어요. 다른 말로 검색하거나 <a href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">카카오로 요청해 주세요.</a></p>') + '</div></section>';
 }
 function renderResource(id) {
@@ -723,6 +723,7 @@ document.addEventListener("click", async (event) => {
 
 document.addEventListener("submit", async (event) => {
   const form = event.target;
+  if(form.matches("[data-signup],[data-member-login],[data-build-adjust],[data-tool-settings],[data-add-admin]")) return;
   if (form.matches("[data-library-search]")) {
     event.preventDefault();
     const q = form.elements.q.value.trim().slice(0, 120);
@@ -791,6 +792,9 @@ fetch("newsletter.json", { cache: "no-cache" })
 
 setInterval(tickBar, 1000);
 tickBar();
+const members = membership({api,auth,main,esc,render,renderAccount,loginDialog,announce});
+members.nav();
+members.refresh();
 renderAccount();
 renderMiniCalendar();
 loadRecent();

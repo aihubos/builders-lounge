@@ -41,3 +41,12 @@ node scripts/check-landing.mjs # 홈·자료실·게시글 주소와 로컬 이�
 ```
 
 GitHub Pages는 `main` 브랜치 루트 파일을 그대로 공개합니다. API 키·로그인 토큰·비밀번호는 저장소에 넣지 않습니다.
+
+## 회원 관리와 보관함 (2026-10-11)
+- 일반 회원은 당근모임 아이디·별도 비밀번호로 가입합니다. 생년월일·가입 이유·선택 개선 설문을 받습니다.
+- 관리자 Google 로그인 후 회원·설문·이용 상태·기존 도구/빌드/관리자 설정과 콘텐츠 보관함에 접근합니다.
+- 공개 메뉴: 모임 소개, 게시판, 일정, 교육자료, 브랜드 룩북. 나머지는 서버에 보관 상태를 저장하고 메뉴·검색·일반 상세 접근에서 제외합니다. 정적 원본 파일은 보존되므로 보관은 비밀 문서 접근통제가 아닙니다.
+- 회원 데이터는 기존 D1에 즉시 저장하며, 비공개 Apps Script가 5분마다 Google Sheets에 비밀번호를 제외하고 반영합니다. 시트는 관리용 사본이며 역방향 수정은 반영되지 않습니다.
+- 시트: https://docs.google.com/spreadsheets/d/155MdQirY4laJLsxeHCQj1Lx2_OSdYmhnWZgySYCd5zI/edit
+- Apps Script: https://script.google.com/home/projects/1EUnDmmcZ01XlxpDGoZLS_c_0abSDOZP9Fc0rytQh3flkEduhQD_5irwh/edit
+- 연결 비밀키는 Worker secret과 비공개 Apps Script에만 저장합니다. 공개 저장소에 넣지 않습니다.
