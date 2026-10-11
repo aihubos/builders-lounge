@@ -205,7 +205,7 @@ function render(force = false) {
   document.querySelector('.more-nav')?.removeAttribute('open');
   document.querySelector('.global-search input').value = new URLSearchParams(location.search).get('q') || '';
   const section = name === "write" ? "board" : name;
-  const names = {home:'라운지 홈',library:'전체 자료 검색',prompts:'프롬프트',materials:'교육자료',lectures:'강의자료',videos:'영상',board:'자유게시판',calendar:'모임 일정',curriculum:'교육 커리큘럼',newsletter:'뉴스레터',terms:'이용약관',privacy:'개인정보 처리 안내',guidelines:'운영정책'};
+  const names = {home:'AI 활용 홈',library:'전체 자료 검색',prompts:'업무 프롬프트',materials:'교육자료',lectures:'슬라이드 갤러리',lookbook:'브랜드 룩북',motion:'모션 스타일',videos:'영상',board:'자유게시판',calendar:'모임 일정',curriculum:'AI 강의',newsletter:'뉴스레터',terms:'이용약관',privacy:'개인정보 처리 안내',guidelines:'운영정책'};
   document.querySelector('[data-page-label]').textContent = names[section] || '라운지';
   document.querySelectorAll("[data-nav]").forEach((link) => {
     if (link.dataset.nav === section) link.setAttribute("aria-current", "page");
@@ -215,6 +215,7 @@ function render(force = false) {
     window.scrollTo(0, 0);
     if (window.innerWidth <= 900 && document.activeElement?.closest("#side")) main.focus();
   }
+  if (name === "lookbook" || name === "motion") return renderDesignDirectory(name);
   if (name === "home") return renderLibraryHome();
   if (["library", "materials", "lectures"].includes(name)) return id ? renderResource(id) : renderLibrary(name);
   if (["prompts", "videos"].includes(name) && !id) return renderLibrary(name);
@@ -487,7 +488,7 @@ function renderCurriculum() {
   setTitle("교육 커리큘럼");
   const c = CURRICULUM;
   const contact = '<a class="btn" href="' + esc(c.contact) + '" target="_blank" rel="noopener noreferrer">과정 상담하기 ↗</a>';
-  main.innerHTML = '<div class="head"><h1>교육 커리큘럼</h1>' + contact + "</div>"
+  main.innerHTML = '<div class="head"><h1>AI 강의</h1>' + contact + "</div>"
     + '<p class="course-info">' + c.info.map(esc).join(" · ") + "</p>"
     + '<section class="course-block"><h2><span class="cat">' + esc(c.setup.tag) + "</span>" + esc(c.setup.title) + "</h2>"
     + "<p>" + esc(c.setup.summary) + '</p><p class="hint">' + esc(c.setup.scope) + '</p><p class="hint">' + esc(c.setup.exclude) + "</p>"
@@ -539,7 +540,7 @@ async function countVisit() {
 }
 
 /* ---------- 자료 중심 홈·검색 ---------- */
-const LIBRARY_TYPES = { prompts: '프롬프트', materials: '교육자료', lectures: '강의자료', videos: '영상' };
+const LIBRARY_TYPES = { prompts: '업무 프롬프트', materials: '교육자료', lectures: '슬라이드 갤러리', videos: '영상' };
 const RESOURCES = MATERIALS.map((item, index) => ({ ...item, id: 'material-' + index, section: /^(PDF|PPT|ZIP)$/.test(item.category) ? 'lectures' : 'materials', summary: item.category + ' · ' + (item.author || 'AI Builders Lab') }));
 const LIBRARY_ITEMS = [...PROMPTS.map(item => ({ ...item, section: 'prompts' })), ...RESOURCES, ...VIDEOS.map(item => ({ ...item, section: 'videos' }))];
 const resourceHref = item => '#' + item.section + '/' + enc(item.id);
@@ -793,3 +794,13 @@ renderMiniCalendar();
 loadRecent();
 countVisit();
 render();
+
+function renderDesignDirectory(name) {
+  const motion = name === 'motion';
+  const title = motion ? '모션 스타일' : '브랜드 룩북';
+  const sites = motion ? [['Prompt Motion','http://prompt-motion.com'],['Shotreel','http://shotreel.app']] : [['Prompt Motion','http://prompt-motion.com'],['Shotreel','http://shotreel.app'],['Evil Buttons','http://evilbuttons.com'],['Drawably','http://drawably.dev'],['Alcove','http://tryalcove.com'],['AppLlama','http://appllama.io'],['Design Bookmark','http://designbookmark.com'],['Amicons','http://amicons.design'],['Graphical UI','http://graphicalui.com']];
+  setTitle(title);
+  main.innerHTML = '<section class="design-directory"><p class="eyebrow">DESIGN LIBRARY</p><h1>'+title+'</h1><p class="design-intro">'+(motion?'움직임의 아이디어를 살펴보고, 프로젝트에 맞는 표현을 찾아보세요.':'브랜드와 UI의 시각적 방향을 찾을 때 참고할 디자인 웹사이트입니다.')+'</p>'
+    + (!motion?'<a class="reference-link" href="https://www.oppadu.com/ai/design-systems-site/" target="_blank" rel="noopener noreferrer"><strong>디자인 시스템 레퍼런스</strong><span>참고 사이트 살펴보기 ↗</span></a><h2>디자이너들을 위한 웹사이트</h2>':'')
+    + '<div class="design-sites">'+sites.map(([label,url],i)=>'<a href="'+url+'" target="_blank" rel="noopener noreferrer"><span class="site-number">'+String(i+1).padStart(2,'0')+'</span><span><strong>'+label+'</strong><small>'+new URL(url).hostname+'</small></span><span class="site-arrow" aria-hidden="true">↗</span></a>').join('')+'</div></section>';
+}
