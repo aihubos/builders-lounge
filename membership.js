@@ -1,6 +1,6 @@
 export function membership({api,auth,main,esc,render,renderAccount,loginDialog,announce}) {
- const labels={home:'모임 소개',board:'게시판',calendar:'일정',materials:'교육자료',lookbook:'브랜드 룩북',prompts:'업무 프롬프트',lectures:'슬라이드 갤러리',videos:'영상',newsletter:'뉴스레터',motion:'모션 스타일',curriculum:'AI 강의'};
- const state=Object.fromEntries(Object.keys(labels).map(k=>[k,!['home','board','calendar','lookbook'].includes(k)]));
+ const labels={home:'모임 소개',board:'게시판','prompt-board':'Prompt 게시판',calendar:'일정',materials:'교육자료',lookbook:'브랜드 룩북',prompts:'업무 프롬프트',lectures:'슬라이드 갤러리',videos:'영상',newsletter:'뉴스레터',motion:'모션 스타일',curriculum:'AI 강의'};
+ const state=Object.fromEntries(Object.keys(labels).map(k=>[k,!['home','board','prompt-board','calendar','lookbook'].includes(k)]));
  const errors={invalid_username:'아이디는 한글·영문·숫자 등 2~30자로 입력해 주세요.',invalid_password:'비밀번호를 10~128자로 입력해 주세요.',invalid_birth_date:'생년월일을 확인해 주세요.',reason_required:'가입 이유를 입력해 주세요.',consent_required:'개인정보 수집·이용에 동의해 주세요.',minimum_age:'현재 만 14세 이상 가입할 수 있습니다.',username_taken:'이미 사용 중인 아이디입니다.',invalid_credentials:'아이디 또는 비밀번호가 맞지 않거나 이용이 제한된 계정입니다.',too_many_attempts:'시도 횟수를 초과했습니다. 15분 후 다시 시도해 주세요.',sheets_sync_failed:'구글 시트 권한 또는 Google Sheets API 설정을 확인해 주세요.'};
  const visible=k=>!state[k];
  function nav(){document.querySelector('.hub-navigation').innerHTML=Object.entries(labels).filter(([k])=>visible(k)).map(([k,v])=>`<a href="#${k}" data-nav="${k}"><span>${v}</span></a>`).join('')+(auth.user?.isAdmin?'<a href="#admin">관리자 · 보관함</a>':'');}

@@ -1,4 +1,5 @@
-import { membership } from "./membership.js?v=20261011-archive-empty";
+import { promptBoard } from "./prompt-board.js?v=20261011-prompt-board";
+import { membership } from "./membership.js?v=20261011-prompt-board";
 import { renderLookbook } from "./lookbook.js?v=20261011-fullsource";
 import { CLASSROOM, CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
 
@@ -224,6 +225,7 @@ function render(force = false) {
   if (name === "signup") return members.signup();
   if (name === "admin") return members.admin();
   if (members.state[name] && !auth.user?.isAdmin) { main.innerHTML='<section class="library-panel"><h1>보관된 콘텐츠입니다</h1><p>현재 공개하지 않는 자료입니다.</p><a href="#home">모임 소개로 돌아가기</a></section>'; return; }
+  if (name === "prompt-board") {setTitle("Prompt 게시판");return promptPosts.render(id);}
   if (name === "lookbook") { setTitle("브랜드 룩북"); return renderLookbook(main, id); }
   if (name === "motion") return renderDesignDirectory(name);
   if (name === "home") return renderLibraryHome();
@@ -730,7 +732,7 @@ document.addEventListener("click", async (event) => {
 
 document.addEventListener("submit", async (event) => {
   const form = event.target;
-  if(form.matches("[data-signup],[data-member-login],[data-build-adjust],[data-tool-settings],[data-add-admin]")) return;
+  if(form.matches("[data-prompt-form],[data-prompt-search],[data-signup],[data-member-login],[data-build-adjust],[data-tool-settings],[data-add-admin]")) return;
   if (form.matches("[data-library-search]")) {
     event.preventDefault();
     const q = form.elements.q.value.trim().slice(0, 120);
@@ -799,6 +801,7 @@ fetch("newsletter.json", { cache: "no-cache" })
 
 setInterval(tickBar, 1000);
 tickBar();
+const promptPosts = promptBoard({api,auth,main,esc});
 const members = membership({api,auth,main,esc,render,renderAccount,loginDialog,announce});
 members.nav();
 members.refresh();
