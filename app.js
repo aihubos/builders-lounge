@@ -1,5 +1,6 @@
-import { promptBoard } from "./prompt-board.js?v=20261011-prompt-board";
-import { membership } from "./membership.js?v=20261011-menu-clean";
+import { promptBoard } from "./prompt-board.js?v=20261013-image-cards";
+import { promptCard } from "./prompt-media.js";
+import { membership } from "./membership.js?v=20261013-image-cards";
 import { renderLookbook } from "./lookbook.js?v=20261011-fullsource";
 import { CLASSROOM, CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
 
@@ -112,8 +113,8 @@ function renderAccount() {
   if (typeof members !== "undefined") members.nav();
   document.querySelectorAll(".workspace-actions [data-login]").forEach(button => { button.hidden = !!auth.user; });
   document.querySelector("[data-account]").innerHTML = auth.user
-    ? (auth.user.isAdmin ? '<a class="btn-line" href="#admin">관리자 · 보관함</a>' : '') + '<p><strong>' + esc(auth.user.name || "빌더") + '</strong>님</p><div class="account-actions"><a class="btn" href="#write">글쓰기</a><button class="btn-line" type="button" data-logout>로그아웃</button></div>'
-    : '<button class="btn" type="button" data-login>🔑 가입·로그인</button>';
+    ? (auth.user.isAdmin ? '<a class="btn-line" href="#admin">관리자 · 보관함</a>' : '') + '<p><strong>' + esc(auth.user.name || "빌더") + '</strong>님</p><div class="account-actions"><a class="btn" href="#prompt-board/new">글쓰기</a><button class="btn-line" type="button" data-logout>로그아웃</button></div>'
+    : '<button class="btn" type="button" data-login>로그인</button>';
 }
 
 
@@ -183,7 +184,7 @@ async function acceptCredential(credential) {
     loginDialog.close();
     renderAccount();
     announce((auth.user.name || "빌더") + "님, 로그인되었습니다.");
-    if(auth.user.isAdmin) location.hash="admin";
+    if(auth.user.isAdmin && location.hash !== "#prompt-board/new") location.hash="admin";
     render(true);
   } catch (error) {
     auth.credential = "";
@@ -215,7 +216,7 @@ function render(force = false) {
   document.querySelector('.more-nav')?.removeAttribute('open');
   document.querySelector('.global-search input').value = new URLSearchParams(location.search).get('q') || '';
   const section = name === "write" ? "board" : name;
-  const names = {home:'AI 활용 홈',library:'전체 자료 검색',prompts:'업무 프롬프트',materials:'교육자료',lectures:'슬라이드 갤러리',lookbook:'브랜드 룩북',motion:'모션 스타일',videos:'영상',board:'자유게시판',calendar:'모임 일정',curriculum:'AI 강의',newsletter:'뉴스레터',terms:'이용약관',privacy:'개인정보 처리 안내',guidelines:'운영정책'};
+  const names = {home:'AI 활용 홈',library:'전체 자료 검색',prompts:'업무 프롬프트',materials:'교육자료',lectures:'슬라이드 갤러리',lookbook:'브랜드 룩북',motion:'모션 스타일',videos:'영상',board:'자유게시판','prompt-board':'프롬프트',calendar:'모임 일정',curriculum:'AI 강의',newsletter:'뉴스레터',terms:'이용약관',privacy:'개인정보 처리 안내',guidelines:'운영정책'};
   document.querySelector('[data-page-label]').textContent = names[section] || '라운지';
   document.querySelectorAll("[data-nav]").forEach((link) => {
     if (link.dataset.nav === section) link.setAttribute("aria-current", "page");
@@ -287,7 +288,7 @@ async function renderBoard() {
   setTitle(q ? "‘" + q + "’ 검색" : "");
   const tabs = [["all", "전체"], ...Object.entries(CATEGORIES)]
     .map(([key, label]) => '<a href="' + boardHref({ category: key, q }) + '"' + (key === category ? ' aria-current="true"' : "") + ">" + label + "</a>").join("");
-  main.innerHTML = '<div class="head"><h1>자유게시판</h1><a class="btn" href="#write">글쓰기</a></div>'
+  main.innerHTML = '<div class="head"><h1>자유게시판</h1><a class="btn" href="#prompt-board/new">글쓰기</a></div>'
     + '<form class="library-search board-search" data-search role="search"><input name="q" value="' + esc(q) + '" aria-label="게시판 검색" placeholder="게시판 검색"><button class="btn">검색</button></form>'
     + '<nav class="tabs" aria-label="분류">' + tabs + "</nav>"
     + (q ? '<p class="search-note">‘' + esc(q) + '’ 검색 결과 · <a href="' + boardHref({ category }) + '">검색 지우기</a></p>' : "")
@@ -411,7 +412,8 @@ function renderReading(name, id) {
   if (name === "prompts") {
     body = (item.useCase ? "<h2>이럴 때 쓰세요</h2><p>" + esc(item.useCase) + "</p>" : "")
       + (item.expected ? "<h2>기대 결과</h2><p>" + esc(item.expected) + "</p>" : "")
-      + '<h2>프롬프트</h2><pre class="prompt" tabindex="0">' + esc(item.copyText) + '</pre><button class="btn" type="button" data-copy-prompt="' + esc(item.id) + '">프롬프트 복사</button>';
+      + (item.videos || []).map((video, index) => '<section class="prompt-video"><h2>' + (index + 1) + '. ' + esc(video.title) + '</h2><video controls playsinline preload="none" poster="' + esc(video.poster) + '" aria-label="' + esc(video.title) + '"><source src="' + esc(video.src) + '" type="video/mp4">영상을 재생할 수 없는 브라우저입니다.</video><a class="link" href="' + esc(video.src) + '" download>영상 다운로드</a></section>').join('')
+      + '<h2>' + esc(item.copyLabel || '프롬프트') + '</h2><pre class="prompt" tabindex="0">' + esc(item.copyText) + '</pre><button class="btn" type="button" data-copy-prompt="' + esc(item.id) + '">프롬프트 복사</button>';
   } else if (name === "newsletter") {
     body = (item.cards || []).map((src, index) => '<img class="card-img" src="' + esc(src) + '" alt="' + esc(item.title) + " " + (index + 1) + '번째 카드" loading="lazy">').join("") || '<p class="hint">카드 이미지가 아직 없습니다. 아래 원문에서 확인해 주세요.</p>';
 
@@ -422,7 +424,7 @@ function renderReading(name, id) {
   main.innerHTML = '<article class="post"><header class="post-head"><span class="cat">' + esc(reading.tag(item)) + "</span><h1>" + esc(item.title) + "</h1>"
     + '<div class="meta"><strong>' + esc(item.author || "") + "</strong>" + (extra ? "<span>" + esc(extra) + "</span>" : "") + "</div></header>"
     + '<div class="post-text"><p class="lead">' + esc(item.summary) + "</p>" + body + "</div>"
-    + '<div class="post-actions"><a class="btn-line" href="#' + name + '">목록</a>'
+    + '<div class="post-actions"><a class="btn-line" href="#' + (item.videos ? 'prompt-board' : name) + '">목록</a>'
     + (/^https:\/\//.test(item.sourceUrl || "") ? '<a class="link" href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener">' + esc(item.sourceLabel || "출처") + " ↗</a>" : "") + "</div></article>";
 }
 
@@ -568,9 +570,22 @@ function libraryRow(item) {
 function librarySearch(section = 'library', q = '') {
   return '<form class="library-search" data-library-search="' + section + '" role="search"><input type="search" name="q" maxlength="120" value="' + esc(q) + '" placeholder="🔍 예: 홈페이지, 이미지, 블로그" aria-label="자료 검색"><button class="btn" type="submit">찾기</button></form>';
 }
-function renderLibraryHome() {
- setTitle('모임 소개');
- main.innerHTML=`<section class="library-panel home-intro"><p class="eyebrow">AI BUILDERS LAB</p><h1>함께 배우고,<br>직접 만들어 보는 AI.</h1><p>빌더스랩은 AI로 아이디어를 실제 결과물로 만들어 가는 모임입니다.<br>질문을 나누고, 자료를 익히고, 서로의 경험에서 배워요.</p><p><a class="btn" href="#signup">모임 회원가입</a> <a class="btn-line" href="#calendar">다가오는 모임</a></p></section><section class="category-grid">${Object.entries(members.labels).filter(([k])=>k!=='home'&&members.visible(k)).map(([k,v])=>`<a class="category-card" href="#${k}"><h2>${v}</h2><p>${({board:'질문과 경험을 나누세요.',calendar:'함께할 다음 일정을 확인하세요.',materials:'수업 자료로 직접 실습해 보세요.',lookbook:'브랜드 디자인의 실제 예시를 살펴보세요.'})[k]||'자료 살펴보기'} →</p></a>`).join('')}</section>`;
+async function renderLibraryHome() {
+ setTitle('함께 만드는 AI');
+ const ticket = renderId;
+ const guide = PROMPTS.find(item => item.id === 'prompt-lebi-cyber');
+ const promptsVisible = members.visible('prompt-board');
+ main.innerHTML = `<section class="lounge-hero"><div class="hero-copy"><p class="eyebrow">AI BUILDERS LAB</p><h1>혼자 고민하던 AI,<br>함께하면 쉬워져요.</h1><p>써 본 프롬프트를 나누고,<br>좋은 아이디어를 내 작업에 가져오세요.</p><div class="hero-actions"><a class="btn" href="${promptsVisible ? '#prompt-board' : '#board'}">${promptsVisible ? '프롬프트 둘러보기' : '게시판 둘러보기'} <span aria-hidden="true">→</span></a><a class="hero-secondary" href="${promptsVisible ? '#prompt-board/new' : '#write'}">나도 공유하기 ↗</a></div><div class="hero-caption"><span class="avatar-dot">B</span><span>배우고, 만들고, 나누는 빌더들의 공간</span></div></div><a class="hero-visual" href="${promptsVisible ? '#prompt-board/prompt-lebi-cyber' : '#calendar'}" aria-label="${promptsVisible ? '레비 영상 연출 가이드 보기' : '다가오는 모임 보기'}"><img src="assets/prompts/lebi-cyber/camera-work.jpg" alt="사이버펑크 장면으로 배우는 영상 연출" width="640" height="640"><span class="hero-image-note">함께 만들어요<span>작은 아이디어에서 시작하는 새로운 결과물 ↗</span></span></a></section><section class="home-discover" ${promptsVisible ? '' : 'hidden'}><div class="section-heading"><div><p class="eyebrow">작은 노하우, 큰 변화</p><h2>오늘의 작업에 바로 써 보세요</h2></div><a href="#prompt-board">전체 보기 →</a></div><div class="prompt-card-grid" data-home-prompts>${guide && promptsVisible ? promptCard(guide,esc,{guide:true}) : ''}<a class="share-card" href="#prompt-board/new"><span aria-hidden="true">＋</span><h3>나의 프롬프트도<br>누군가에겐 좋은 시작</h3><p>써 본 방법을 한 장의 카드로 나눠 주세요.</p><b>첫 프롬프트 올리기 →</b></a></div><p class="home-load-status" data-home-prompt-status role="status"></p></section><section class="home-connections"><div><p class="eyebrow">BUILD TOGETHER</p><h2>혼자보다 함께, 한 걸음 더</h2><p>막히는 건 물어보고, 새로운 영감은 모아 보세요.</p></div><div class="connection-links">${Object.entries(members.labels).filter(([key])=>['board','calendar','lookbook'].includes(key)&&members.visible(key)).map(([key,label])=>`<a href="#${key}"><span><strong>${esc(label)}</strong><small>${({board:'질문과 경험을 나누는 공간',calendar:'함께 배우는 다음 모임',lookbook:'실제 브랜드에서 찾는 디자인 영감'})[key]}</small></span><b aria-hidden="true">↗</b></a>`).join('')}</div></section>`;
+ if (!promptsVisible) return;
+ try {
+   const data = await api('/lounge/prompts?page=1');
+   if (ticket !== renderId || route().name !== 'home') return;
+   const items = data.posts.slice(0, guide ? 2 : 3);
+   const container = main.querySelector('[data-home-prompts]');
+   if (items.length) container.innerHTML = (guide ? promptCard(guide,esc,{guide:true}) : '') + items.map(post=>promptCard(post,esc)).join('');
+ } catch {
+   if (ticket === renderId && route().name === 'home') main.querySelector('[data-home-prompt-status]').textContent = '회원 프롬프트를 불러오지 못했어요. 프롬프트 게시판에서 다시 확인해 주세요.';
+ }
 }
 
 function renderLibrary(section) {
@@ -831,7 +846,7 @@ fetch("newsletter.json", { cache: "no-cache" })
 
 setInterval(tickBar, 1000);
 tickBar();
-const promptPosts = promptBoard({api,auth,main,esc});
+const promptPosts = promptBoard({api,auth,main,esc,guide: PROMPTS.find(item => item.id === "prompt-lebi-cyber"), renderGuide: id => renderReading("prompts", id)});
 const members = membership({api,auth,main,esc,render,renderAccount,loginDialog,announce});
 members.nav();
 members.refresh();

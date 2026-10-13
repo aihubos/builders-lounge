@@ -3,22 +3,23 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f4f6fa" />
+    <meta name="theme-color" content="#ffffff" />
     <title>Builders Lounge | AI Builders Lab</title>
-    <meta name="description" content="모임 소식과 일정, 교육자료와 브랜드 룩북을 만나보세요." />
+    <meta name="description" content="함께 배우고 만드는 AI 커뮤니티. 직접 써 본 프롬프트와 이미지를 나누고, 좋은 아이디어를 내 작업에 활용하세요." />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:url" content="https://aihubos.github.io/builders-lounge/" />
     <meta property="og:title" content="Builders Lounge | AI Builders Lab" />
-    <meta property="og:description" content="모임 소식과 일정, 교육자료와 브랜드 룩북을 만나보세요." />
+    <meta property="og:description" content="함께 배우고 만드는 AI 커뮤니티. 직접 써 본 프롬프트와 이미지를 나누고, 좋은 아이디어를 내 작업에 활용하세요." />
     <meta property="og:image" content="https://aihubos.github.io/builders-lounge/assets/og.png" />
     <link rel="canonical" href="https://aihubos.github.io/builders-lounge/" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
     <link rel="preconnect" href="https://reportmode-request-board.report-request-board.workers.dev" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=20261011-live-calendar" />
-    <link rel="stylesheet" href="hub.css?v=20261011-live-calendar" />
-    <script type="module" src="app.js?v=20261011-live-calendar"></script>
+    <link rel="stylesheet" href="styles.css?v=20261013-image-cards" />
+    <link rel="stylesheet" href="hub.css?v=20261013-image-cards" />
+    <link rel="stylesheet" href="lounge.css?v=20261013-image-cards" />
+    <script type="module" src="app.js?v=20261013-image-cards"></script>
   </head>
   <body>
     <a class="skip" href="#main" data-skip>본문 바로가기</a>
@@ -28,14 +29,14 @@
         <a class="logo" href="#home" aria-label="Builders Lounge 홈"><img src="assets/builders-lounge-logo.webp" width="224" height="75" alt="Builders Lounge"></a>
         <div class="header-account" data-account></div>
       </div>
-      <form class="library-search global-search" data-library-search="library" role="search">
-        <input type="search" name="q" maxlength="120" placeholder="교육자료를 검색해 보세요" aria-label="자료 검색">
+      <form class="library-search global-search" data-prompt-search role="search">
+        <input type="search" name="q" maxlength="120" placeholder="어떤 프롬프트가 필요하세요?" aria-label="프롬프트 검색">
         <button class="btn" type="submit">검색</button>
       </form>
       <span class="visually-hidden" data-page-label>홈</span><button data-menu hidden aria-expanded="false" aria-label="메뉴"></button>
     </header>
     <div class="wrap three-layout">
-      <aside class="left-menu" aria-label="사이트 메뉴"><nav class="hub-navigation reference-menu" aria-label="주요 메뉴"><a href="#board" data-nav="board"><span>게시판</span></a><a href="#prompt-board" data-nav="prompt-board"><span>Prompt 게시판</span></a><a href="#calendar" data-nav="calendar"><span>일정</span></a><a href="#lookbook" data-nav="lookbook"><span>브랜드 룩북</span></a></nav><a class="btn-line" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">교육 문의 ↗</a></aside>
+      <aside class="left-menu" aria-label="사이트 메뉴"><nav class="hub-navigation reference-menu" aria-label="주요 메뉴"><a href="#board" data-nav="board"><span>게시판</span></a><a href="#prompt-board" data-nav="prompt-board"><span>프롬프트</span></a><a href="#calendar" data-nav="calendar"><span>일정</span></a><a href="#lookbook" data-nav="lookbook"><span>브랜드 룩북</span></a></nav><a class="btn-line" href="https://open.kakao.com/me/aibuilderslab" target="_blank" rel="noopener noreferrer">교육 문의 ↗</a></aside>
       <main class="content" id="main" tabindex="-1"></main>
       <aside id="floating-calendar" class="calendar-sidebar" aria-label="모임 일정" data-mini-calendar></aside>
     </div>
@@ -58,7 +59,7 @@
 
     <dialog class="login" data-login-dialog aria-labelledby="login-title">
       <div class="login-head">
-        <h2 id="login-title">🔑 가입·로그인</h2>
+        <h2 id="login-title">다시 만나 반가워요</h2>
         <button class="link" type="button" data-login-close aria-label="로그인 창 닫기">닫기</button>
       </div>
       <form data-member-login class="member-form"><label>당근모임 아이디<input class="field" name="username" autocomplete="username" required></label><label>비밀번호<input class="field" type="password" name="password" autocomplete="current-password" required></label><p data-member-status role="status"></p><button class="btn" type="submit">로그인</button></form><p><a href="#signup" onclick="this.closest('dialog').close()">처음이신가요? 회원가입</a></p><hr><h3>관리자 구글 로그인</h3>

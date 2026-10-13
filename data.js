@@ -1,6 +1,43 @@
 
 const prompts = [
   {
+    "id": "prompt-lebi-cyber",
+    "kicker": "영상",
+    "type": "prompt",
+    "title": "레비 사이버펑크 영상 연출 가이드: 카메라워크·촬영 방식·장면 전환",
+    "summary": "3개의 영상으로 카메라 움직임, 촬영 방식과 시간 연출, 장면 전환까지 24가지 기법을 살펴봅니다.",
+    "tags": [
+        "영상",
+        "카메라워크",
+        "촬영",
+        "장면 전환"
+    ],
+    "category": "영상",
+    "useCase": "영상 생성 프롬프트에 원하는 카메라 움직임과 촬영·편집 기법을 구체적으로 지정할 때",
+    "expected": "기법별 움직임을 영상으로 비교하고, 원하는 연출을 골라 프롬프트에 적용할 수 있습니다.",
+    "copyText": "주제와 장면: [인물·배경·행동]\n카메라워크: [패닝 / 틸트 / 돌리 인 / 줌 인 / 트래킹 / 오빗 / 크레인 업 / 돌리 줌 중 선택]\n촬영 방식·시간 연출: [랙 포커스 / 핸드헬드 / FPV 드론 / 더치 앵글 / 슬로 모션 / 스피드 램프 / 타임랩스 / 프리즈 프레임 중 선택]\n장면 전환: [점프 컷 / 매치 컷 / 휩 팬 / 크로스 디졸브 / 와이프 / 스매시 컷 / J컷 / L컷 중 선택]\n화면 비율·길이: [비율과 초 단위 길이]\n\n선택한 기법을 적용한 영상 제작 프롬프트를 작성해 주세요. 카메라의 시작 위치, 움직이는 방향, 피사체의 동작, 전환 시점을 구체적으로 설명해 주세요. J컷·L컷을 선택했다면 소리와 화면이 바뀌는 시점도 구분해 주세요.",
+    "copyLabel": "활용 프롬프트 템플릿",
+    "author": "AI Builders Lab 운영팀",
+    "videos": [
+        {
+            "title": "카메라워크",
+            "src": "assets/prompts/lebi-cyber/camera-work.mp4",
+            "poster": "assets/prompts/lebi-cyber/camera-work.jpg"
+        },
+        {
+            "title": "촬영 방식·시간 연출",
+            "src": "assets/prompts/lebi-cyber/filming.mp4",
+            "poster": "assets/prompts/lebi-cyber/filming.jpg"
+        },
+        {
+            "title": "장면 전환",
+            "src": "assets/prompts/lebi-cyber/transitions.mp4",
+            "poster": "assets/prompts/lebi-cyber/transitions.jpg"
+        }
+    ],
+    "status": "published"
+},
+  {
     id: "prompt-stic",
     kicker: "업무",
     type: "prompt",
