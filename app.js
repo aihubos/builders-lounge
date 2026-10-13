@@ -1,6 +1,7 @@
 import { promptBoard } from "./prompt-board.js?v=20261013-image-cards";
 import { promptCard } from "./prompt-media.js";
-import { membership } from "./membership.js?v=20261013-image-cards";
+import { BRANDS } from "./lookbook-data.js";
+import { membership } from "./membership.js?v=20261013-community-main-v2";
 import { renderLookbook } from "./lookbook.js?v=20261011-fullsource";
 import { CLASSROOM, CURRICULUM, MATERIALS, PROMPTS, VIDEOS } from "./data.js";
 
@@ -184,7 +185,7 @@ async function acceptCredential(credential) {
     loginDialog.close();
     renderAccount();
     announce((auth.user.name || "빌더") + "님, 로그인되었습니다.");
-    if(auth.user.isAdmin && location.hash !== "#prompt-board/new") location.hash="admin";
+    if(auth.user.isAdmin && !["#prompt-board/new", "#write"].includes(location.hash)) location.hash="admin";
     render(true);
   } catch (error) {
     auth.credential = "";
@@ -213,6 +214,8 @@ function render(force = false) {
   document.body.classList.remove("menu-open");
   document.querySelector("[data-menu]").setAttribute("aria-expanded", "false");
   const { name, id } = route();
+  document.body.classList.toggle("community-page", name === "home");
+  if (moved) setCalendarVisibility();
   document.querySelector('.more-nav')?.removeAttribute('open');
   document.querySelector('.global-search input').value = new URLSearchParams(location.search).get('q') || '';
   const section = name === "write" ? "board" : name;
@@ -570,22 +573,115 @@ function libraryRow(item) {
 function librarySearch(section = 'library', q = '') {
   return '<form class="library-search" data-library-search="' + section + '" role="search"><input type="search" name="q" maxlength="120" value="' + esc(q) + '" placeholder="🔍 예: 홈페이지, 이미지, 블로그" aria-label="자료 검색"><button class="btn" type="submit">찾기</button></form>';
 }
+function communityRow(title, href, label = '', date = '', comments = 0) {
+  return '<a class="community-row" href="' + esc(href) + '">'
+    + (label ? '<span class="community-tag">' + esc(label) + '</span>' : '')
+    + '<span class="community-row-title">' + esc(title) + '</span>'
+    + (comments > 0 ? '<b class="community-comments" aria-label="댓글 ' + Number(comments) + '개">' + Number(comments) + '</b>' : '')
+    + (date ? '<time datetime="' + esc(date) + '">' + esc(shortDate(date)) + '</time>' : '') + '</a>';
+}
+
+function communityPanel(title, href, content, slot = '') {
+  return '<section class="community-panel"><header><h2><a href="' + esc(href) + '">' + esc(title)
+    + '</a></h2><a class="community-more" href="' + esc(href) + '" aria-label="' + esc(title) + ' 전체 보기">더보기 <span aria-hidden="true">＋</span></a></header>'
+    + '<div class="community-list"' + (slot ? ' data-home-list="' + slot + '"' : '') + '>' + content + '</div></section>';
+}
+
+function renderHomeAgenda() {
+  const box = main.querySelector('[data-home-agenda]');
+  if (!box) return;
+  if (calendarEvents === null) { box.innerHTML = '<p class="community-empty" role="status">일정을 불러오는 중이에요.</p>'; return; }
+  if (calendarEvents === 'error') { box.innerHTML = '<p class="community-empty" role="status">일정을 불러오지 못했어요. <button class="link" data-calendar-refresh>다시 불러오기</button></p>'; return; }
+  const upcoming = calendarEvents.filter(event => Date.parse(event.end || event.start) >= Date.now())
+    .sort((a, b) => Date.parse(a.start) - Date.parse(b.start)).slice(0, 4);
+  box.innerHTML = upcoming.length ? upcoming.map(event => {
+    const date = new Date(event.start);
+    return '<a class="community-event" href="#calendar"><time datetime="' + esc(event.start) + '"><b>'
+      + date.toLocaleDateString('ko-KR', {timeZone:'Asia/Seoul',month:'numeric',day:'numeric'}) + '</b><span>'
+      + esc(event.allDay ? '종일' : kst(date).slice(11,16)) + '</span></time><span><strong>' + esc(event.title)
+      + '</strong>' + (event.location ? '<small>' + esc(event.location) + '</small>' : '') + '</span></a>';
+  }).join('') : '<p class="community-empty">예정된 모임이 없어요.<br><a href="#calendar">전체 일정 확인하기 →</a></p>';
+}
+
 async function renderLibraryHome() {
- setTitle('함께 만드는 AI');
- const ticket = renderId;
- const guide = PROMPTS.find(item => item.id === 'prompt-lebi-cyber');
- const promptsVisible = members.visible('prompt-board');
- main.innerHTML = `<section class="lounge-hero"><div class="hero-copy"><p class="eyebrow">AI BUILDERS LAB</p><h1>혼자 고민하던 AI,<br>함께하면 쉬워져요.</h1><p>써 본 프롬프트를 나누고,<br>좋은 아이디어를 내 작업에 가져오세요.</p><div class="hero-actions"><a class="btn" href="${promptsVisible ? '#prompt-board' : '#board'}">${promptsVisible ? '프롬프트 둘러보기' : '게시판 둘러보기'} <span aria-hidden="true">→</span></a><a class="hero-secondary" href="${promptsVisible ? '#prompt-board/new' : '#write'}">나도 공유하기 ↗</a></div><div class="hero-caption"><span class="avatar-dot">B</span><span>배우고, 만들고, 나누는 빌더들의 공간</span></div></div><a class="hero-visual" href="${promptsVisible ? '#prompt-board/prompt-lebi-cyber' : '#calendar'}" aria-label="${promptsVisible ? '레비 영상 연출 가이드 보기' : '다가오는 모임 보기'}"><img src="assets/prompts/lebi-cyber/camera-work.jpg" alt="사이버펑크 장면으로 배우는 영상 연출" width="640" height="640"><span class="hero-image-note">함께 만들어요<span>작은 아이디어에서 시작하는 새로운 결과물 ↗</span></span></a></section><section class="home-discover" ${promptsVisible ? '' : 'hidden'}><div class="section-heading"><div><p class="eyebrow">작은 노하우, 큰 변화</p><h2>오늘의 작업에 바로 써 보세요</h2></div><a href="#prompt-board">전체 보기 →</a></div><div class="prompt-card-grid" data-home-prompts>${guide && promptsVisible ? promptCard(guide,esc,{guide:true}) : ''}<a class="share-card" href="#prompt-board/new"><span aria-hidden="true">＋</span><h3>나의 프롬프트도<br>누군가에겐 좋은 시작</h3><p>써 본 방법을 한 장의 카드로 나눠 주세요.</p><b>첫 프롬프트 올리기 →</b></a></div><p class="home-load-status" data-home-prompt-status role="status"></p></section><section class="home-connections"><div><p class="eyebrow">BUILD TOGETHER</p><h2>혼자보다 함께, 한 걸음 더</h2><p>막히는 건 물어보고, 새로운 영감은 모아 보세요.</p></div><div class="connection-links">${Object.entries(members.labels).filter(([key])=>['board','calendar','lookbook'].includes(key)&&members.visible(key)).map(([key,label])=>`<a href="#${key}"><span><strong>${esc(label)}</strong><small>${({board:'질문과 경험을 나누는 공간',calendar:'함께 배우는 다음 모임',lookbook:'실제 브랜드에서 찾는 디자인 영감'})[key]}</small></span><b aria-hidden="true">↗</b></a>`).join('')}</div></section>`;
- if (!promptsVisible) return;
- try {
-   const data = await api('/lounge/prompts?page=1');
-   if (ticket !== renderId || route().name !== 'home') return;
-   const items = data.posts.slice(0, guide ? 2 : 3);
-   const container = main.querySelector('[data-home-prompts]');
-   if (items.length) container.innerHTML = (guide ? promptCard(guide,esc,{guide:true}) : '') + items.map(post=>promptCard(post,esc)).join('');
- } catch {
-   if (ticket === renderId && route().name === 'home') main.querySelector('[data-home-prompt-status]').textContent = '회원 프롬프트를 불러오지 못했어요. 프롬프트 게시판에서 다시 확인해 주세요.';
- }
+  setTitle('모아보기');
+  const ticket = renderId;
+  const current = () => ticket === renderId && route().name === 'home';
+  const promptsVisible = members.visible('prompt-board'), boardVisible = members.visible('board');
+  const guide = promptsVisible ? PROMPTS.find(item => item.id === 'prompt-lebi-cyber') : null;
+  const writeHref = promptsVisible ? '#prompt-board/new' : boardVisible ? '#write' : '';
+  const loading = '<p class="community-empty" role="status">새 글을 불러오는 중이에요.</p>';
+  const guideRow = guide ? communityRow(guide.title, '#prompt-board/' + enc(guide.id), '가이드') : '';
+  const boardLinks = boardVisible ? Object.entries(CATEGORIES).map(([key, label]) =>
+    '<a href="' + esc(boardHref({category:key})) + '">' + esc(label) + '<span aria-hidden="true">›</span></a>').join('') : '';
+  document.querySelector('[data-community-menu]').innerHTML =
+    (boardLinks ? '<p class="community-nav-label">이야기 나누기</p>' + boardLinks : '')
+    + (promptsVisible ? '<p class="community-nav-label">프롬프트 분류</p>' + ['업무','이미지','영상','글쓰기','코딩','학습'].map(category =>
+      '<a href="?category=' + enc(category) + '#prompt-board">' + category + '<span aria-hidden="true">›</span></a>').join('') : '')
+    + '<p class="community-nav-label">라운지 안내</p><a href="#guidelines">이용 안내<span aria-hidden="true">›</span></a><a href="#privacy">개인정보 안내<span aria-hidden="true">›</span></a>';
+  const account = auth.user
+    ? '<p class="community-welcome"><strong>' + esc(auth.user.name || '빌더') + '</strong>님, 반가워요.</p><p>오늘의 경험을 함께 나눠 주세요.</p>'
+      + (writeHref ? '<a class="btn" href="' + writeHref + '">＋ 새 글 쓰기</a>' : '')
+      + '<div class="community-account-links">' + (auth.user.isAdmin ? '<a href="#admin">관리자 · 보관함</a>' : '') + '<button class="link" data-logout>로그아웃</button></div>'
+    : '<p class="community-welcome"><strong>함께 만드는 AI 커뮤니티</strong></p><p>로그인하고 나만의 노하우를 나눠요.</p><button class="btn" data-login>로그인</button><a class="community-signup" href="#signup">처음 오셨나요? <b>회원가입</b></a>';
+  const policyRows = [['guidelines','처음 오셨다면, 커뮤니티 이용 안내'],['terms','회원과 게시물 이용약관'],['privacy','내 정보는 어떻게 관리되나요?']]
+    .map(([id, title]) => communityRow(title, '#' + id, '안내')).join('');
+  const promptPanel = promptsVisible ? communityPanel('새 프롬프트', '#prompt-board', guideRow + loading, 'prompts') : '';
+  const boardPanels = boardVisible
+    ? communityPanel('라운지 새 글', '#board', loading, 'all')
+      + communityPanel('AI 질문', boardHref({category:'ai_question'}), loading, 'ai_question')
+      + communityPanel('정보 공유', boardHref({category:'knowledge_share'}), loading, 'knowledge_share') : '';
+  const brands = members.visible('lookbook') ? BRANDS.filter(brand => ['toss','openai','anthropic','figma','notion','apple-hig'].includes(brand.slug)) : [];
+  main.innerHTML = '<div class="community-home"><div class="community-toolbar"><div><h1>모아보기</h1><span>빌더들의 이야기와 새로운 아이디어</span></div>'
+    + '<button class="community-refresh" data-home-refresh aria-label="메인 새 글 새로고침">↻ <span>새로고침</span></button></div>'
+    + '<nav class="community-tabs" aria-label="모아보기 바로가기"><a href="#home" aria-current="page">모아보기</a>'
+    + (boardVisible ? '<a href="#board">게시판</a>' : '') + (promptsVisible ? '<a href="#prompt-board">프롬프트</a>' : '')
+    + (members.visible('lookbook') ? '<a href="#lookbook">브랜드 룩북</a>' : '')
+    + (members.visible('calendar') ? '<a href="#calendar">모임 일정</a>' : '') + '</nav>'
+    + '<div class="community-layout"><div class="community-main"><div class="community-notice"><span>안내</span><a href="#guidelines">함께 배우고, 직접 만든 결과물을 나눠 주세요.</a>'
+    + (writeHref ? '<a class="community-write" href="' + writeHref + '">글쓰기 <span aria-hidden="true">↗</span></a>' : '') + '</div>'
+    + '<div class="community-board-grid">' + promptPanel + boardPanels + (!promptPanel && !boardPanels ? communityPanel('라운지 안내','#guidelines',policyRows) : '') + '</div><div class="community-feature-grid">'
+    + (promptsVisible ? '<section class="community-panel community-gallery"><header><h2><a href="#prompt-board">이미지로 보는 프롬프트</a></h2><a class="community-more" href="#prompt-board">전체 보기 ＋</a></header>'
+      + '<div class="community-gallery-layout"><div class="prompt-card-grid" data-home-prompts>' + (guide ? promptCard(guide,esc,{guide:true}) : '') + '</div>'
+      + '<a class="community-share" href="#prompt-board/new"><span aria-hidden="true">＋</span><strong>잘 쓰는 프롬프트,<br>한 장으로 공유해요.</strong><small>이미지와 함께 올리면<br>회원 누구나 바로 게시할 수 있어요.</small><b>프롬프트 올리기 →</b></a></div><p class="home-load-status" data-home-prompt-status role="status"></p></section>' : '')
+    + (brands.length ? communityPanel('브랜드 룩북', '#lookbook', '<div class="community-brands">' + brands.map(brand =>
+      '<a href="#lookbook/' + enc(brand.slug) + '"><span class="community-brand-mark" style="--brand-color:' + esc(brand.primary_color_hex) + '">' + esc(brand.brand.slice(0,1)) + '</span><span><strong>'
+      + esc(brand.brand) + '</strong><small>' + esc(brand.brand_ko) + '</small></span><span aria-hidden="true">›</span></a>').join('') + '</div>') : '')
+    + '</div></div><aside class="community-sidebar" aria-label="회원과 모임 안내"><section class="community-account">' + account + '</section>'
+    + communityPanel('라운지 안내','#guidelines',policyRows)
+    + (members.visible('calendar') ? communityPanel('다가오는 모임','#calendar','<div data-home-agenda></div><a class="community-calendar-link" href="#calendar">전체 일정 보기 →</a>') : '')
+    + '<section class="community-panel"><header><h2>함께하는 공간</h2></header><div class="community-external"><a href="https://open.kakao.com/o/grZIANIi" target="_blank" rel="noopener noreferrer">카카오 단체방 <span>↗</span></a><a href="https://t.me/+fvLrEpQ99jplNmI9" target="_blank" rel="noopener noreferrer">텔레그램 단체방 <span>↗</span></a><a href="https://aihubos.github.io/reportmode/archive/" target="_blank" rel="noopener noreferrer">리포트 허브 <span>↗</span></a></div></section></aside></div></div>';
+  renderHomeAgenda();
+  const loadBoard = async category => {
+    const selector = '[data-home-list="' + category + '"]';
+    try {
+      const data = await api('/board/posts?' + new URLSearchParams({page:1,pageSize:6,category,sort:'latest',q:''}), {signal:AbortSignal.timeout(15000)});
+      if (!current()) return;
+      const posts = Array.isArray(data.posts) ? data.posts : [];
+      main.querySelector(selector).innerHTML = posts.length
+        ? posts.map(post => communityRow(post.title, '?post=' + enc(post.id) + '#board', category === 'all' ? CATEGORIES[post.category] || '이야기' : '', post.created_at, Number(post.comment_count || 0))).join('')
+        : '<p class="community-empty">아직 올라온 글이 없어요.<br><a href="#write">첫 이야기를 남겨 주세요 →</a></p>';
+    } catch {
+      if (current()) main.querySelector(selector).innerHTML = '<p class="community-empty" role="status">새 글을 불러오지 못했어요.<br><a href="' + esc(boardHref({category})) + '">게시판에서 다시 확인하기 →</a></p>';
+    }
+  };
+  const loadPrompts = async () => {
+    try {
+      const data = await api('/lounge/prompts?page=1', {signal:AbortSignal.timeout(15000)});
+      if (!current()) return;
+      const posts = Array.isArray(data.posts) ? data.posts : [];
+      main.querySelector('[data-home-list="prompts"]').innerHTML = guideRow + posts.slice(0,5).map(post =>
+        communityRow(post.title, '#prompt-board/' + enc(post.id), post.category, post.createdAt || post.updatedAt)).join('')
+        + (!posts.length ? '<p class="community-empty">회원의 프롬프트를 기다리고 있어요.<br><a href="#prompt-board/new">나의 프롬프트 올리기 →</a></p>' : '');
+      main.querySelector('[data-home-prompts]').innerHTML = (guide ? promptCard(guide,esc,{guide:true}) : '') + posts.slice(0,3).map(post => promptCard(post,esc)).join('');
+      main.querySelector('.community-gallery-layout').classList.toggle('has-many-prompts', posts.length > 1);
+    } catch {
+      if (!current()) return;
+      main.querySelector('[data-home-list="prompts"]').innerHTML = guideRow + '<p class="community-empty" role="status">회원 프롬프트를 불러오지 못했어요.<br><a href="#prompt-board">게시판에서 다시 확인하기 →</a></p>';
+      main.querySelector('[data-home-prompt-status]').textContent = '회원 프롬프트 연결을 확인해 주세요. 운영팀 가이드는 볼 수 있어요.';
+    }
+  };
+  await Promise.allSettled([...(boardVisible ? ['all','ai_question','knowledge_share'].map(loadBoard) : []), ...(promptsVisible ? [loadPrompts()] : [])]);
 }
 
 function renderLibrary(section) {
@@ -677,6 +773,7 @@ async function removeItem(path, question) {
 
 document.addEventListener("click", async (event) => {
   const target = event.target;
+  if (target.closest("[data-home-refresh]")) { render(true); return; }
   if (target.closest('[data-calendar-refresh]')) { refreshCalendar(true); return; }
   if(target.closest('[data-calendar-toggle],[data-calendar-close]')) {
     const panel=document.querySelector('[data-mini-calendar]');
@@ -830,6 +927,7 @@ async function refreshCalendar(force = false) {
     const scrollTop = panel.scrollTop;
     tickBar();
     renderMiniCalendar();
+    renderHomeAgenda();
     panel.scrollTop = scrollTop;
     if (route().name === 'calendar' && previousEvents !== JSON.stringify(calendarEvents)) render(true);
   }
@@ -852,7 +950,7 @@ members.nav();
 members.refresh();
 renderAccount();
 const calendarMedia=window.matchMedia('(max-width:959px)');
-function setCalendarVisibility(){const open=!calendarMedia.matches;document.querySelector('[data-mini-calendar]').hidden=!open;document.querySelector('[data-calendar-toggle]').setAttribute('aria-expanded',String(open));}
+function setCalendarVisibility(){const open=!calendarMedia.matches && route().name !== "home";document.querySelector('[data-mini-calendar]').hidden=!open;document.querySelector('[data-calendar-toggle]').setAttribute('aria-expanded',String(open));}
 calendarMedia.addEventListener('change',setCalendarVisibility);
 setCalendarVisibility();
 renderMiniCalendar();
