@@ -280,3 +280,25 @@ export const CLASSROOM = [
   { no: "05", title: "Codex로 나만의 홈페이지", outcome: "휴대폰에서도 읽히는 소개 페이지", url: "https://aihubos.github.io/builderslab-curriculum/web.html" },
   { no: "06", title: "Codex로 작은 앱", outcome: "입력·처리·결과가 있는 할 일 앱", url: "https://aihubos.github.io/builderslab-curriculum/app.html" },
 ];
+
+// AI빌더스랩 1기(2026년 11월 시작) 안내. 상세 페이지는 /curriculum/ 아래 정적 파일입니다.
+export const COHORT1 = {
+  contact: "https://open.kakao.com/me/aibuilderslab",
+  full: "/curriculum/",
+  detail: "/curriculum/cohort1.html",
+  facts: ["무료 설치반 → 4회 · 1개월", "주 1회 · 회당 2시간", "수강생 5명 + 강사 1명", "회당 3만원 · 4회 12만원 (장소 대여비 포함)", "수료 시 Aside 플레이북 전자책", "1기 한정 · 후기·결과물 공유 시 50% 페이백"],
+  classes: [
+    { label: "평일 오전반", when: "수요일 10~12시", dates: "11/11 · 11/18 · 11/25 · 12/2" },
+    { label: "평일 오후반", when: "수요일 14~16시", dates: "11/11 · 11/18 · 11/25 · 12/2" },
+    { label: "주말반", when: "토요일 10~12시", dates: "11/14 · 11/21 · 11/28 · 12/5" },
+    { label: "무료 설치반", when: "격주 토요일 오전 7~9시 · 오프라인 · 정원 5명", dates: "11/7 · 11/21 · 12/5 · 12/19" },
+  ],
+  prepare: "준비물: 노트북(Mac은 macOS 15 이상), 구글 계정, Grok Premium 구독(기수제 필수). 1기 수강생은 11/7 무료 설치반에 먼저 참석합니다.",
+  sessions: [
+    { id: "s0", no: "무료 설치반", title: "설치하고 연결하기", tools: "Aside · Grok Bot", outcome: "Aside와 Grok Bot이 설치된 내 컴퓨터, 두 도구에 시켜 본 첫 요청" },
+    { id: "s1", no: "1회", title: "일정·할 일 비서 + 블로그·SNS 자동화", tools: "Grok Bot · Aside", outcome: "매일 아침 받는 브리핑, 예약 직전까지 준비된 블로그·SNS 글" },
+    { id: "s2", no: "2회", title: "나만의 지식창고(LLM Wiki) + 내 홈페이지", tools: "Obsidian · Grok · Grok Build", outcome: "출처가 달린 작은 위키, grok.me 공개 주소" },
+    { id: "s3", no: "3회", title: "캐릭터 시트 + 쇼츠 + 롱폼", tools: "Grok Imagine · Google Flow · HyperFrames", outcome: "캐릭터 시트, 30초 쇼츠, 1~3분 롱폼 영상" },
+    { id: "s4", no: "4회", title: "주문 자동화 + 관리 대시보드", tools: "Aside · Grok Build", outcome: "결제 직전에서 멈춘 주문, 숫자가 바뀌는 대시보드, 하루 루틴 발표" },
+  ],
+};
