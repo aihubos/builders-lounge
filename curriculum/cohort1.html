@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2F6BFF">
+  <meta name="description" content="AI빌더스랩 1기 회차별 안내. 무료 설치반과 4번의 수업에서 매주 무엇을 배우고 무엇을 만드는지 한눈에 봅니다.">
+  <title>AI빌더스랩 1기 · 회차별 안내</title>
+  <link rel="stylesheet" href="fonts/pretendard.css">
+  <link rel="stylesheet" href="cohort1.css">
+  <script src="cohort1-data.js" defer></script>
+  <script src="cohort1.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#sessions">회차별 안내 바로가기</a>
+  <header class="top">
+    <a class="brand" href="index.html" aria-label="AI빌더스랩 커리큘럼으로"><img src="assets/brand-wordmark.png" alt="AI빌더스랩" width="190" height="46"></a>
+    <nav aria-label="1기 페이지 메뉴"><a href="/#home">빌더스 라운지</a><a href="#overview">한눈에</a><a href="#sessions">회차별</a><a href="#prepare">준비물</a><a href="index.html#schedule">일정 달력</a></nav>
+  </header>
+  <main id="top">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <p class="eyebrow">AI BUILDERS LAB · 1기 · 2026년 11월 시작</p>
+      <h1 id="hero-title">무료 설치반 + 4번의 수업,<br><span>회마다 두 가지를 완성합니다.</span></h1>
+      <p class="lede">설치는 무료 설치반에서 함께 하고, 4주 동안 비서와 블로그·SNS 자동화, 지식창고와 홈페이지, 캐릭터·쇼츠·롱폼, 주문 자동화와 대시보드를 만듭니다. 마지막 4회에 모두 하루 루틴으로 묶어 발표합니다.</p>
+      <dl class="facts">
+        <div><dt>시작</dt><dd>11월 7일 (토) 무료 설치반</dd></div>
+        <div><dt>인원</dt><dd>수강생 5명 + 강사 1명</dd></div>
+        <div><dt>수업</dt><dd>주 1회 · 회당 2시간</dd></div>
+        <div><dt>가격</dt><dd>1회 3만원 · 4회 12만원 · 설치반 수강료 무료<small>확정 금액 · 정규 과정은 장소 대여비 포함 · 무료 설치반만 장소비 1/n 별도</small></dd></div>
+        <div><dt>1기 혜택</dt><dd>50% 페이백<small>후기 + 결과물 공유 시 1회 15,000원 환급</small></dd></div>
+        <div><dt>수료 혜택</dt><dd>AI 브라우저 Aside 실전활용 플레이북 전자책<small>4회 결과물을 모두 제출한 수료자</small></dd></div>
+      </dl>
+      <div class="class-switch" role="radiogroup" aria-label="반 선택">
+        <span class="switch-label">내 반</span>
+        <button type="button" role="radio" data-class="morning" aria-checked="true">평일 오전반 <small>수요일 10~12시</small></button>
+        <button type="button" role="radio" data-class="afternoon" aria-checked="false">평일 오후반 <small>수요일 14~16시</small></button>
+        <button type="button" role="radio" data-class="weekend" aria-checked="false">주말반 <small>토요일 10~12시</small></button>
+      </div>
+    </section>
+
+    <section id="overview" class="overview wrap" aria-labelledby="overview-title">
+      <div class="section-head"><p class="eyebrow">01 / 한눈에 보기</p><h2 id="overview-title">5번의 만남, 회마다 두 가지 결과물.</h2><p id="overview-note">선택한 반의 날짜로 보여 드립니다.</p></div>
+      <div id="timeline" class="timeline"></div>
+    </section>
+
+    <section id="sessions" class="sessions wrap" aria-labelledby="sessions-title">
+      <div class="section-head"><p class="eyebrow">02 / 회차별 안내</p><h2 id="sessions-title">매 회차, 이렇게 진행합니다.</h2><p>회마다 두 주제를 약 1시간씩 다룹니다. 시간은 선택한 반의 시작 시각 기준이며, 휴식 시간은 따로 둡니다.</p></div>
+      <div id="session-list"></div>
+    </section>
+
+    <section id="prepare" class="prepare" aria-labelledby="prepare-title"><div class="wrap">
+      <div class="section-head"><p class="eyebrow">03 / 준비물과 약속</p><h2 id="prepare-title">수업 전에 준비해 주세요.</h2></div>
+      <div class="prepare-grid">
+        <dl class="prep-list">
+          <div><dt>Grok Premium 구독 <em>필수</em></dt><dd>Grok Bot과 영상 생성이 Premium부터 들어 있습니다. 월 ₩45,000, 세금 별도 (2026-10-27 확인). Plus 요금제에는 Grok Bot이 없습니다. <a href="https://x.ai/pricing" target="_blank" rel="noopener">요금제 비교</a></dd></div>
+          <div><dt>Cursor 계정</dt><dd>Grok Bot은 Cursor 계정으로 로그인합니다. 새 요금제는 Grok과 계정이 하나로 묶여 따로 연결하지 않아도 됩니다. <a href="https://cursor.com/help/grok-bot/sign-in" target="_blank" rel="noopener">로그인 안내</a></dd></div>
+          <div><dt>구글 계정</dt><dd>1회에 일정(구글 캘린더)과 메일(지메일)을 비서에 연결합니다.</dd></div>
+          <div><dt>노트북 · 휴대전화</dt><dd>Mac 또는 Windows 노트북. Mac은 macOS 15 이상에서 Aside를 쓸 수 있습니다. 휴대전화로 홈페이지와 영상을 확인합니다.</dd></div>
+          <div><dt>Node.js · FFmpeg (3회 전)</dt><dd>쇼츠·롱폼을 영상 파일로 만들 때 씁니다. 3회 전에 미리 설치하고, 막히면 수업 15분 전에 일찍 오세요.</dd></div>
+        </dl>
+        <div class="promises">
+          <h3>꼭 지킬 약속 세 가지</h3>
+          <ol>
+            <li><strong>비밀번호와 카드번호는 대화창에 쓰지 않습니다.</strong></li>
+            <li><strong>결제, 게시, 메일 보내기 버튼은 내가 직접 누릅니다.</strong> AI에게는 초안까지만 맡깁니다.</li>
+            <li><strong>AI가 가져온 숫자와 사실은 원래 링크를 열어 한 번 더 확인합니다.</strong></li>
+          </ol>
+          <div class="payback">
+            <h3>1기 한정 · 50% 페이백</h3>
+            <p>후기를 쓰고 내가 만든 결과물도 함께 공유하면, 낸 수강료의 절반을 돌려드립니다.</p>
+            <table><thead><tr><th>수강</th><th>낸 금액</th><th>돌려받는 금액</th></tr></thead><tbody><tr><td>1회</td><td>3만원</td><td>15,000원</td></tr><tr><td>4회 전체</td><td>12만원</td><td>6만원</td></tr></tbody></table>
+            <small>지급 방법과 시점은 강사가 안내합니다.</small>
+          </div>
+        </div>
+      </div>
+    </div></section>
+  </main>
+  <footer class="foot wrap"><strong>AI BUILDERS LAB · 1기</strong><span id="updated"></span><a href="index.html">← 1기 모집 페이지</a></footer>
+  <div id="live" class="sr-only" role="status" aria-live="polite"></div>
+</body>
+</html>
